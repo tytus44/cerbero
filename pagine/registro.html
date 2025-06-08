@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERBERO - Registro Giornaliero</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/registro.css">
+</head>
+<body>
+
+<header class="header">
+    <div class="logo-container"> <div class="logo"> <img src="../icons/icon_logo.svg" alt="CERBERO Logo"> CERBERO </div> </div>
+    <nav class="nav">
+        <ul>
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="registro.html">Registro</a></li>
+            <li><a href="cassa.html">Cassa</a></li>
+            <li><a href="erogatori.html">Erogatori</a></li>
+            <li><a href="vendite.html">Vendite</a></li>
+            <li><a href="credito.html">Credito</a></li>
+            <li><a href="carico.html">Carico</a></li>
+        </ul>
+    </nav>
+    <div class="info-icon-container"> 
+        <a href="info.html"> <img src="../icons/icon_info.svg" alt="Informazioni" id="infoIcon"> 
+        </a>
+    </div>
+</header>
+
+    <main class="container registro-layout">
+        <div class="column-registro column-principale">
+            <div class="box">
+                <div class="header-box" style="display: flex; justify-content: space-between; align-items: center;">
+                    <h3>REGISTRO GIORNALIERO - 08/06/2025</h3>
+                    <img src="../icons/icon_modifica.svg" alt="Modifica" title="Modifica Registro" style="cursor: pointer; width: 22px; height: 22px; filter: brightness(0) invert(1);">
+                </div>
+                <div class="content-box">
+                    <h4>Incassi</h4>
+                    <div class="gruppo-campi gruppo-campi-registro">
+                        <span class="nome-campo">Incasso Contanti</span> <input type="text" class="valore-campo" value="€ 0,00">
+                        <span class="nome-campo">Incasso Elettronico</span> <input type="text" class="valore-campo" value="€ 0,00">
+                        <span class="nome-campo-totale">Totale Incassato</span> <span class="valore-campo-totale">€ 0,00</span>
+                    </div>
+                    <hr style="margin: 20px 0;">
+                    <h4>Altre Voci</h4>
+                     <div class="gruppo-campi gruppo-campi-registro">
+                        <span class="nome-campo">Buoni Carburante</span> <input type="text" class="valore-campo" value="€ 0,00">
+                        <span class="nome-campo">Fatture</span> <input type="text" class="valore-campo" value="€ 0,00">
+                        <span class="nome-campo">Crediti</span> <input type="text" class="valore-campo" value="€ 0,00">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="column-registro column-laterale">
+            <div class="box">
+                <div class="header-box sfondo-verde"> <h3>Riepilogo Erogato</h3> </div>
+                <div class="content-box">
+                    <div class="gruppo-campi gruppo-campi-riepilogo">
+                        <div class="campo-speciale accento-giallo">GASOLIO</div> <span class="valore-campo-riepilogo">0 L</span>
+                        <div class="campo-speciale accento-arancione">DIESEL+</div> <span class="valore-campo-riepilogo">0 L</span>
+                        <div class="campo-speciale accento-verde">BENZINA</div> <span class="valore-campo-riepilogo">0 L</span>
+                        <div class="campo-speciale accento-blu">HVO</div> <span class="valore-campo-riepilogo">0 L</span>
+                    </div>
+                </div>
+            </div>
+             <div class="box">
+                <div class="header-box sfondo-rosso"> <h3>Apertura Cassa</h3> </div>
+                <div class="content-box">
+                    <div class="gruppo-campi gruppo-campi-registro">
+                        <span class="nome-campo">Fondo Cassa</span> <input type="text" class="valore-campo" value="€ 0,00">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/gestioneStorage.js"></script>
+    <script src="../js/pulsante_fab.js"></script>
+    <script src="../js/menu.js"></script>
+    <script src="../js/base.js"></script>
+    <script src="../js/registro.js"></script>
+
+</body>
+</html>

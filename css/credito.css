@@ -1,0 +1,169 @@
+/* credito.css */
+
+/* Layout del contenitore principale per credito.html */
+.container.credito-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Stile per il contenitore della barra di ricerca specifica di credito.html */
+.credito-layout .search-container {
+    margin: 20px auto; /* Centra il contenitore e aggiunge margine */
+}
+
+/* Stile per ogni riga che contiene due box */
+.riga-box {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap; /* Permette ai box di andare a capo su schermi piccoli */
+    justify-content: center; /* Centra i box nella riga */
+}
+
+/* Stile per ogni box cliente (colonna) */
+.colonna-meta {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: calc(50% - 10px); /* 50% meno metà del gap (gap totale 20px) */
+    min-width: 300px; /* Larghezza minima per evitare che si rimpiccioliscano troppo */
+}
+
+/* Stile per le icone di azione nell'intestazione del box */
+.edit-icon,
+.aggiungi-riga-icona,
+.cancella-ultima-riga-icona,
+.pulisci-tutto-icona,
+.delete-box-icon {
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    filter: brightness(0) invert(1); /* Bianco */
+    transition: transform 0.2s, filter 0.2s ease;
+}
+
+.edit-icon:hover,
+.aggiungi-riga-icona:hover,
+.cancella-ultima-riga-icona:hover,
+.pulisci-tutto-icona:hover,
+.delete-box-icon:hover {
+    transform: scale(1.1);
+}
+
+
+/* Stile per la tabella all'interno di ogni box cliente */
+.tabella-credito {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 10px; /* Spazio prima del pulsante Aggiungi Riga */
+}
+
+.tabella-credito th,
+.tabella-credito td {
+    border: 1px solid var(--bordo-grigio-medio);
+    padding: 8px; /* Padding leggermente ridotto per le celle */
+    text-align: center; /* Allineamento centrale */
+    color: var(--testo-scuro); /* Testo nero di default per le celle */
+}
+
+.tabella-credito th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    font-size: 0.9em;
+}
+
+/* Stile per gli input all'interno delle celle della tabella */
+.tabella-credito td input[type="text"],
+.tabella-credito td input[type="number"] {
+    width: 100%;
+    padding: 5px;
+    /* font-size ereditato da base.css (18px) */
+    border: 1px solid transparent; 
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: transparent;
+    color: var(--testo-scuro);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Stile per gli input quando il box è in modalità modifica (evidenziazione) */
+.box.in-modifica .tabella-credito td input.credito-campo {
+    background-color: #e8f0fe; /* Sfondo chiaro per indicare editabilità */
+    border-color: var(--bordo-focus);
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2); /* Ombra sottile */
+    outline: none;
+}
+
+/* Colori delle intestazioni dei box clienti */
+.colore-header-1 > .header-box { background-color: #FF4D7B; } /* Rosa Corallo */
+.colore-header-2 > .header-box { background-color: #FF884D; } /* Arancione */
+.colore-header-3 > .header-box { background-color: #FFBF00; } /* Giallo Intenso */
+.colore-header-4 > .header-box { background-color: #00BFB2; } /* Turchese/Ciano */
+.colore-header-5 > .header-box { background-color: #6A0DAD; } /* Viola Profondo */
+.colore-header-6 > .header-box { background-color: #E6456E; }
+.colore-header-7 > .header-box { background-color: #E67A45; }
+.colore-header-8 > .header-box { background-color: #E6AC00; }
+.colore-header-9 > .header-box { background-color: #00A397; }
+.colore-header-10 > .header-box { background-color: #5D0B99; }
+.colore-header-11 > .header-box { background-color: #CC406A; }
+.colore-header-12 > .header-box { background-color: #CC6D3D; }
+.colore-header-13 > .header-box { background-color: #CC9900; }
+.colore-header-14 > .header-box { background-color: #00887E; }
+.colore-header-15 > .header-box { background-color: #4A0877; }
+.colore-header-16 > .header-box { background-color: #B3365C; }
+.colore-header-17 > .header-box { background-color: #B35C36; }
+.colore-header-18 > .header-box { background-color: #B37D00; }
+.colore-header-19 > .header-box { background-color: #006B62; }
+.colore-header-20 > .header-box { background-color: #330055; }
+
+
+/* Stile per la riga del totale nel box */
+.riga-totale .empty-cell {
+    border-color: transparent; 
+    background-color: transparent !important; 
+    box-shadow: none !important; 
+}
+
+/* La cella centrale del totale */
+.riga-totale .cella-totale {
+    text-align: center; 
+    color: white;
+    font-weight: bold;
+    /* MODIFICA QUI: Aggiunta la dimensione del font */
+    font-size: 18px;
+}
+
+
+/* Stile per il contenitore del pulsante "Aggiungi Nuovi Box" */
+.add-box-button-container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    padding-bottom: 40px;
+}
+
+/* Stile per il pulsante "Aggiungi Nuovi Box" */
+.add-box-button {
+    /* Eredita tutti gli stili dalla regola 'button' globale in base.css */
+}
+
+/* Media Query per la responsività */
+@media (max-width: 992px) {
+    .riga-box {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .colonna-meta {
+        flex-basis: 100%;
+        max-width: 600px;
+        min-width: unset;
+    }
+}

@@ -1,0 +1,279 @@
+/* carico.css */
+
+/* Layout del contenitore principale */
+.container.carico-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px;
+    align-items: center;
+    width: 100%;
+}
+
+/* Stile per la riga dei box di riepilogo */
+.riga-box-riepilogo {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+    max-width: 1200px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* Stile per le colonne di riepilogo (metà larghezza o intera su mobile) */
+.colonna-riepilogo {
+    flex-grow: 1;
+    flex-shrink: 1;
+    flex-basis: calc(50% - 10px); /* 50% meno il gap */
+    min-width: 300px; /* Larghezza minima per evitare che si rimpiccioliscano troppo */
+}
+
+/* Stile per il box di riepilogo dell'anno (se necessario uno stile specifico) */
+.box-riepilogo-anno {
+    /* Stili specifici se diversi dagli altri box */
+}
+
+/* Stile per l'intestazione del box Carico Contabile (viola) */
+.box-carico-contabile > .header-box {
+    background-color: var(--colore-viola); /* Imposta il colore di sfondo viola */
+}
+
+/* Stile per la sezione contabile */
+.sezione-contabile {
+    margin-bottom: 10px; /* Spazio sotto ogni sezione contabile */
+}
+
+.titolo-sezione {
+    display: block; /* Occupa una riga intera */
+    font-size: 1.1em;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    color: var(--testo-scuro);
+}
+
+/* Stili per le griglie interne dei prodotti (per Rimanenza Anno Precedente e Carico Contabile Totale) */
+.griglia-contabile {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colonne di larghezza uguale */
+    gap: 5px 10px; /* Spazio tra gli elementi della griglia */
+    text-align: center; /* Centra il testo */
+    align-items: center; /* Centra verticalmente gli elementi */
+}
+
+/* Stili per la griglia dei prodotti nella sezione "Totale Carico Anno" */
+.griglia-riepilogo-prodotti-anno {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); /* 4 colonne uguali */
+    gap: 5px 10px; /* Spazio tra gli elementi della griglia */
+    text-align: center; /* Centra il testo */
+    align-items: center; /* Centra verticalmente gli elementi */
+    margin-top: 15px; /* Spazio sopra questa sezione */
+}
+
+/* Classi di colore per i prodotti (utilizzate per etichette e valori) */
+.colore-benzina {
+    color: var(--colore-verde); 
+}
+.colore-gasolio { 
+    color: var(--colore-giallo); 
+}
+.colore-dieselplus { 
+    color: var(--colore-arancione); 
+}
+.colore-hvolution { 
+    color: var(--colore-blu); 
+}
+
+/* Stili per le intestazioni dei prodotti contabili (Benzina, Gasolio, ecc.) */
+.header-prodotto-contabile {
+    font-weight: bold;
+    font-size: 0.9em;
+    padding-bottom: 5px; 
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Stili per i valori contabili non editabili (Rimanenza Anno Precedente) */
+.valore-contabile {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Stili per i valori dei prodotti nella sezione "Totale Carico Anno" */
+.valore-prodotto-anno {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Stili per le differenze dei prodotti nella sezione "Totale Carico Anno" */
+.diff-prodotto-anno {
+    font-size: 0.85em;
+    color: #666; 
+    margin-top: 5px; 
+}
+
+/* Stili per i valori contabili calcolati (Carico Contabile Totale) */
+.valore-contabile-calcolato {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* Stile per la tabella di carico principale */
+.box-tabella-principale {
+    width: 100%;
+    max-width: 1200px;
+}
+
+.tabella-carico table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+/* Stile per le intestazioni delle colonne della tabella (th) e le celle (td) */
+.tabella-carico th,
+.tabella-carico td {
+    border: 1px solid var(--bordo-grigio-medio);
+    padding: 10px;
+}
+
+.tabella-carico th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    color: var(--testo-scuro); 
+}
+
+.tabella-carico tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tabella-carico tbody tr:hover {
+    background-color: #f0f0f0;
+}
+
+/* Stile per gli input all'interno delle celle della tabella */
+.tabella-carico td input[type="text"],
+.tabella-carico td input[type="number"] {
+    width: 100%;
+    padding: 5px 8px;
+    font-size: 1em;
+    border: 1px solid var(--bordo-grigio-medio);
+    border-radius: 4px;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: white;
+    color: var(--testo-scuro); 
+    margin-top: 5px; 
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+/* Stile per gli input quando sono disabilitati */
+.tabella-carico td input[disabled] {
+    background-color: #f0f0f0;
+    cursor: not-allowed;
+}
+
+/* Evidenziazione per i campi contenteditable e input quando il box è in modalità modifica */
+.box.in-modifica .tabella-carico .scarico-value[contenteditable="true"],
+.box.in-modifica .tabella-carico .autista-value[contenteditable="true"],
+.box.in-modifica .tabella-carico .differenza-input,
+.editable-field[contenteditable="true"] { 
+    background-color: #e8f0fe; 
+    border-color: var(--bordo-focus);
+    box-shadow: 0 0 0 2px rgba(66, 133, 244, 0.2); 
+    outline: none; 
+}
+
+
+/* Stile per i nuovi campi eccedenze/deficienze */
+.eccedenze-deficienze {
+    font-size: 0.9em;
+    color: #666; 
+    text-align: right;
+    padding-right: 2px;
+}
+
+/* Wrapper per la cella del prodotto per gestire span e input */
+.product-cell-wrapper {
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    justify-content: center; 
+    width: 100%; 
+}
+
+.scarico-value {
+    display: block; 
+    width: 100%;
+    text-align: center; 
+    font-weight: bold;
+    font-size: 1.1em;
+    /* Il colore è ora impostato via JavaScript con !important */
+    padding: 5px 0; 
+    transition: background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    border: 1px solid transparent; 
+    border-radius: 4px;
+}
+
+
+/* Media Query per la responsività */
+@media (max-width: 768px) {
+    .riga-box-riepilogo {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .colonna-riepilogo {
+        flex-basis: 100%;
+        max-width: 600px;
+    }
+
+    .tabella-carico table,
+    .tabella-carico thead,
+    .tabella-carico tbody,
+    .tabella-carico th,
+    .tabella-carico td,
+    .tabella-carico tr {
+        display: block;
+    }
+
+    .tabella-carico thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .tabella-carico tr {
+        border: 1px solid var(--bordo-grigio-medio);
+        margin-bottom: 10px;
+    }
+
+    .tabella-carico td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    .tabella-carico td:before {
+        position: absolute;
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        content: attr(data-label); 
+        font-weight: bold;
+        text-align: left;
+    }
+
+    /* Regola per gli input e span nella tabella quando sono in modalità responsiva */
+    .tabella-carico td input,
+    .tabella-carico td .scarico-value,
+    .tabella-carico td .autista-value {
+        text-align: right; 
+    }
+}
