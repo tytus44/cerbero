@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERBERO - Informazioni</title>
+    <link rel="stylesheet" href="../css/base.css">
+    <link rel="stylesheet" href="../css/info.css"> </head>
+<body>
+
+<header class="header">
+    <div class="logo-container"> <div class="logo"> <img src="../icons/icon_logo.svg" alt="CERBERO Logo"> CERBERO </div> </div>
+    <nav class="nav">
+        <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="registro.html">Registro</a></li>
+            <li><a href="cassa.html">Cassa</a></li>
+            <li><a href="erogatori.html">Erogatori</a></li>
+            <li><a href="vendite.html">Vendite</a></li>
+            <li><a href="credito.html">Credito</a></li>
+            <li><a href="carico.html">Carico</a></li>
+        </ul>
+    </nav>
+    <div class="info-icon-container"> 
+        <a href="info.html">
+            <img src="../icons/icon_info.svg" alt="Informazioni" id="infoIcon"> 
+        </a>
+    </div>
+</header>
+
+<main class="container info-special-background" style="display: flex; justify-content: center; align-items: center; min-height: calc(100vh - 70px - 20px); padding: 10px;">
+    <canvas id="matrixCanvas" class="background-canvas"></canvas> <div class="box info-box-glow" style="max-width: 500px; width: 90%; margin: 0 auto; border: 1px solid var(--colore-blu);"> <div class="header-box" style="display: flex; justify-content: space-between; align-items: center;">
+            <h3>Benvenuto in CERBERO!</h3>
+        </div>
+        <div class="content-box">
+            <img src="../icons/user.png" alt="Icona Utente" style="width: 128px; height: auto; display: block; margin: 0 auto 20px auto; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
+            <p style="font-size: 16px; line-height: 1.8; color: var(--testo-scuro); margin-bottom: 15px; text-align: center;">
+                "<strong>CERBERO</strong>" è un'applicazione web per la gestione di un impianto di distribuzione carburanti. Si occupa di monitorare e registrare dati relativi a erogatori, cassa, vendite, carico di carburanti, credito e storico, permettendo di modificare i registri e visualizzare riepiloghi contabili, con un'interfaccia utente basata su box interattivi e tabelle.
+            </p>
+            <p style="font-size: 13px; color: #888; margin-top: 20px; text-align: center;">
+                Codice HTML, CSS, JS di NeRO, v1.5
+            </p>
+        </div>
+    </div>
+</main>
+
+<script src="../js/gestioneStorage.js"></script>
+<script src="../js/pulsante_fab.js"></script>
+<script src="../js/menu.js"></script>
+<script src="../js/base.js"></script>
+<script src="../js/info.js"></script> </body>
+</html>

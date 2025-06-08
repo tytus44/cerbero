@@ -1,0 +1,57 @@
+/* info.css */
+
+/* Stile per il contenitore principale, che ora conterrà il canvas */
+.info-special-background {
+    background-color: #000; /* Sfondo nero per l'effetto Matrix */
+    position: relative; /* Importante per posizionare il canvas e il box */
+    overflow: hidden;
+}
+
+/* Stile per il canvas che conterrà l'animazione Matrix */
+.background-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0; /* Assicura che il canvas sia dietro il box */
+}
+
+/* Effetto di bordo "glow" sul box (mantenuto) */
+.info-box-glow {
+    position: relative;
+    box-shadow: 0 0 0 5px rgba(52, 93, 242, 0.3);
+    transition: box-shadow 0.5s ease-in-out;
+    z-index: 1; /* Assicura che il box sia sopra il canvas */
+}
+
+/* Pseudo-elemento per l'effetto luce che scorre (mantenuto) */
+.info-box-glow::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        45deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 40%,
+        rgba(255, 255, 255, 0.3) 50%,
+        rgba(255, 255, 255, 0.1) 60%,
+        rgba(255, 255, 255, 0) 100%
+    );
+    opacity: 0;
+    pointer-events: none;
+    animation: scanlineEffect 4s infinite linear;
+    border-radius: inherit;
+    z-index: 2; /* Assicura che la scanline sia sopra il box ma sotto il contenuto */
+}
+
+@keyframes scanlineEffect {
+    0% { transform: translateX(-100%); opacity: 0; }
+    10% { opacity: 1; }
+    40% { transform: translateX(100%); opacity: 1; }
+    50% { opacity: 0; }
+    100% { transform: translateX(-100%); opacity: 0; }
+}

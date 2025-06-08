@@ -1,0 +1,388 @@
+/* Importazione Font */
+/* Importa il font 'Montserrat' da Google Fonts con vari spessori */
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap');
+
+/* CSS Variables (Custom Properties) */
+/* Definizione dei colori principali del tema, colori per il testo, i bordi e gli stati di focus */
+:root {
+  --colore-blu: #345DF2; /* Blu principale per intestazioni e focus */
+  --colore-verde: #0F9D58; /* Verde per elementi specifici (es. erogatore Servito) */
+  --colore-rosso: #EA4335; /* Rosso per elementi specifici (es. erogatore Iperself) */
+  --colore-viola: #6A0DAD; /* Viola per elementi specifici */
+  --colore-celeste: #00CED1; /* Celeste per elementi specifici */
+  --colore-giallo: #FBBC05; /* Giallo per elementi specifici */
+  --colore-arancione: #FF8800; /* Arancione per elementi specifici */
+
+  --testo-chiaro: white; /* Colore chiaro per il testo (es. su sfondi scuri) */
+  --testo-scuro: #333; /* Colore scuro per il testo normale */
+
+  --bordo-grigio-chiaro: #ddd; /* Grigio chiaro per bordi sottili */
+  --bordo-grigio-medio: #ccc; /* Grigio medio per bordi standard */
+  --bordo-focus: var(--colore-blu); /* Colore del bordo quando un elemento è in focus */
+
+  --campo-speciale-accento-colore: var(--colore-blu); /* Colore di accento per i campi speciali (predefinito blu) */
+}
+
+/* Stili Globali / Reset */
+/* Regole di base per HTML e Body per un reset consistente e un layout a tutta altezza */
+html,
+body {
+  height: 100%; /* Rende l'altezza di html e body pari al 100% della viewport */
+  margin: 0; /* Rimuove i margini predefiniti del browser */
+  padding: 0; /* Rimuove il padding predefinito del browser */
+}
+
+/* Stili generali per il body del documento */
+body {
+  background-color: #f0f2f5; /* Colore di sfondo generale della pagina */
+  color: var(--testo-scuro); /* Colore del testo predefinito */
+  font-family: 'Montserrat', sans-serif; /* Font principale per tutto il testo */
+  line-height: 1.6; /* Altezza della linea per una migliore leggibilità del testo */
+}
+
+/* Box-sizing universale per un controllo più prevedibile del layout */
+/* e applicazione del font per tutti gli elementi */
+*,
+*:before,
+*:after {
+  box-sizing: border-box; /* Include padding e border nella larghezza/altezza dell'elemento */
+  font-family: 'Montserrat', sans-serif !important; /* Forza il font per tutti gli elementi */
+}
+
+/* Sezione Header */
+/* Stili per la barra di navigazione superiore del sito */
+.header {
+  background-color: var(--colore-blu); /* Sfondo blu dell'header */
+  color: var(--testo-chiaro); /* Colore del testo chiaro nell'header */
+  padding: 15px 20px; /* Padding interno dell'header */
+  display: flex; /* Utilizza Flexbox per allineare gli elementi interni */
+  align-items: center; /* Allinea gli elementi verticalmente al centro */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Leggera ombra sotto l'header */
+  position: sticky; /* Rende l'header "appiccicoso" durante lo scroll */
+  top: 0; /* Fissa l'header in cima alla viewport */
+  z-index: 1000; /* Assicura che l'header sia sopra gli altri contenuti */
+  flex-wrap: wrap; /* Permette agli elementi dell'header di andare a capo su schermi piccoli */
+}
+
+/* Stili per il logo (testo e immagine) nell'header */
+.header .logo {
+  font-size: 24px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  margin-right: 10px;
+  color: var(--testo-chiaro);
+}
+
+/* Stili per l'immagine del logo nell'header */
+.header .logo img {
+  height: 48px;
+  width: 48px;
+  margin-right: 10px;
+  filter: brightness(0) invert(1); /* Rende l'icona bianca */
+}
+
+/* Stili per il contenitore della navigazione principale */
+.header .nav {
+  flex-grow: 1; /* Permette alla nav di occupare lo spazio disponibile */
+  display: flex;
+  justify-content: center; /* Centra orizzontalmente gli elementi di navigazione */
+}
+
+/* Stili per la lista non ordinata degli elementi di navigazione */
+.header .nav ul {
+  list-style: none; /* Rimuove i pallini della lista */
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Stili per ogni elemento della lista di navigazione */
+.header .nav ul li {
+  margin: 0 15px; /* Spazio tra gli elementi del menu */
+}
+
+/* Stili per i link di navigazione */
+.header .nav ul li a {
+  color: var(--testo-chiaro); /* Colore del testo predefinito per i link */
+  padding: 5px 0; /* Padding interno */
+  text-decoration: none; /* Rimuove la sottolineatura dei link */
+  white-space: nowrap; /* Impedisce al testo del link di andare a capo */
+}
+
+/* Effetto sottolineatura animata per i link di navigazione (non per le etichette) */
+.header .nav ul li a:not(.etichetta-tipo) {
+  background: linear-gradient(to right, #cceeff, #cceeff); /* Gradiente per la sottolineatura */
+  background-position: left bottom; /* Posiziona la sottolineatura in basso */
+  background-repeat: no-repeat;
+  background-size: 0% 2px; /* Inizia invisibile (0% larghezza, 2px altezza) */
+  transition: background-size 0.3s ease, color 0.3s ease; /* Transizione per l'animazione */
+}
+
+/* Effetto hover per i link di navigazione */
+.header .nav ul li a:not(.etichetta-tipo):hover {
+  background-size: 100% 2px; /* La sottolineatura si espande all'hover */
+  color: #cceeff; /* Il testo diventa più chiaro all'hover */
+}
+
+/* Stile per l'etichetta del menu della pagina attiva */
+.header .nav ul li a.active {
+    background-size: 100% 2px; /* Simula l'hover, rendendola "attiva" */
+    color: #cceeff; /* Colore evidenziato */
+    font-weight: bold; /* Rende il testo più spesso */
+}
+
+/* Stili per il contenitore dell'icona informazioni */
+.header .info-icon-container {
+  display: flex;
+  align-items: center;
+  margin-left: auto; /* Spinge l'icona a destra */
+}
+
+/* Stili per l'immagine dell'icona informazioni */
+.header .info-icon-container img {
+  height: 30px;
+  width: 30px;
+  cursor: pointer; /* Indica che è cliccabile */
+  filter: brightness(0) invert(1); /* Rende l'icona bianca */
+}
+
+/* Componenti Box */
+/* Stili di base per tutti i contenitori "box" usati nel layout */
+.box {
+  background-color: white; /* Sfondo bianco del box */
+  border-radius: 8px; /* Arrotondamento generale per tutti gli angoli del box */
+  border-top-left-radius: 0;   /* Rende l'angolo in alto a sinistra squadrato */
+  border-top-right-radius: 0;  /* Rende l'angolo in alto a destra squadrato */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Ombra leggera sotto il box */
+  margin-bottom: 20px; /* Margine sotto ogni box */
+  display: flex; /* Utilizza Flexbox per la struttura interna (header, content) */
+  flex-direction: column; /* Impila gli elementi verticalmente */
+  transition: box-shadow 0.2s ease, border 0.2s ease; /* Transizione per effetti focus/hover */
+  border: 1px solid transparent; /* Bordo di default trasparente per evitare salti di layout */
+  overflow: hidden; /* Nasconde il contenuto dell'header-box che sporge dagli angoli squadrati */
+}
+
+/* Stili per l'intestazione di ogni box */
+.header-box {
+  background-color: var(--colore-blu); /* Sfondo blu di default per l'intestazione */
+  color: var(--testo-chiaro); /* Colore del testo bianco */
+  padding: 15px 20px;
+  font-size: 18px;
+  font-weight: bold;
+  border-radius: 0; /* Rimuove qualsiasi arrotondamento per renderlo squadrato */
+}
+
+/* Stili per il titolo H3 all'interno dell'intestazione del box */
+.header-box h3 {
+  line-height: 1.3;
+  margin: 0; /* Rimuove i margini predefiniti del titolo */
+}
+
+/* Stili per l'area del contenuto di ogni box */
+.content-box {
+  padding: 20px;
+  flex-grow: 1; /* Permette al contenuto di occupare lo spazio rimanente */
+}
+
+/* Formulari e Campi (Input, Textarea, Select) */
+/* Stili per i gruppi di campi in un layout a griglia */
+.gruppo-campi {
+  display: grid;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--bordo-grigio-chiaro);
+  gap: 8px 12px; /* Spazio tra gli elementi della griglia */
+  align-items: center; /* Allinea verticalmente gli elementi al centro */
+}
+
+/* Permette agli elementi figli di .riga-campo di diventare item della griglia del genitore */
+.riga-campo {
+  display: contents;
+}
+
+/* Stile per i valori dei campi (generico) */
+.valore-campo {
+  text-align: center;
+}
+
+/* Forza l'allineamento centrale per gli header che lo richiedono */
+.header-allineato-centro {
+  text-align: center !important;
+}
+
+/* Stili per i campi speciali con accento colorato a sinistra */
+.campo-speciale {
+  background-color: #fdfdfd;
+  border: 1px solid var(--bordo-grigio-medio);
+  border-left: 5px solid var(--campo-speciale-accento-colore); /* Bordo sinistro colorato */
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 8px 10px;
+  width: 100%;
+  box-sizing: border-box; /* Include padding e border nella larghezza */
+  display: flex; /* Usa flexbox per allineare il testo internamente */
+  align-items: center; /* Allinea verticalmente il testo */
+  min-width: 0; /* Permette al campo di restringersi nella griglia */
+  overflow: hidden; /* Nasconde il testo che eccede */
+  white-space: nowrap; /* Impedisce al testo di andare a capo */
+  text-overflow: ellipsis; /* Aggiunge i puntini di sospensione */
+}
+
+/* Colori di accento per i campi speciali */
+.accento-giallo { --campo-speciale-accento-colore: var(--colore-giallo); }
+.accento-arancione { --campo-speciale-accento-colore: var(--colore-arancione); }
+.accento-verde { --campo-speciale-accento-colore: var(--colore-verde); }
+.accento-blu { --campo-speciale-accento-colore: var(--colore-blu); }
+.accento-celeste { --campo-speciale-accento-colore: var(--colore-celeste); }
+
+/* Input, Textarea, Select Base Styles */
+input[type="text"],
+input[type="number"],
+textarea,
+select {
+  border: 1px solid var(--bordo-grigio-medio);
+  border-radius: 8px;
+  color: var(--testo-scuro);
+  font-size: 18px;
+  padding: 10px 12px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--bordo-focus);
+  box-shadow: 0 0 0 3px rgba(66, 133, 244, 0.2);
+  outline: none;
+}
+
+/* Componente Barra di Ricerca */
+.search-container {
+    position: relative; 
+    width: 100%; 
+    /* MODIFICA QUI: Ripristinato !important con la larghezza che preferisci */
+    max-width: 350px !important;
+}
+
+input.search-input {
+    width: 100%;
+    padding: 16px 50px 16px 20px;
+    border: none;
+    border-radius: 30px !important;
+    font-size: 24px;
+    font-weight: bold;
+    color: var(--testo-chiaro);
+    background-color: var(--colore-blu);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    box-sizing: border-box;
+    outline: none;
+    transition: box-shadow 0.2s ease;
+}
+
+input.search-input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+input.search-input:focus {
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25); 
+}
+
+.search-icon {
+    position: absolute;
+    right: 20px;
+    top: 50%; 
+    transform: translateY(-50%); 
+    width: 24px;
+    height: 24px;
+    background-image: url('../icons/icon_ricerca.svg'); 
+    background-size: contain; 
+    background-repeat: no-repeat;
+    pointer-events: none; 
+    filter: brightness(0) invert(1);
+}
+
+/* Pulsanti Generali */
+button {
+    background-color: var(--colore-blu);
+    color: var(--testo-chiaro);
+    border: none;
+    border-radius: 30px; 
+    padding: 16px 32px;  
+    font-size: 24px;     
+    font-weight: bold;
+    text-transform: uppercase;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    cursor: pointer;
+    transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+}
+
+button:hover {
+    background-color: #2a4acb;
+    transform: translateY(-2px); 
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2); 
+}
+
+button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Floating Action Button (FAB) */
+.fab-salva {
+  align-items: center;
+  background-color: var(--colore-blu);
+  border-radius: 50%;
+  bottom: 25px;
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  display: flex;
+  height: 60px;
+  justify-content: center;
+  position: fixed;
+  right: 25px;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+  width: 60px;
+  z-index: 1001;
+}
+
+.fab-salva:hover {
+  transform: scale(1.05);
+  background-color: #2a4acb; 
+}
+
+.fab-salva img {
+  filter: brightness(0) invert(1);
+  height: 28px;
+  width: 28px;
+}
+
+/* Label / Tag Styles (.etichetta-tipo) */
+.etichetta-tipo {
+  background-color: white;
+  border-radius: 20px;
+  padding: 5px 18px;
+  font-weight: bold;
+  font-size: 14px;
+  text-transform: uppercase;
+  box-shadow: none;
+  white-space: nowrap;
+  transition: none;
+}
+
+/* Colori specifici per le etichette in base al tipo */
+.etichetta-verde { color: var(--colore-verde); }
+.etichetta-rosso { color: var(--colore-rosso); }
+.etichetta-blu { color: var(--colore-blu) !important; }
+
+/* Regola Specifica che forza il padding corretto sul link del menu */
+.header .nav ul li a.etichetta-tipo {
+    padding: 5px 18px;
+}

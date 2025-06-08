@@ -1,0 +1,14 @@
+/* /css/vendite.css */
+/* Stili specifici per la pagina Vendite */
+
+.vendite-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+.vendite-layout > .box {
+    width: 100%;
+    max-width: 1200px;
+}
