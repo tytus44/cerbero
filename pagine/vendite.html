@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERBERO - Dashboard Vendite</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/vendite.css">
+</head>
+<body>
+    <!-- Header Navigation -->
+    <header class="header">
+        <nav class="nav">
+            <ul>
+                <li><a href="../index.html">HOME</a></li>
+                <li><a href="registro.html">REGISTRO</a></li>
+                <li><a href="monetario.html">MONETARIO</a></li>
+                <li><a href="erogatori.html">EROGATORI</a></li>
+                <li><a href="vendite.html" class="active">VENDITE</a></li>
+                <li><a href="credito.html">CREDITO</a></li>
+                <li><a href="carico.html">CARICO</a></li>
+                <li><a href="info.html">INFO</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Title -->
+        <h1 class="page-title">DASHBOARD VENDITE</h1>
+
+        <!-- Date Selector -->
+        <div class="date-selector">
+            <div class="date-controls">
+                <div class="date-input-group">
+                    <label class="date-label">Data Inizio</label>
+                    <input type="text" id="startDate" placeholder="DD/MM/YYYY" value="">
+                </div>
+                <div class="date-input-group">
+                    <label class="date-label">Data Fine</label>
+                    <input type="text" id="endDate" placeholder="DD/MM/YYYY" value="">
+                </div>
+                <div class="date-actions">
+                    <button id="refreshBtn" class="date-btn primary">AGGIORNA</button>
+                    <button id="clearBtn" class="date-btn secondary">PULISCI</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" id="totalSales">€ 125.430</div>
+                <div class="stat-label">Fatturato Totale</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="totalLiters">89.250 L</div>
+                <div class="stat-label">Litri Erogati</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="avgPrice">Gasolio</div>
+                <div class="stat-label">Prodotto Top</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="servitoPerc">65%</div>
+                <div class="stat-label">Servito vs Iperself</div>
+            </div>
+        </div>
+
+        <!-- Charts Grid -->
+        <div class="charts-grid">
+            <div class="chart-container">
+                <div class="chart-title">Vendite per Prodotto</div>
+                <div class="chart-wrapper">
+                    <canvas id="productChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Performance Erogatori</div>
+                <div class="chart-wrapper">
+                    <canvas id="islandChart"></canvas>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="chart-title">Servito vs Iperself</div>
+                <div class="chart-wrapper">
+                    <canvas id="modalityChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../js/vendite.js"></script>
+</body>
+</html>

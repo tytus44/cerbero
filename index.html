@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERBERO - Centro di Controllo</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="css/index.css">
+</head>
+<body>
+
+<!-- Overlay per blur -->
+<div class="blur-overlay" id="blurOverlay"></div>
+
+<!-- Close button -->
+<div class="close-selection" id="closeSelection">×</div>
+
+    <!-- Navigazione Header -->
+    <div class="header">
+        <nav class="nav">
+            <ul>
+                <li><a href="index.html" class="active">HOME</a></li>
+                <li><a href="pagine/registro.html">REGISTRO</a></li>
+                <li><a href="pagine/monetario.html">MONETARIO</a></li>
+                <li><a href="pagine/erogatori.html">EROGATORI</a></li>
+                <li><a href="pagine/vendite.html">VENDITE</a></li>
+                <li><a href="pagine/credito.html">CREDITO</a></li>
+                <li><a href="pagine/carico.html">CARICO</a></li>
+                <li><a href="pagine/info.html">INFO</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Contenitore principale -->
+    <div class="container">
+        <!-- Titolo -->
+        <h1 class="page-title">CENTRO DI CONTROLLO</h1>
+
+        <!-- Sezione Operazioni -->
+        <div class="operazioni-section">
+            <h2 class="section-title">OPERAZIONI GIORNATA</h2>
+            <div class="section-divider"></div>
+            
+            <!-- Display Ora -->
+            <div class="time-display">
+                <div class="current-time" id="currentTime">19:10</div>
+                <div class="current-date" id="currentDateDisplay">Domenica, 15 giugno</div>
+            </div>
+
+            <!-- Griglia Operazioni -->
+            <div class="operazioni-grid-new">
+                <div class="field-container">
+                    <label class="field-label">DATA</label>
+                    <input type="text" id="controlDate" class="grid-input-new" placeholder="15/06/2025" readonly>
+                </div>
+                <div class="field-container">
+                    <label class="field-label">TURNO STAZIONE</label>
+                    <input type="text" id="controlTurno" class="grid-input-new" placeholder="Turno">
+                </div>
+                <button class="action-btn-new info" onclick="importaDatiCompleti()">IMPORTA</button>
+                <button class="action-btn-new export" onclick="esportaDatiCompleti()">ESPORTA</button>
+                <button class="action-btn-new flat-print" onclick="stampaDati()">STAMPA</button>
+            </div>
+        </div>
+
+        <!-- Griglia Contenuto -->
+        <div class="content-grid">
+            <!-- Sezione Note -->
+            <div class="box">
+                <h2 class="box-header">NOTE</h2>
+                <div class="box-content">
+                    <textarea class="notes-area" id="notesArea" placeholder="Scrivi le tue note qui..."></textarea>
+                </div>
+            </div>
+
+            <!-- Sezione Calendario -->
+            <div class="box">
+                <h2 class="box-header">CALENDARIO</h2>
+                <div class="box-content">
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <button class="calendar-nav" id="calendarPrev">‹</button>
+                            <h4 class="calendar-title" id="calendarTitle">Giugno 2025</h4>
+                            <button class="calendar-nav" id="calendarNext">›</button>
+                        </div>
+                        <div class="calendar-weekdays">
+                            <div>LU</div>
+                            <div>MA</div>
+                            <div>ME</div>
+                            <div>GI</div>
+                            <div>VE</div>
+                            <div>SA</div>
+                            <div>DO</div>
+                        </div>
+                        <div class="calendar-dates" id="calendarDates">
+                            <!-- I giorni del calendario vengono popolati da JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sezione TODO -->
+            <div class="box">
+                <h2 class="box-header">TO-DO LIST</h2>
+                <div class="box-content">
+                    <div class="todo-input-container">
+                        <input type="text" id="newTodoInput" class="todo-input" placeholder="Aggiungi task del turno...">
+                        <button class="todo-add-btn" id="addTodoBtn">
+                            <span class="add-icon">+</span>
+                        </button>
+                    </div>
+                    <ul class="todo-list" id="todoList">
+                        <!-- Gli elementi TODO vengono popolati da JavaScript -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/index.js"></script>
+</body>
+</html>
