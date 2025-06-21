@@ -1,0 +1,527 @@
+/* ===== DESIGN SYSTEM CERBERO ===== */
+:root {
+    --primary-blue: #0056b3;
+    --primary-blue-hover: #007bff;
+    --primary-blue-light: rgba(0, 86, 179, 0.1);
+    --text-primary: #334155;
+    --text-secondary: #64748b;
+    --text-light: rgba(255, 255, 255, 0.9);
+    --bg-primary: #f4f4f9;
+    --bg-white: #ffffff;
+    --bg-glass: rgba(255, 255, 255, 0.9);
+    --bg-glass-light: rgba(255, 255, 255, 0.15);
+    --product-benzina: #28a746;
+    --product-gasolio: #ff9f00;
+    --product-diesel: #fe5d26;
+    --product-hvolution: #007bff;
+    --product-adblue: #6bb6ff;
+    --servito-color: #007bff;
+    --iperself-color: #fe5d26;
+    --success: #28a745;
+    --warning: #ffc107;
+    --danger: #dc3545;
+    --info: #17a2b8;
+    --shadow-light: 0 2px 4px rgba(0, 0, 0, 0.15);
+    --shadow-medium: 0 10px 40px rgba(0, 86, 179, 0.12);
+    --shadow-heavy: 0 25px 60px rgba(0, 86, 179, 0.20);
+    --radius-small: 8px;
+    --radius-medium: 15px;
+    --radius-large: 20px;
+    --radius-pill: 50px;
+    --font-weight-normal: 400;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+}
+
+/* ===== BASE STYLES ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 16px;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 50px 30px 30px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.page-title::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--primary-blue-hover), var(--primary-blue));
+    border-radius: 2px;
+}
+
+/* ===== HEADER ===== */
+.header {
+    background: var(--bg-white);
+    color: var(--primary-blue);
+    padding: 20px 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 86, 179, 0.25);
+    position: relative;
+    border-bottom: 1px solid rgba(0, 86, 179, 0.1);
+}
+
+.nav {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 2;
+}
+
+.nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    background: transparent;
+    gap: 8px;
+}
+
+.nav li {
+    display: inline-block;
+}
+
+.nav a {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 16px;
+    font-family: 'Montserrat', sans-serif;
+    padding: 15px 25px;
+    border-radius: var(--radius-pill);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border: 2px solid transparent;
+}
+
+.nav a:hover {
+    color: var(--primary-blue);
+    background: rgba(0, 86, 179, 0.05);
+    border-color: rgba(0, 86, 179, 0.2);
+    border-radius: var(--radius-pill);
+}
+
+.nav a.active {
+    background: rgba(0, 86, 179, 0.1);
+    color: var(--primary-blue);
+    border-color: var(--primary-blue);
+    font-weight: 700;
+    border-radius: var(--radius-pill);
+}
+
+/* ===== DATE SELECTOR ===== */
+.date-selector {
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: center;
+}
+
+.date-controls {
+    display: flex;
+    gap: 20px;
+    align-items: flex-end;
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    padding: 25px 30px;
+    border-radius: var(--radius-large);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-top: 5px solid var(--primary-blue);
+    box-shadow: 0 4px 20px rgba(0, 86, 179, 0.25);
+}
+
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.date-label {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--primary-blue);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+}
+
+.date-controls input {
+    padding: 12px 16px;
+    border: 2px solid rgba(0, 86, 179, 0.2);
+    border-radius: var(--radius-large);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    background: var(--bg-white);
+    transition: all 0.3s ease;
+    color: var(--text-primary);
+    min-width: 160px;
+    text-align: center;
+}
+
+.date-controls input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(0, 86, 179, 0.1);
+    transform: translateY(-1px);
+}
+
+.date-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.date-btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: var(--radius-large);
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.date-btn.primary {
+    background: var(--primary-blue);
+    color: white;
+}
+
+.date-btn.primary:hover {
+    transform: translateY(-2px);
+    background: var(--primary-blue-hover);
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+}
+
+.date-btn.secondary {
+    background: var(--text-secondary);
+    color: white;
+}
+
+.date-btn.secondary:hover {
+    transform: translateY(-2px);
+    background: #495057;
+    box-shadow: 0 4px 12px rgba(100, 116, 139, 0.3);
+}
+
+/* ===== ACTION BUTTONS ===== */
+.action-btn {
+    padding: 12px 20px;
+    background: var(--primary-blue);
+    color: white;
+    border: none;
+    border-radius: var(--radius-large);
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    min-width: 120px;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.action-btn:hover {
+    transform: translateY(-2px);
+    background: var(--primary-blue-hover);
+    box-shadow: 0 4px 12px rgba(0, 86, 179, 0.3);
+}
+
+.action-btn.success {
+    background: var(--success);
+}
+
+.action-btn.success:hover {
+    background: #218838;
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+}
+
+.action-btn.warning {
+    background: var(--warning);
+    color: white;
+}
+
+.action-btn.warning:hover {
+    background: #e0a800;
+    box-shadow: 0 4px 12px rgba(255, 193, 7, 0.3);
+}
+
+.action-btn.danger {
+    background: var(--danger);
+}
+
+.action-btn.danger:hover {
+    background: #c82333;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.action-btn.info {
+    background: var(--info);
+}
+
+.action-btn.info:hover {
+    background: #138496;
+    box-shadow: 0 4px 12px rgba(23, 162, 184, 0.3);
+}
+
+.action-section {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 30px;
+    flex-wrap: wrap;
+}
+
+/* ===== STATS ROW ===== */
+.stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.stat-card {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-large);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-top: 5px solid var(--primary-blue);
+    box-shadow: 0 4px 20px rgba(0, 86, 179, 0.25);
+    padding: 25px;
+    text-align: center;
+    transition: all 0.4s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 8px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* ===== CHARTS GRID ===== */
+.charts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.chart-container {
+    background: var(--bg-glass);
+    backdrop-filter: blur(20px);
+    border-radius: var(--radius-large);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    border-top: 5px solid var(--primary-blue);
+    box-shadow: 0 4px 20px rgba(0, 86, 179, 0.25);
+    padding: 25px;
+    transition: all 0.4s ease;
+}
+
+.chart-container:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-heavy);
+}
+
+.chart-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.chart-wrapper {
+    position: relative;
+    height: 300px;
+    width: 100%;
+}
+
+/* Forza font Montserrat sui grafici Chart.js */
+.chart-wrapper canvas,
+.chart-wrapper * {
+    font-family: 'Montserrat', sans-serif !important;
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.page-title {
+    animation: slideIn 0.8s ease 0.1s both;
+}
+
+.date-selector {
+    animation: slideIn 0.8s ease 0.2s both;
+}
+
+.stats-row .stat-card:nth-child(1) {
+    animation: slideIn 0.8s ease 0.3s both;
+}
+
+.stats-row .stat-card:nth-child(2) {
+    animation: slideIn 0.8s ease 0.4s both;
+}
+
+.stats-row .stat-card:nth-child(3) {
+    animation: slideIn 0.8s ease 0.5s both;
+}
+
+.stats-row .stat-card:nth-child(4) {
+    animation: slideIn 0.8s ease 0.6s both;
+}
+
+.charts-grid .chart-container:nth-child(1) {
+    animation: slideIn 0.8s ease 0.7s both;
+}
+
+.charts-grid .chart-container:nth-child(2) {
+    animation: slideIn 0.8s ease 0.8s both;
+}
+
+.charts-grid .chart-container:nth-child(3) {
+    animation: slideIn 0.8s ease 0.9s both;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    .date-controls {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+        align-items: stretch;
+    }
+
+    .date-input-group {
+        width: 100%;
+    }
+
+    .date-controls input {
+        min-width: auto;
+        width: 100%;
+    }
+
+    .date-actions {
+        flex-direction: column;
+        gap: 10px;
+        width: 100%;
+    }
+
+    .date-btn {
+        width: 100%;
+        min-width: auto;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .charts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+
+    .chart-wrapper {
+        height: 250px;
+    }
+
+    .container {
+        padding: 30px 20px 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 2rem;
+    }
+
+    .stat-value {
+        font-size: 1.5rem;
+    }
+
+    .chart-title {
+        font-size: 1rem;
+    }
+}

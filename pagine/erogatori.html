@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERBERO - Erogatori</title>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- CSS -->
+    <link rel="stylesheet" href="../css/erogatori.css">
+</head>
+<body>
+    <!-- Navigazione Header -->
+    <div class="header">
+        <nav class="nav">
+            <ul>
+                <li><a href="../index.html">HOME</a></li>
+                <li><a href="registro.html">REGISTRO</a></li>
+                <li><a href="monetario.html">MONETARIO</a></li>
+                <li><a href="erogatori.html" class="active">EROGATORI</a></li>
+                <li><a href="vendite.html">VENDITE</a></li>
+                <li><a href="credito.html">CREDITO</a></li>
+                <li><a href="carico.html">CARICO</a></li>
+                <li><a href="info.html">INFO</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <!-- Contenitore principale -->
+    <div class="container">
+        <!-- Titolo -->
+        <h1 class="page-title">GESTIONE EROGATORI</h1>
+
+        <!-- Griglia Erogatori -->
+        <div class="dispenser-grid">
+            <!-- Erogatore 1-2 -->
+            <div class="box">
+                <h2 class="box-header">
+                    Erogatore 1-2
+                    <span class="dispenser-type">Servito</span>
+                </h2>
+                <div class="box-content">
+                    <div class="product-grid">
+                        <div class="grid-header">Prodotto</div>
+                        <div class="grid-header">Iniziali</div>
+                        <div class="grid-header">Finali</div>
+                        <div class="grid-header">Litri</div>
+                        
+                        <div class="product-label product-gasolio">Gasolio</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="gasolio" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="gasolio" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="gasolio" data-role="liters" readonly>
+                        
+                        <div class="product-label product-diesel">Diesel+</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="diesel" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="diesel" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="diesel" data-role="liters" readonly>
+                        
+                        <div class="product-label product-benzina">Benzina</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="benzina" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="benzina" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="benzina" data-role="liters" readonly>
+                        
+                        <div class="product-label product-hvolution">HVOlution</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="hvolution" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="hvolution" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="hvolution" data-role="liters" readonly>
+                        
+                        <div class="product-label product-adblue">AdBlue</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="adblue" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="adblue" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="1-2" data-product="adblue" data-role="liters" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erogatore 3 -->
+            <div class="box">
+                <h2 class="box-header">
+                    Erogatore 3
+                    <span class="dispenser-type">Servito</span>
+                </h2>
+                <div class="box-content">
+                    <div class="product-grid">
+                        <div class="grid-header">Prodotto</div>
+                        <div class="grid-header">Iniziali</div>
+                        <div class="grid-header">Finali</div>
+                        <div class="grid-header">Litri</div>
+                        
+                        <div class="product-label product-gasolio">Gasolio</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="gasolio" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="gasolio" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="gasolio" data-role="liters" readonly>
+                        
+                        <div class="product-label product-diesel">Diesel+</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="diesel" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="diesel" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="diesel" data-role="liters" readonly>
+                        
+                        <div class="product-label product-benzina">Benzina</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="benzina" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="benzina" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="benzina" data-role="liters" readonly>
+                        
+                        <div class="product-label product-hvolution">HVOlution</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="hvolution" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="hvolution" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="3" data-product="hvolution" data-role="liters" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erogatore 4 -->
+            <div class="box">
+                <h2 class="box-header">
+                    Erogatore 4
+                    <span class="dispenser-type iperself">Iperself</span>
+                </h2>
+                <div class="box-content">
+                    <div class="product-grid">
+                        <div class="grid-header">Prodotto</div>
+                        <div class="grid-header">Iniziali</div>
+                        <div class="grid-header">Finali</div>
+                        <div class="grid-header">Litri</div>
+                        
+                        <div class="product-label product-gasolio">Gasolio</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="gasolio" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="gasolio" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="gasolio" data-role="liters" readonly>
+                        
+                        <div class="product-label product-diesel">Diesel+</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="diesel" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="diesel" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="diesel" data-role="liters" readonly>
+                        
+                        <div class="product-label product-benzina">Benzina</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="benzina" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="benzina" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="benzina" data-role="liters" readonly>
+                        
+                        <div class="product-label product-hvolution">HVOlution</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="hvolution" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="hvolution" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="4" data-product="hvolution" data-role="liters" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erogatore 5 -->
+            <div class="box">
+                <h2 class="box-header">
+                    Erogatore 5
+                    <span class="dispenser-type">Servito</span>
+                </h2>
+                <div class="box-content">
+                    <div class="product-grid">
+                        <div class="grid-header">Prodotto</div>
+                        <div class="grid-header">Iniziali</div>
+                        <div class="grid-header">Finali</div>
+                        <div class="grid-header">Litri</div>
+                        
+                        <div class="product-label product-gasolio">Gasolio</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="gasolio" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="gasolio" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="gasolio" data-role="liters" readonly>
+                        
+                        <div class="product-label product-diesel">Diesel+</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="diesel" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="diesel" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="diesel" data-role="liters" readonly>
+                        
+                        <div class="product-label product-benzina">Benzina</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="benzina" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="benzina" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="benzina" data-role="liters" readonly>
+                        
+                        <div class="product-label product-hvolution">HVOlution</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="hvolution" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="hvolution" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="5" data-product="hvolution" data-role="liters" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erogatore 6 -->
+            <div class="box">
+                <h2 class="box-header">
+                    Erogatore 6
+                    <span class="dispenser-type iperself">Iperself</span>
+                </h2>
+                <div class="box-content">
+                    <div class="product-grid">
+                        <div class="grid-header">Prodotto</div>
+                        <div class="grid-header">Iniziali</div>
+                        <div class="grid-header">Finali</div>
+                        <div class="grid-header">Litri</div>
+                        
+                        <div class="product-label product-gasolio">Gasolio</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="gasolio" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="gasolio" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="gasolio" data-role="liters" readonly>
+                        
+                        <div class="product-label product-diesel">Diesel+</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="diesel" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="diesel" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="diesel" data-role="liters" readonly>
+                        
+                        <div class="product-label product-benzina">Benzina</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="benzina" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="benzina" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="benzina" data-role="liters" readonly>
+                        
+                        <div class="product-label product-hvolution">HVOlution</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="hvolution" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="hvolution" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="6" data-product="hvolution" data-role="liters" readonly>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Erogatore 7 -->
+            <div class="box">
+                <h2 class="box-header">
+                    Erogatore 7
+                    <span class="dispenser-type iperself">Iperself</span>
+                </h2>
+                <div class="box-content">
+                    <div class="product-grid">
+                        <div class="grid-header">Prodotto</div>
+                        <div class="grid-header">Iniziali</div>
+                        <div class="grid-header">Finali</div>
+                        <div class="grid-header">Litri</div>
+                        
+                        <div class="product-label product-gasolio">Gasolio</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="gasolio" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="gasolio" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="gasolio" data-role="liters" readonly>
+                        
+                        <div class="product-label product-diesel">Diesel+</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="diesel" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="diesel" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="diesel" data-role="liters" readonly>
+                        
+                        <div class="product-label product-benzina">Benzina</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="benzina" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="benzina" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="benzina" data-role="liters" readonly>
+                        
+                        <div class="product-label product-hvolution">HVOlution</div>
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="hvolution" data-role="initial">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="hvolution" data-role="final">
+                        <input type="number" class="grid-input" placeholder="0" data-dispenser="7" data-product="hvolution" data-role="liters" readonly>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sezione Azioni -->
+        <div class="action-section">
+            <button class="action-btn import" onclick="importaDatiCompleti()">IMPORTA</button>
+            <button class="action-btn export" onclick="esportaDatiCompleti()">ESPORTA</button>
+            <button class="action-btn clear" onclick="clearDispenserData()">CANCELLA</button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="../js/erogatori.js"></script>
+</body>
+</html>

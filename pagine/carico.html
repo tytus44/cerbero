@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERBERO - Carico</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+
+    <link rel="stylesheet" href="../css/carico.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="nav">
+            <ul>
+                <li><a href="../index.html">HOME</a></li>
+                <li><a href="registro.html">REGISTRO</a></li>
+                <li><a href="monetario.html">MONETARIO</a></li>
+                <li><a href="erogatori.html">EROGATORI</a></li>
+                <li><a href="vendite.html">VENDITE</a></li>
+                <li><a href="credito.html">CREDITO</a></li>
+                <li><a href="carico.html" class="active">CARICO</a></li>
+                <li><a href="info.html">INFO</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h1 class="page-title">REGISTRO DI CARICO</h1>
+
+        <div class="main-container">
+            <div class="box" id="box-sinistro">
+                <h2 class="box-header" id="box-title-anno">TOTALE ANNO (2025)</h2>
+                <div class="box-content">
+                    <div class="carico-grid">
+                        <div class="grid-header">Prodotto</div>
+                        <div class="grid-header">Litri</div>
+                        <div class="grid-header hide-mobile">Differenza</div>
+                        <div class="grid-header hide-mobile" id="rimanenza-header">RIMANENZA (2024)</div>
+                        <div class="grid-header hide-mobile">Totale</div>
+
+                        <div class="product-label product-benzina">BENZINA</div>
+                        <div><input type="text" class="grid-input" id="litri-benzina" placeholder="0" readonly></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="diff-benzina" readonly placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="rimanenza-benzina" placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="totale-benzina" readonly placeholder="0"></div>
+
+                        <div class="product-label product-gasolio">GASOLIO</div>
+                        <div><input type="text" class="grid-input" id="litri-gasolio" placeholder="0" readonly></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="diff-gasolio" readonly placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="rimanenza-gasolio" placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="totale-gasolio" readonly placeholder="0"></div>
+
+                        <div class="product-label product-diesel">DIESEL+</div>
+                        <div><input type="text" class="grid-input" id="litri-diesel" placeholder="0" readonly></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="diff-diesel" readonly placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="rimanenza-diesel" placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="totale-diesel" readonly placeholder="0"></div>
+
+                        <div class="product-label product-hvolution">HVOLUTION</div>
+                        <div><input type="text" class="grid-input" id="litri-hvolution" placeholder="0" readonly></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="diff-hvolution" readonly placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="rimanenza-hvolution" placeholder="0"></div>
+                        <div class="hide-mobile"><input type="text" class="grid-input" id="totale-hvolution" readonly placeholder="0"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box" id="box-grafico">
+                <h2 class="box-header header-grafico">GRAFICO CARICHI</h2>
+                <div class="box-content">
+                    <div class="chart-container-adaptive">
+                        <canvas id="carichiChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="box" id="box-inferiore">
+            <h2 class="box-header header-storico">STORICO CARICHI</h2>
+            <div class="box-content">
+                <div class="table-container">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th class="product-benzina">Benzina</th>
+                                <th class="product-benzina">+/-</th>
+                                <th class="product-gasolio">Gasolio</th>
+                                <th class="product-gasolio">+/-</th>
+                                <th class="product-diesel">Diesel+</th>
+                                <th class="product-diesel">+/-</th>
+                                <th class="product-hvolution">HVOlution</th>
+                                <th class="product-hvolution">+/-</th>
+                                <th>Autista</th>
+                                <th>Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-section">
+            <button id="btn-nuovo-carico" class="action-btn success">
+                NUOVO CARICO
+            </button>
+            <button id="btn-esporta" class="action-btn export">
+                ESPORTA DATI
+            </button>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+            <button id="btn-importa" class="action-btn warning">
+                IMPORTA DATI
+            </button>
+            <button id="btn-reset" class="action-btn danger">
+                RESET ANNO
+            </button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="newLoadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuovo Carico</h3>
+                <button class="modal-close" id="btn-close-modal">&times;</button>
+            </div>
+            <div class="modal-content">
+                <form class="modal-form" id="newLoadForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Data Carico</label>
+                            <input type="date" class="form-input" id="load-date" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Autista</label>
+                            <input type="text" class="form-input" id="load-driver" placeholder="Nome autista" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group full-width">
+                        <label class="form-label">Quantità Prodotti e Differenze</label>
+                        <div class="product-inputs">
+                            <div class="product-input-group">
+                                <div class="product-input-label benzina">Benzina</div>
+                                <input type="number" class="form-input" id="load-benzina" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-benzina" placeholder="+/- 0">
+                            </div>
+                            <div class="product-input-group">
+                                <div class="product-input-label gasolio">Gasolio</div>
+                                <input type="number" class="form-input" id="load-gasolio" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-gasolio" placeholder="+/- 0">
+                            </div>
+                            <div class="product-input-group">
+                                <div class="product-input-label diesel">Diesel+</div>
+                                <input type="number" class="form-input" id="load-diesel" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-diesel" placeholder="+/- 0">
+                            </div>
+                            <div class="product-input-group">
+                                <div class="product-input-label hvolution">HVOlution</div>
+                                <input type="number" class="form-input" id="load-hvolution" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-hvolution" placeholder="+/- 0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="modal-btn cancel" id="btn-cancel-modal">
+                            Annulla
+                        </button>
+                        <button type="submit" class="modal-btn save">
+                            Salva Carico
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/carico.js"></script>
+</body>
+</html>
