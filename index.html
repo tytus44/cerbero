@@ -5,123 +5,199 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CERBERO - Centro di Controllo</title>
     
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
-    <!-- CSS -->
+
     <link rel="stylesheet" href="css/index.css">
+    
 </head>
 <body>
 
-<!-- Overlay per blur -->
-<div class="blur-overlay" id="blurOverlay"></div>
-
-<!-- Close button -->
-<div class="close-selection" id="closeSelection">×</div>
-
-    <!-- Navigazione Header -->
-    <div class="header">
+    <header class="header">
+        <div class="header-brand">CERBERO</div>
         <nav class="nav">
             <ul>
                 <li><a href="index.html" class="active">HOME</a></li>
                 <li><a href="pagine/registro.html">REGISTRO</a></li>
                 <li><a href="pagine/monetario.html">MONETARIO</a></li>
-                <li><a href="pagine/erogatori.html">EROGATORI</a></li>
+                <li><a href="pagine/virtualstation.html">VIRTUALSTATION</a></li>
                 <li><a href="pagine/vendite.html">VENDITE</a></li>
                 <li><a href="pagine/credito.html">CREDITO</a></li>
                 <li><a href="pagine/carico.html">CARICO</a></li>
-                <li><a href="pagine/info.html">INFO</a></li>
             </ul>
         </nav>
-    </div>
+        <div class="header-actions">
+            <a href="#" id="info-btn" title="Informazioni">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="16" x2="12" y2="12"></line>
+                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+            </a>
+            <a href="#" id="theme-switcher" title="Cambia Tema">
+                <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px">
+                    <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
+                </svg>
+                <svg id="theme-icon-dark" class="theme-icon-hidden" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px">
+                    <g><rect fill="none" height="24" width="24"/></g>
+                    <g><path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.11-1.36c-0.98,1.37-2.58,2.26-4.39,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.39C12.92,3.04,12.46,3,12,3L12,3z"/>
+                    </g>
+                </svg>
+            </a>
+        </div>
+    </header>
 
-    <!-- Contenitore principale -->
     <div class="container">
-        <!-- Titolo -->
-        <h1 class="page-title">CENTRO DI CONTROLLO</h1>
+        <main class="main-content">
+            <h1 class="page-title">CENTRO DI CONTROLLO</h1>
 
-        <!-- Sezione Operazioni -->
-        <div class="operazioni-section">
-            <h2 class="section-title">OPERAZIONI GIORNATA</h2>
-            <div class="section-divider"></div>
-            
-            <!-- Display Ora -->
-            <div class="time-display">
-                <div class="current-time" id="currentTime">19:10</div>
-                <div class="current-date" id="currentDateDisplay">Domenica, 15 giugno</div>
+            <div class="action-bar">
+                <button class="action-btn" onclick="importaDatiCompleti()">IMPORTA TUTTO</button>
+                <button class="action-btn" onclick="esportaTuttiIDati()">ESPORTA TUTTO</button>
+                <button class="action-btn success" onclick="confirmNewDay()">NUOVA GIORNATA</button>
             </div>
 
-            <!-- Griglia Operazioni -->
-            <div class="operazioni-grid-new">
-                <div class="field-container">
-                    <label class="field-label">DATA</label>
-                    <input type="text" id="controlDate" class="grid-input-new" placeholder="15/06/2025" readonly>
-                </div>
-                <div class="field-container">
-                    <label class="field-label">TURNO STAZIONE</label>
-                    <input type="text" id="controlTurno" class="grid-input-new" placeholder="Turno">
-                </div>
-                <button class="action-btn-new info" onclick="importaDatiCompleti()">IMPORTA</button>
-                <button class="action-btn-new export" onclick="esportaDatiCompleti()">ESPORTA</button>
-                <button class="action-btn-new flat-print" onclick="stampaDati()">STAMPA</button>
+            <div class="dashboard-grid">
+                <section class="box summary-box giornata-box">
+                    <div class="box-header">GIORNATA</div>
+                    <div class="box-content">
+                        <div class="giornata-content">
+                            <div class="time-date">
+                                <div id="currentTime"></div>
+                                <div id="currentDateDisplay"></div>
+                            </div>
+                            <div class="form-fields">
+                                <div class="form-group">
+                                    <label for="controlTurno">GIORNATA</label>
+                                    <input type="text" class="grid-input" id="controlTurno" placeholder="Turno">
+                                </div>
+                                <div class="form-group">
+                                    <label for="controlDate">DATA</label>
+                                    <input type="text" class="display-field" id="controlDate" readonly tabindex="-1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="box summary-box box-libero-1">
+                    <div class="box-header">
+                        <span>INCASSO</span>
+                        <button class="reset-fatturato-btn" id="reset-manual-fatturato-btn" title="Azzera il fatturato manuale e usa quello automatico da Virtualstation">✓</button>
+                    </div>
+                    <div class="box-content corrispettivi-content">
+                        
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">FATTURATO TOTALE</span>
+                            <input type="text" class="corrispettivi-input" id="corrispettivi-fatturato" placeholder="€ 0,00" inputmode="decimal">
+                        </div>
+
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">IMPONIBILE</span>
+                            <span class="corrispettivi-value" id="corrispettivi-imponibile">€ 0,00</span>
+                        </div>
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">IVA (22%)</span>
+                            <span class="corrispettivi-value" id="corrispettivi-iva">€ 0,00</span>
+                        </div>
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">MARGINE</span>
+                            <span class="corrispettivi-value" id="corrispettivi-margine">€ 0,00</span>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="box summary-box vendite-summary-box">
+                    <div class="box-header">RIEPILOGO VENDITE</div>
+                    <div class="box-content">
+                        <ul id="product-liters-summary">
+                            </ul>
+                        <div class="servito-percentage-summary">
+                            <div class="label">Percentuale Servito</div>
+                            <div class="value" id="servito-percentage-value">0%</div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" id="servito-progress-bar"></div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section class="box summary-box note-box" id="notes-card">
+                    <div class="box-header">NOTE</div>
+                    <div class="box-content">
+                        <textarea id="notesArea" placeholder="Scrivi le tue note qui..."></textarea>
+                    </div>
+                </section>
+
+                <section class="box summary-box calendario-box" id="calendar-card">
+                    <div class="box-header">CALENDARIO</div>
+                    <div class="box-content">
+                        <div class="calendar-header">
+                            <button id="calendarPrev">‹</button>
+                            <h4 id="calendarTitle"></h4>
+                            <button id="calendarNext">›</button>
+                        </div>
+                        <div class="calendar-grid">
+                            <div class="weekday">LU</div>
+                            <div class="weekday">MA</div>
+                            <div class="weekday">ME</div>
+                            <div class="weekday">GI</div>
+                            <div class="weekday">VE</div>
+                            <div class="weekday">SA</div>
+                            <div class="weekday">DO</div>
+                        </div>
+                        <div class="calendar-grid" id="calendarDates"></div>
+                    </div>
+                </section>
+                
+                <section class="box summary-box todo-box" id="todo-card">
+                    <div class="box-header">TO-DO LIST</div>
+                    <div class="box-content">
+                        <div class="todo-input-group">
+                            <input type="text" id="newTodoInput" placeholder="Aggiungi task del turno...">
+                            <button id="addTodoBtn">+</button>
+                        </div>
+                        <ul id="todo-list"></ul>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirm-modal-title">Conferma Azione</h3>
+            </div>
+            <div class="modal-content">
+                <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn secondary" id="confirm-modal-cancel">Annulla</button>
+                <button class="action-btn" id="confirm-modal-ok">Conferma</button>
             </div>
         </div>
-
-        <!-- Griglia Contenuto -->
-        <div class="content-grid">
-            <!-- Sezione Note -->
-            <div class="box">
-                <h2 class="box-header">NOTE</h2>
-                <div class="box-content">
-                    <textarea class="notes-area" id="notesArea" placeholder="Scrivi le tue note qui..."></textarea>
-                </div>
+    </div>
+    
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Informazioni Progetto</h3>
+                <button class="modal-close-btn" title="Chiudi">&times;</button>
             </div>
-
-            <!-- Sezione Calendario -->
-            <div class="box">
-                <h2 class="box-header">CALENDARIO</h2>
-                <div class="box-content">
-                    <div class="calendar-container">
-                        <div class="calendar-header">
-                            <button class="calendar-nav" id="calendarPrev">‹</button>
-                            <h4 class="calendar-title" id="calendarTitle">Giugno 2025</h4>
-                            <button class="calendar-nav" id="calendarNext">›</button>
-                        </div>
-                        <div class="calendar-weekdays">
-                            <div>LU</div>
-                            <div>MA</div>
-                            <div>ME</div>
-                            <div>GI</div>
-                            <div>VE</div>
-                            <div>SA</div>
-                            <div>DO</div>
-                        </div>
-                        <div class="calendar-dates" id="calendarDates">
-                            <!-- I giorni del calendario vengono popolati da JavaScript -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Sezione TODO -->
-            <div class="box">
-                <h2 class="box-header">TO-DO LIST</h2>
-                <div class="box-content">
-                    <div class="todo-input-container">
-                        <input type="text" id="newTodoInput" class="todo-input" placeholder="Aggiungi task del turno...">
-                        <button class="todo-add-btn" id="addTodoBtn">
-                            <span class="add-icon">+</span>
-                        </button>
-                    </div>
-                    <ul class="todo-list" id="todoList">
-                        <!-- Gli elementi TODO vengono popolati da JavaScript -->
-                    </ul>
-                </div>
+            <div class="modal-content info-modal-content">
+                <img class="modal-info-icon" src="svg/cerbero.svg" alt="Logo Cerbero">
+                <h1 class="info-modal-brand">CERBERO</h1>
+                <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
+                <p class="programmer-info">
+                    Sviluppato da: <strong>NeRO</strong><br>
+                    <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
+                    <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
+                </p>
             </div>
         </div>
     </div>
 
-    <!-- JavaScript -->
+    <script src="js/storage.js"></script>
     <script src="js/index.js"></script>
+
 </body>
 </html>

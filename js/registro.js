@@ -1,777 +1,588 @@
-/* ===== INIZIO JAVASCRIPT ===== */
+/* ===== CERBERO REGISTRO JAVASCRIPT - VERSIONE CORRETTA ===== */
 
-/* ===== INIZIO GESTIONE STORAGE UNIFICATO ===== */
-const Storage = {
-    KEYS: {
-        NOTES: 'cerbero_notes',
-        TODO_LIST: 'cerbero_todo',
-        CURRENT_TURNO: 'cerbero_turno',
-        DISPENSERS: 'cerbero_dispensers',
-        CARICO_TOTALS: 'cerbero_carico_totals',
-        CARICO_HISTORY: 'cerbero_carico_history',
-        VENDITE_DATA: 'cerbero_vendite',
-        MONETARIO_DATA: 'cerbero_monetario',
-        CREDITO_DATA: 'cerbero_credito',
-        REGISTRO_DATA: 'cerbero_registro'
-    },
+/* ===== 1. UTILITY GLOBALI E FUNZIONI HELPER ===== */
 
-    save: function(key, data) {
-        try {
-            if (key === this.KEYS.NOTES) {
-                localStorage.setItem(key, data);
-                return true;
-            }
-            localStorage.setItem(key, JSON.stringify(data));
-            return true;
-        } catch (error) {
-            console.error('Errore nel salvare i dati:', error);
-            return false;
+function applyTheme(theme) {
+    try {
+        document.body.classList.toggle('dark-theme', theme === 'dark');
+        const lightIcon = document.getElementById('theme-icon-light');
+        const darkIcon = document.getElementById('theme-icon-dark');
+        if (lightIcon && darkIcon) {
+            lightIcon.classList.toggle('theme-icon-hidden', theme === 'dark');
+            darkIcon.classList.toggle('theme-icon-hidden', theme !== 'dark');
         }
-    },
-
-    load: function(key, defaultValue = null) {
-        try {
-            const data = localStorage.getItem(key);
-            if (!data) return defaultValue;
-            
-            if (key === this.KEYS.NOTES) {
-                return data;
-            }
-            return JSON.parse(data);
-        } catch (error) {
-            console.error('Errore nel caricare i dati per', key, ':', error);
-            if (key === this.KEYS.NOTES) {
-                const rawData = localStorage.getItem(key);
-                return rawData || defaultValue;
-            }
-            return defaultValue;
-        }
-    },
-
-    remove: function(key) {
-        try {
-            localStorage.removeItem(key);
-            return true;
-        } catch (error) {
-            console.error('Errore nel rimuovere i dati:', error);
-            return false;
-        }
+        Storage.save(Storage.KEYS.THEME, theme);
+    } catch (error) {
+        console.error('Errore applicazione tema:', error);
     }
-};
-/* ===== FINE GESTIONE STORAGE UNIFICATO ===== */
+}
 
-/* ===== INIZIO UTILITY ===== */
-function showMessage(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast-message toast-${type}`;
-    toast.textContent = message;
-    
-    const colors = {
-        success: '#28a745',
-        error: '#dc3545',
-        info: '#17a2b8',
-        warning: '#ffc107'
-    };
-    
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${colors[type] || colors.info};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        z-index: 1001;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-        font-size: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        animation: slideIn 0.3s ease;
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            if (toast.parentNode) {
-                toast.parentNode.removeChild(toast);
+function initializeThemeSwitcher() {
+    try {
+        const themeSwitcher = document.getElementById('theme-switcher');
+        if (themeSwitcher) {
+            themeSwitcher.addEventListener('click', (e) => {
+                e.preventDefault();
+                const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+                applyTheme(newTheme);
+            });
+        }
+        const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
+        applyTheme(savedTheme);
+    } catch (error) {
+        console.error('Errore inizializzazione theme switcher:', error);
+    }
+}
+
+function initializeInfoButton() {
+    try {
+        const infoBtn = document.getElementById('info-btn');
+        const infoModal = document.getElementById('info-modal');
+        const modalCloseBtn = infoModal ? infoModal.querySelector('.modal-close-btn') : null;
+        
+        if (infoBtn && infoModal) {
+            infoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                infoModal.classList.add('active');
+            });
+            
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', () => {
+                    infoModal.classList.remove('active');
+                });
             }
-        }, 300);
-    }, 3000);
+            
+            // Chiudi cliccando fuori dal modale
+            infoModal.addEventListener('click', (e) => {
+                if (e.target === infoModal) {
+                    infoModal.classList.remove('active');
+                }
+            });
+        }
+    } catch (error) {
+        console.error('Errore inizializzazione pulsante info:', error);
+    }
 }
 
-// Formatta valore euro in formato italiano
-function formatEuro(value) {
-    if (isNaN(value) || value === null || value === undefined) return '€ 0,00';
-    return new Intl.NumberFormat('it-IT', {
-        style: 'currency',
-        currency: 'EUR'
-    }).format(value);
+function initializeFullscreenButton() {
+    try {
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+        if (fullscreenBtn) {
+            fullscreenBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                
+                if (!document.fullscreenElement) {
+                    // Entra in fullscreen
+                    const fullscreenPromise = document.documentElement.requestFullscreen ? 
+                        document.documentElement.requestFullscreen() :
+                        document.documentElement.mozRequestFullScreen ? 
+                        document.documentElement.mozRequestFullScreen() :
+                        document.documentElement.webkitRequestFullscreen ? 
+                        document.documentElement.webkitRequestFullscreen() :
+                        document.documentElement.msRequestFullscreen ? 
+                        document.documentElement.msRequestFullscreen() : null;
+                    
+                    if (fullscreenPromise) {
+                        fullscreenPromise.then(() => {
+                            // Salva lo stato fullscreen solo se riesce
+                            Storage.save('fullscreen_state', true);
+                        }).catch(err => {
+                            console.warn('Fullscreen non supportato:', err);
+                            Storage.save('fullscreen_state', false);
+                        });
+                    }
+                } else {
+                    // Esce dal fullscreen
+                    const exitPromise = document.exitFullscreen ? 
+                        document.exitFullscreen() :
+                        document.mozCancelFullScreen ? 
+                        document.mozCancelFullScreen() :
+                        document.webkitExitFullscreen ? 
+                        document.webkitExitFullscreen() :
+                        document.msExitFullscreen ? 
+                        document.msExitFullscreen() : null;
+                    
+                    if (exitPromise) {
+                        exitPromise.then(() => {
+                            Storage.save('fullscreen_state', false);
+                        }).catch(err => {
+                            console.warn('Errore uscita fullscreen:', err);
+                        });
+                    }
+                }
+            });
+        }
+
+        // Listener per quando l'utente esce dal fullscreen con ESC
+        document.addEventListener('fullscreenchange', () => {
+            if (!document.fullscreenElement) {
+                Storage.save('fullscreen_state', false);
+            }
+        });
+
+        // Compatibilità con altri browser
+        document.addEventListener('webkitfullscreenchange', () => {
+            if (!document.webkitFullscreenElement) {
+                Storage.save('fullscreen_state', false);
+            }
+        });
+
+        document.addEventListener('mozfullscreenchange', () => {
+            if (!document.mozFullScreenElement) {
+                Storage.save('fullscreen_state', false);
+            }
+        });
+
+    } catch (error) {
+        console.error('Errore inizializzazione pulsante fullscreen:', error);
+    }
 }
 
-// Converte stringa euro in numero
-function parseEuro(value) {
-    if (!value) return 0;
-    // Rimuove simboli euro e spazi, converte virgola in punto per i decimali
-    const cleaned = value.replace(/[€\s]/g, '').replace(/\./g, '').replace(',', '.');
-    const parsed = parseFloat(cleaned);
+function showMessage(message, type = 'info') {
+    try {
+        const allowedTypes = ['error', 'warning', 'info', 'success'];
+        if (!allowedTypes.includes(type)) return;
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-message toast-${type}`;
+        toast.textContent = message;
+        
+        const colors = {
+            error: '#FF3547', info: '#0ABAB5', warning: '#FFD700', success: '#4CAF50'
+        };
+        
+        toast.style.cssText = `
+            position: fixed; top: 20px; right: 20px;
+            background: ${colors[type] || colors.info};
+            color: ${type === 'warning' ? '#333' : 'white'};
+            padding: 15px 20px; z-index: 1001; border-radius: 20px;
+            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-width: 350px; word-wrap: break-word;
+            animation: slideIn 0.3s ease-out;
+        `;
+        
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+        }, 3000);
+    } catch (error) {
+        console.error('Errore visualizzazione messaggio:', error);
+        alert(message);
+    }
+}
+
+function showConfirmModal(title, text, onConfirm) {
+    try {
+        const modal = document.getElementById('confirm-modal');
+        if (!modal) {
+            if (confirm(`${title}\n${text}`)) onConfirm();
+            return;
+        }
+        
+        const titleEl = modal.querySelector('#confirm-modal-title');
+        const textEl = modal.querySelector('#confirm-modal-text');
+        const btnOk = modal.querySelector('#confirm-modal-ok');
+        const btnCancel = modal.querySelector('#confirm-modal-cancel');
+        
+        if (titleEl) titleEl.textContent = title;
+        if (textEl) textEl.textContent = text;
+        
+        const newBtnOk = btnOk.cloneNode(true);
+        btnOk.parentNode.replaceChild(newBtnOk, btnOk);
+        newBtnOk.addEventListener('click', () => { onConfirm(); modal.classList.remove('active'); }, { once: true });
+        
+        const newBtnCancel = btnCancel.cloneNode(true);
+        btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
+        newBtnCancel.addEventListener('click', () => modal.classList.remove('active'), { once: true });
+        
+        modal.classList.add('active');
+    } catch (error) {
+        console.error('Errore nella visualizzazione del modal:', error);
+        if (confirm(`${title}\n${text}`)) onConfirm();
+    }
+}
+
+const formatter = {
+    currency: new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }),
+    date: (d) => new Date(d).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+    dateTime: (d) => new Date(d).toLocaleString('it-IT', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric', 
+        hour: '2-digit', 
+        minute: '2-digit' 
+    })
+};
+
+function parseNumber(value) {
+    if (typeof value !== 'string' || value.trim() === '') return 0;
+    const cleanedValue = value.replace(/€|\s/g, '').replace(/\./g, '').replace(',', '.');
+    const parsed = parseFloat(cleanedValue);
     return isNaN(parsed) ? 0 : parsed;
 }
 
-// CORRETTO: Formatta valore litri SELF come XXX,XX (es. 990,04)
-function formatLitriSelf(input) {
-    let value = input.value.replace(/[^\d,]/g, ''); // Mantiene solo cifre e virgola
-    
-    if (value === '') {
-        input.value = '';
-        return;
+function parseItalianDate(dateString) {
+    if (!dateString || typeof dateString !== 'string') return null;
+    const parts = dateString.trim().split('/');
+    if (parts.length === 3) {
+        const day = parseInt(parts[0], 10), month = parseInt(parts[1], 10) - 1, year = parseInt(parts[2], 10);
+        const date = new Date(year, month, day);
+        if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) return date;
     }
-    
-    // Se non c'è virgola, aggiungiamo ,00 alla fine
-    if (!value.includes(',')) {
-        if (value.length > 0) {
-            // Formatta parte intera con punti ogni 3 cifre
-            let formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-            input.value = formattedValue + ',00';
-        }
-        return;
-    }
-    
-    // Se c'è la virgola, processa normalmente
-    const parts = value.split(',');
-    let integerPart = parts[0];
-    let decimalPart = parts[1] || '';
-    
-    // Limita decimali a 2 cifre
-    if (decimalPart.length > 2) {
-        decimalPart = decimalPart.substring(0, 2);
-    }
-    
-    // Formatta parte intera con punti ogni 3 cifre
-    if (integerPart.length > 3) {
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-    
-    // Ricompone il valore
-    input.value = decimalPart ? `${integerPart},${decimalPart}` : `${integerPart},`;
+    return null;
 }
 
-// CORRETTO: Converte stringa litri SELF in numero (es. "990,04" → 990.04)
-function parseLitriSelf(value) {
-    if (!value) return 0;
-    // Rimuove punti (separatori migliaia) e converte virgola in punto decimale
-    const cleaned = value.replace(/\./g, '').replace(',', '.');
-    const parsed = parseFloat(cleaned) || 0;
-    return parsed;
-}
-
-// Formatta input importo nel formato corretto (sempre con ,00)
-function formatImportoInput(input) {
-    let value = input.value.replace(/[^\d,]/g, '');
-    
-    if (value === '') {
-        return;
-    }
-
-    // Se non c'è virgola, è solo numero intero - aggiungi ,00
-    if (!value.includes(',')) {
-        // NON aggiungere ,00 durante la digitazione, solo al blur
-        const parts = [value, ''];
-        let integerPart = parts[0];
-        
-        // Formatta parte intera con punti ogni 3 cifre
-        if (integerPart.length > 3) {
-            integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-        }
-        
-        input.value = integerPart;
-        return;
-    }
-
-    // Se c'è la virgola, processa normalmente
-    const parts = value.split(',');
-    let integerPart = parts[0];
-    let decimalPart = parts[1] || '';
-
-    // Limita decimali a 2 cifre
-    if (decimalPart.length > 2) {
-        decimalPart = decimalPart.substring(0, 2);
-    }
-
-    // Formatta parte intera con punti ogni 3 cifre
-    if (integerPart.length > 3) {
-        integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    }
-
-    // Ricompone il valore
-    input.value = decimalPart ? `${integerPart},${decimalPart}` : `${integerPart},`;
-}
-
-/* ===== FINE UTILITY ===== */
-
-/* ===== INIZIO GESTIONE REGISTRO UNIFICATA ===== */
-const RegistroManager = {
-    // Calcola totale fondi inizio turno
-    calculateFondiInizio: function() {
-        const fondoCassa = parseEuro(document.getElementById('fondo-cassa-inizio')?.value || '0');
-        const monete = parseEuro(document.getElementById('monete-inizio')?.value || '0');
-        const litriSelf = parseLitriSelf(document.getElementById('litri-self-inizio')?.value || '0');
-        const importoSelf = parseEuro(document.getElementById('importo-self-inizio')?.value || '0');
-        
-        // I litri non contribuiscono al totale monetario, solo gli importi
-        return fondoCassa + monete + importoSelf;
-    },
-
-    // Calcola totale entrate dalle tabelle
-    calculateEntrateTabelle: function() {
-        let total = 0;
-        const entrateRows = document.querySelectorAll('.bottom-row-grid .box:nth-child(1) .table-input.importo');
-        
-        entrateRows.forEach(input => {
-            const value = parseEuro(input.value);
-            if (value > 0) total += value;
-        });
-        
-        return total;
-    },
-
-    // Calcola totale fondi fine turno
-    calculateFondiFine: function() {
-        const fondoCassa = parseEuro(document.getElementById('fondo-cassa-fine')?.value || '0');
-        const monete = parseEuro(document.getElementById('monete-fine')?.value || '0');
-        const litriSelf = parseLitriSelf(document.getElementById('litri-self-fine')?.value || '0');
-        const importoSelf = parseEuro(document.getElementById('importo-self-fine')?.value || '0');
-        
-        // I litri non contribuiscono al totale monetario, solo gli importi
-        return fondoCassa + monete + importoSelf;
-    },
-
-    // Calcola totale uscite dalle tabelle
-    calculateUsciteTabelle: function() {
-        let total = 0;
-        const usciteRows = document.querySelectorAll('.bottom-row-grid .box:nth-child(2) .table-input.importo');
-        
-        usciteRows.forEach(input => {
-            const value = parseEuro(input.value);
-            if (value > 0) total += value;
-        });
-        
-        return total;
-    },
-
-    // Aggiorna il riepilogo secondo la nuova logica
-    updateRiepilogo: function() {
-        // LOGICA CORRETTA:
-        // Totale Entrate = Fondi Inizio + Entrate Tabelle
-        // Totale Uscite = Fondi Fine + Uscite Tabelle
-
-        const fondiInizio = this.calculateFondiInizio();
-        const entrateTabelle = this.calculateEntrateTabelle();
-        const fondiFine = this.calculateFondiFine();
-        const usciteTabelle = this.calculateUsciteTabelle();
-
-        const totaleEntrate = fondiInizio + entrateTabelle;
-        const totaleUscite = fondiFine + usciteTabelle;
-        const differenza = totaleEntrate - totaleUscite;
-        const chiusuraPrevista = totaleEntrate;
-
-        // Aggiorna i valori nel DOM
-        document.getElementById('totale-entrate').textContent = formatEuro(totaleEntrate);
-        document.getElementById('totale-uscite').textContent = formatEuro(totaleUscite);
-        document.getElementById('differenza').textContent = formatEuro(differenza);
-        document.getElementById('chiusura-prevista').textContent = formatEuro(chiusuraPrevista);
-    },
-
-    // Ottieni tutti i dati del registro (struttura unificata)
-    getAllData: function() {
-        return {
-            timestamp: new Date().toISOString(),
-            date: new Date().toLocaleDateString('it-IT'),
-            fondiInizio: {
-                fondoCassa: document.getElementById('fondo-cassa-inizio')?.value || '',
-                monete: document.getElementById('monete-inizio')?.value || '',
-                litriSelf: document.getElementById('litri-self-inizio')?.value || '',
-                importoSelf: document.getElementById('importo-self-inizio')?.value || ''
-            },
-            fondiFine: {
-                fondoCassa: document.getElementById('fondo-cassa-fine')?.value || '',
-                monete: document.getElementById('monete-fine')?.value || '',
-                litriSelf: document.getElementById('litri-self-fine')?.value || '',
-                importoSelf: document.getElementById('importo-self-fine')?.value || ''
-            },
-            entrate: this.getTableData('.bottom-row-grid .box:nth-child(1) .table-input'),
-            uscite: this.getTableData('.bottom-row-grid .box:nth-child(2) .table-input'),
-            riepilogo: {
-                totaleEntrate: this.calculateFondiInizio() + this.calculateEntrateTabelle(),
-                totaleUscite: this.calculateFondiFine() + this.calculateUsciteTabelle(),
-                differenza: (this.calculateFondiInizio() + this.calculateEntrateTabelle()) - (this.calculateFondiFine() + this.calculateUsciteTabelle())
-            }
-        };
-    },
-
-    // Estrae dati dalle tabelle
-    getTableData: function(selector) {
-        const data = [];
-        const inputs = document.querySelectorAll(selector);
-        
-        for (let i = 0; i < inputs.length; i += 3) {
-            if (inputs[i]?.value || inputs[i+1]?.value || inputs[i+2]?.value) {
-                data.push({
-                    nome: inputs[i]?.value || '',
-                    prodotto: inputs[i+1]?.value || '',
-                    importo: inputs[i+2]?.value || ''
-                });
-            }
-        }
-        
-        return data;
-    },
-
-    // Carica dati nel registro
-    loadData: function(data) {
-        if (!data) return;
-
-        try {
-            // Carica fondi inizio
-            if (data.fondiInizio) {
-                if (data.fondiInizio.fondoCassa) document.getElementById('fondo-cassa-inizio').value = data.fondiInizio.fondoCassa;
-                if (data.fondiInizio.monete) document.getElementById('monete-inizio').value = data.fondiInizio.monete;
-                if (data.fondiInizio.litriSelf) document.getElementById('litri-self-inizio').value = data.fondiInizio.litriSelf;
-                if (data.fondiInizio.importoSelf) document.getElementById('importo-self-inizio').value = data.fondiInizio.importoSelf;
-            }
-
-            // Carica fondi fine
-            if (data.fondiFine) {
-                if (data.fondiFine.fondoCassa) document.getElementById('fondo-cassa-fine').value = data.fondiFine.fondoCassa;
-                if (data.fondiFine.monete) document.getElementById('monete-fine').value = data.fondiFine.monete;
-                if (data.fondiFine.litriSelf) document.getElementById('litri-self-fine').value = data.fondiFine.litriSelf;
-                if (data.fondiFine.importoSelf) document.getElementById('importo-self-fine').value = data.fondiFine.importoSelf;
-            }
-
-            // Carica tabelle entrate
-            if (data.entrate) {
-                this.loadTableData('.bottom-row-grid .box:nth-child(1) .table-input', data.entrate);
-            }
-
-            // Carica tabelle uscite
-            if (data.uscite) {
-                this.loadTableData('.bottom-row-grid .box:nth-child(2) .table-input', data.uscite);
-            }
-
-            this.updateRiepilogo();
-            console.log('📊 Dati registro caricati correttamente');
-        } catch (error) {
-            console.error('❌ Errore nel caricamento dati registro:', error);
-        }
-    },
-
-    // Carica dati nelle tabelle
-    loadTableData: function(selector, data) {
-        const inputs = document.querySelectorAll(selector);
-        let inputIndex = 0;
-
-        data.forEach(row => {
-            if (inputIndex < inputs.length - 2) {
-                inputs[inputIndex].value = row.nome || '';
-                inputs[inputIndex + 1].value = row.prodotto || '';
-                inputs[inputIndex + 2].value = row.importo || '';
-                inputIndex += 3;
-            }
-        });
-    },
-
-    // Salva automaticamente i dati nel storage unificato
-    autoSave: function() {
-        try {
-            const data = this.getAllData();
-            const success = Storage.save(Storage.KEYS.REGISTRO_DATA, data);
-            if (success) {
-                console.log('💾 Dati registro salvati in localStorage');
-            } else {
-                console.error('❌ Errore nel salvare i dati registro');
-            }
-            return success;
-        } catch (error) {
-            console.error('❌ Errore critico nel salvataggio registro:', error);
-            return false;
-        }
-    },
-
-    // Carica dati salvati dal storage unificato
-    loadSavedData: function() {
-        try {
-            const savedData = Storage.load(Storage.KEYS.REGISTRO_DATA);
-            if (savedData) {
-                this.loadData(savedData);
-                console.log('📂 Dati registro caricati da localStorage');
-            } else {
-                console.log('📭 Nessun dato registro salvato');
-            }
-        } catch (error) {
-            console.error('❌ Errore nel caricare dati registro salvati:', error);
-        }
-    },
-
-    // Metodo per sincronizzare con il backup completo
-    syncWithSystemData: function(systemData) {
-        if (systemData && systemData.registro) {
-            this.loadData(systemData.registro);
-            this.autoSave();
-            return true;
-        }
-        return false;
-    },
-
-    // Cancella tutti i dati del registro
-    clearAllData: function() {
-        if (confirm('Cancellare tutti i dati del registro? Questa azione non può essere annullata.')) {
-            // Cancella tutti gli input
-            document.querySelectorAll('.grid-input, .table-input').forEach(input => {
-                input.value = '';
+function setupAutocomplete(inputElement, suggestionsArray) {
+    if (!inputElement || !Array.isArray(suggestionsArray)) return;
+    let currentFocus = -1;
+    let suggestionsContainer = document.createElement('div');
+    suggestionsContainer.setAttribute('class', 'autocomplete-suggestions');
+    suggestionsContainer.style.display = 'none';
+    let inputWrapper = document.createElement('div');
+    inputWrapper.setAttribute('class', 'autocomplete-wrapper');
+    inputElement.parentNode.insertBefore(inputWrapper, inputElement);
+    inputWrapper.appendChild(inputElement);
+    inputWrapper.appendChild(suggestionsContainer);
+    inputElement.addEventListener('input', function() {
+        let val = this.value;
+        suggestionsContainer.innerHTML = '';
+        currentFocus = -1;
+        if (!val) { suggestionsContainer.style.display = 'none'; return; }
+        let matchingSuggestions = suggestionsArray.filter(s => s.toUpperCase().includes(val.toUpperCase())).slice(0, 10);
+        if (matchingSuggestions.length === 0) { suggestionsContainer.style.display = 'none'; return; }
+        suggestionsContainer.style.display = 'block';
+        matchingSuggestions.forEach(suggestion => {
+            let item = document.createElement('div');
+            item.setAttribute('class', 'suggestion-item');
+            item.innerHTML = "<strong>" + suggestion.substr(0, val.length) + "</strong>" + suggestion.substr(val.length);
+            item.addEventListener('click', () => {
+                inputElement.value = suggestion;
+                suggestionsContainer.style.display = 'none';
+                inputElement.focus();
             });
-            
-            // Reset riepilogo
-            this.updateRiepilogo();
-            
-            // Cancella dal storage
-            Storage.remove(Storage.KEYS.REGISTRO_DATA);
-            
-            showMessage('Tutti i dati del registro sono stati cancellati', 'info');
+            suggestionsContainer.appendChild(item);
+        });
+    });
+    inputElement.addEventListener('keydown', function(e) {
+        let x = suggestionsContainer.getElementsByClassName('suggestion-item');
+        if (e.keyCode == 40) { currentFocus++; addActive(x); }
+        else if (e.keyCode == 38) { currentFocus--; addActive(x); }
+        else if (e.keyCode == 13) { e.preventDefault(); if (currentFocus > -1 && x[currentFocus]) x[currentFocus].click(); else inputElement.blur(); }
+        else if (e.keyCode == 27) { suggestionsContainer.style.display = 'none'; inputElement.blur(); }
+    });
+    function addActive(x) {
+        if (!x) return;
+        removeActive(x);
+        if (currentFocus >= x.length) currentFocus = 0;
+        if (currentFocus < 0) currentFocus = x.length - 1;
+        x[currentFocus].classList.add('active-suggestion');
+        x[currentFocus].scrollIntoView({ block: 'nearest' });
+    }
+    function removeActive(x) {
+        for (let i = 0; i < x.length; i++) x[i].classList.remove('active-suggestion');
+    }
+    document.addEventListener('click', e => {
+        if (e.target !== inputElement && !suggestionsContainer.contains(e.target)) {
+            suggestionsContainer.style.display = 'none';
         }
-    },
+    });
+}
 
-    // Ottieni statistiche del registro
-    getStatistics: function() {
-        const data = this.getAllData();
+const pageState = { fondi: {}, entrate: [], uscite: [] };
+
+function saveData() {
+    document.querySelectorAll('.top-row-grid .grid-input').forEach(input => {
+        if (input && input.id) pageState.fondi[input.id] = input.value || '';
+    });
+    Storage.save(Storage.KEYS.REGISTRO_DATA, pageState);
+}
+
+function loadData() {
+    const loadedData = Storage.load(Storage.KEYS.REGISTRO_DATA, { fondi: {}, entrate: [], uscite: [] });
+    pageState.fondi = loadedData.fondi || {};
+    pageState.entrate = Array.isArray(loadedData.entrate) ? loadedData.entrate : [];
+    pageState.uscite = Array.isArray(loadedData.uscite) ? loadedData.uscite : [];
+}
+
+function getCreditClients() {
+    const creditoData = Storage.load(Storage.KEYS.CREDITO_DATA, {});
+    const clientNames = Object.values(creditoData).map(client => client.name).filter(Boolean);
+    const frequentProducts = ['lubrificante', 'spazzole', 'lampadina', 'deodorante', 'sapone', 'Scontrino Self-Service', 'Bibita', 'Saldo'];
+    return Array.from(new Set([...clientNames, ...frequentProducts]));
+}
+
+const SectionHandler = {
+    create(type) {
         return {
-            entrateCount: data.entrate.length,
-            usciteCount: data.uscite.length,
-            totaleEntrate: data.riepilogo.totaleEntrate,
-            totaleUscite: data.riepilogo.totaleUscite,
-            differenza: data.riepilogo.differenza,
-            lastUpdate: data.timestamp
+            type,
+            addEntry() {
+                const dateInput = document.getElementById(`${this.type}-date`),
+                      descInput = document.getElementById(`${this.type}-desc`),
+                      amountInput = document.getElementById(`${this.type}-amount`);
+                const dateStr = dateInput.value.trim(), desc = descInput.value.trim(), amount = parseNumber(amountInput.value);
+                const validDate = parseItalianDate(dateStr);
+
+                if (!validDate || !desc || amount === 0) {
+                    showMessage('Data (GG/MM/AAAA), descrizione e importo sono richiesti.', 'warning');
+                    return;
+                }
+
+                const now = new Date();
+                validDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+                const newEntry = {
+                    id: Date.now().toString(),
+                    date: validDate.toISOString(),
+                    description: desc,
+                    amount: amount
+                };
+
+                const wasLinked = this.linkToCreditSystem(newEntry, this.type);
+
+                pageState[this.type].push(newEntry);
+                saveData();
+                this.render();
+                updateTopSummary();
+                descInput.value = '';
+                amountInput.value = '';
+                
+                if (!wasLinked) {
+                    showMessage(`${this.type === 'entrate' ? 'Entrata' : 'Uscita'} aggiunta con successo!`, 'success');
+                }
+            },
+            
+            linkToCreditSystem(transaction, transactionType) {
+                try {
+                    const clientsData = Storage.load(Storage.KEYS.CREDITO_DATA, {});
+                    if (!clientsData || typeof clientsData !== 'object') return false;
+
+                    const clientEntry = Object.entries(clientsData).find(([id, client]) => 
+                        client.name.trim().toLowerCase() === transaction.description.trim().toLowerCase()
+                    );
+
+                    if (!clientEntry) return false;
+
+                    const [clientId, client] = clientEntry;
+                    let creditAmount;
+
+                    if (transactionType === 'entrate') {
+                        creditAmount = Math.abs(transaction.amount);
+                    } else if (transactionType === 'uscite') {
+                        creditAmount = -Math.abs(transaction.amount);
+                    } else {
+                        return false; 
+                    }
+                    
+                    const creditTransaction = {
+                        id: 'reg-' + transaction.id,
+                        date: transaction.date,
+                        description: `DA REGISTRO CASSA`,
+                        amount: creditAmount,
+                        timestamp: Date.now()
+                    };
+
+                    if (!clientsData[clientId].transactions) {
+                        clientsData[clientId].transactions = [];
+                    }
+                    clientsData[clientId].transactions.push(creditTransaction);
+
+                    Storage.save(Storage.KEYS.CREDITO_DATA, clientsData);
+                    showMessage(`Transazione collegata al cliente: ${client.name}`, 'info');
+                    return true;
+
+                } catch (error) {
+                    console.error("Errore durante il collegamento al sistema di credito:", error);
+                    showMessage("Errore nell'aggiornamento del credito cliente.", 'error');
+                    return false;
+                }
+            },
+
+            deleteEntry(entryId) {
+                const index = pageState[this.type].findIndex(e => e.id === entryId);
+                if (index === -1) return;
+                const entry = pageState[this.type][index];
+                showConfirmModal('Conferma Eliminazione', `Eliminare la voce "${entry.description}"?`, () => {
+                    pageState[this.type].splice(index, 1);
+                    saveData(); this.render(); updateTopSummary();
+                    showMessage('Voce eliminata con successo!', 'success');
+                });
+            },
+            render() {
+                const container = document.getElementById(`${this.type}-container`);
+                if (!container) return;
+                const title = this.type === 'entrate' ? 'ENTRATE TURNO' : 'USCITE TURNO';
+                const total = pageState[this.type].reduce((sum, e) => sum + (e.amount || 0), 0);
+                const today = formatter.date(new Date());
+                
+                let historyHTML = pageState[this.type].length > 0 ? pageState[this.type].sort((a, b) => new Date(b.date) - new Date(a.date)).map(e => `
+                    <div class="transaction-item">
+                        <div class="transaction-details">${e.description || 'N/D'}<div class="transaction-date">${formatter.dateTime(e.date)}</div></div>
+                        <div class="transaction-right-side">
+                            <div class="transaction-amount">${formatter.currency.format(e.amount || 0)}</div>
+                            <button class="transaction-delete-btn" data-id="${e.id}">×</button>
+                        </div>
+                    </div>`).join('') : '<p style="text-align:center; font-size:12px; color:var(--text-secondary); padding:10px 0;">Nessuna voce registrata.</p>';
+                
+                container.innerHTML = `
+                    <div class="box summary-box">
+                        <h2 class="box-header">${title}</h2>
+                        <div class="box-content">
+                            <div class="transaction-form-grid">
+                                <input type="text" id="${this.type}-date" class="grid-input" value="${today}" placeholder="GG/MM/AAAA">
+                                <input type="text" id="${this.type}-desc" class="grid-input" placeholder="Descrizione">
+                                <input type="text" id="${this.type}-amount" class="grid-input" placeholder="Importo">
+                            </div>
+                            <div class="history-toggle">MOSTRA / NASCONDI STORICO</div>
+                            <div class="transactions-container">${historyHTML}</div>
+                            <div class="box-total"><span>Totale:</span><span class="total-value">${formatter.currency.format(total)}</span></div>
+                        </div>
+                    </div>`;
+                this.addEventListeners(container);
+                const descInput = container.querySelector(`#${this.type}-desc`);
+                if (descInput) setupAutocomplete(descInput, getCreditClients());
+            },
+            addEventListeners(container) {
+                const amountInput = container.querySelector(`#${this.type}-amount`);
+                if (amountInput) {
+                    const descInput = container.querySelector(`#${this.type}-desc`);
+                    amountInput.addEventListener('blur', e => { if (e.target.value.trim() !== '') e.target.value = formatter.currency.format(parseNumber(e.target.value)); });
+                    amountInput.addEventListener('keydown', e => { if (e.key === 'Enter') this.addEntry(); });
+                    if (descInput) descInput.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim() !== '' && (document.querySelector('.autocomplete-suggestions').style.display === 'none' || document.querySelector('.autocomplete-suggestions').getElementsByClassName('active-suggestion').length === 0)) { e.preventDefault(); amountInput.focus(); } });
+                }
+                const historyToggle = container.querySelector('.history-toggle');
+                historyToggle.addEventListener('click', () => {
+                    const transactionsContainer = container.querySelector('.transactions-container');
+                    transactionsContainer.classList.toggle('is-expanded');
+                });
+                container.querySelectorAll('.transaction-delete-btn').forEach(btn => btn.addEventListener('click', e => this.deleteEntry(e.target.dataset.id)));
+            }
         };
     }
 };
-/* ===== FINE GESTIONE REGISTRO UNIFICATA ===== */
 
-/* ===== INIZIO FUNZIONI IMPORT/EXPORT INTEGRATE ===== */
+function getSalesTotal() {
+    try {
+        if (!Storage.KEYS || !Storage.KEYS.VIRTUALSTATION_DATA) {
+            console.warn('Attenzione: La chiave VIRTUALSTATION_DATA non è definita in storage.js. Il totale carburanti sarà 0.');
+            return 0;
+        }
+        const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
+        if (!virtualstationData || typeof virtualstationData !== 'object') return 0;
+        let totalSales = 0;
+        for (const key in virtualstationData) {
+            if (key.startsWith('turn-')) {
+                const turnData = virtualstationData[key];
+                totalSales += turnData.totalTurnAmount || 0;
+            }
+        }
+        return totalSales;
+    } catch (error) {
+        console.error('Errore nel calcolo del totale carburanti:', error);
+        return 0;
+    }
+}
+
+function updateTopSummary() {
+    const fondi = pageState.fondi;
+    const fondiInizio = parseNumber(fondi['cassa-inizio']) + parseNumber(fondi['monete-inizio']) + parseNumber(fondi['altro-inizio']) + parseNumber(fondi['altro2-inizio']);
+    const fondiFine = parseNumber(fondi['contanti-fine']) + parseNumber(fondi['monete-fine']) + parseNumber(fondi['pos-fine']) + parseNumber(fondi['buoni-fine']);
+    const totaleVociEntrate = pageState.entrate.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totaleVociUscite = pageState.uscite.reduce((sum, e) => sum + (e.amount || 0), 0);
+    const totaleCarburanti = getSalesTotal();
+    const granTotaleEntrate = fondiInizio + totaleVociEntrate + totaleCarburanti;
+    const granTotaleUscite = fondiFine + totaleVociUscite;
+    const differenza = granTotaleEntrate - granTotaleUscite;
+    document.getElementById('totale-entrate').textContent = formatter.currency.format(granTotaleEntrate);
+    document.getElementById('totale-carburanti').textContent = formatter.currency.format(totaleCarburanti);
+    document.getElementById('totale-uscite').textContent = formatter.currency.format(granTotaleUscite);
+    const elDifferenza = document.getElementById('differenza');
+    elDifferenza.textContent = formatter.currency.format(differenza);
+    elDifferenza.style.color = Math.abs(differenza) < 0.01 ? 'var(--text-secondary)' : (differenza >= 0 ? 'var(--success)' : 'var(--danger)');
+}
+
 function importaDatiCompleti() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    
-    input.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
-                
-                if (confirm('Importare TUTTI i dati? Questo sovrascriverà i dati attuali di tutte le sezioni.')) {
-                    let importSuccess = false;
-                    
-                    // Importa dati Registro
-                    if (importedData.registro) {
-                        if (RegistroManager.syncWithSystemData(importedData)) {
-                            importSuccess = true;
-                        }
-                    }
-                    
-                    // Importa altri dati del sistema
-                    if (importedData.erogatori) {
-                        Storage.save(Storage.KEYS.DISPENSERS, importedData.erogatori);
-                        importSuccess = true;
-                    }
-                    
-                    if (importedData.monetario) {
-                        Storage.save(Storage.KEYS.MONETARIO_DATA, importedData.monetario);
-                        importSuccess = true;
-                    }
-                    
-                    if (importedData.carico) {
-                        if (importedData.carico.totals) {
-                            Storage.save(Storage.KEYS.CARICO_TOTALS, importedData.carico.totals);
-                            importSuccess = true;
-                        }
-                        if (importedData.carico.history) {
-                            Storage.save(Storage.KEYS.CARICO_HISTORY, importedData.carico.history);
-                            importSuccess = true;
-                        }
-                    }
-                    
-                    if (importedData.vendite) {
-                        Storage.save(Storage.KEYS.VENDITE_DATA, importedData.vendite);
-                        importSuccess = true;
-                    }
-                    
-                    if (importedData.credito) {
-                        Storage.save(Storage.KEYS.CREDITO_DATA, importedData.credito);
-                        importSuccess = true;
-                    }
-                    
-                    if (importSuccess) {
-                        showMessage('Dati importati con successo!', 'success');
-                    } else {
-                        showMessage('Nessun dato valido trovato nel file', 'warning');
-                    }
-                }
-            } catch (error) {
-                showMessage('Errore: file non valido', 'error');
-                console.error('Errore import:', error);
+    showConfirmModal('Importare Dati Registro?', 'Questo sovrascriverà i dati del registro. Procedere?', () => {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = '.json';
+        input.onchange = event => {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = e => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        let registroData = data.registro || (data.fondi || data.entrate || data.uscite ? data : null);
+                        if (!registroData) throw new Error('Formato file non riconosciuto');
+                        registroData.fondi = registroData.fondi || {};
+                        registroData.entrate = Array.isArray(registroData.entrate) ? registroData.entrate : [];
+                        registroData.uscite = Array.isArray(registroData.uscite) ? registroData.uscite : [];
+                        Storage.save(Storage.KEYS.REGISTRO_DATA, registroData);
+                        showMessage('Dati registro importati con successo!', 'success');
+                        setTimeout(() => location.reload(), 1000);
+                    } catch (error) { showMessage('Errore: file non valido o corrotto.', 'error'); }
+                };
+                reader.onerror = () => showMessage('Errore nella lettura del file.', 'error');
+                reader.readAsText(file);
             }
         };
-        reader.readAsText(file);
+        input.click();
     });
-    
-    input.click();
 }
 
 function esportaDatiCompleti() {
+    const registroData = Storage.load(Storage.KEYS.REGISTRO_DATA, { fondi: {}, entrate: [], uscite: [] });
+    const data = { exportDate: new Date().toISOString(), exportType: 'registro', version: '2.0', registro: registroData };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `cerbero_registro_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showMessage('Dati registro esportati con successo!', 'success');
+}
+
+function stampaDati() { showMessage('Funzione di stampa non ancora implementata.', 'info'); }
+
+function initializePage() {
     try {
-        const dataToExport = {
-            timestamp: new Date().toISOString(),
-            version: '1.0',
-            
-            // Dati Registro
-            registro: Storage.load(Storage.KEYS.REGISTRO_DATA, {}),
-            
-            // Dati Erogatori
-            erogatori: Storage.load(Storage.KEYS.DISPENSERS, {}),
-            
-            // Dati Monetario
-            monetario: Storage.load(Storage.KEYS.MONETARIO_DATA, {}),
-            
-            // Dati Carico
-            carico: {
-                totals: Storage.load(Storage.KEYS.CARICO_TOTALS, {}),
-                history: Storage.load(Storage.KEYS.CARICO_HISTORY, [])
-            },
-            
-            // Altri dati delle pagine
-            vendite: Storage.load(Storage.KEYS.VENDITE_DATA, {}),
-            credito: Storage.load(Storage.KEYS.CREDITO_DATA, {})
-        };
-
-        const dataStr = JSON.stringify(dataToExport, null, 2);
-        const dataBlob = new Blob([dataStr], {type: 'application/json'});
-        const url = URL.createObjectURL(dataBlob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `cerbero_backup_completo_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        showMessage('Backup completo esportato con successo!', 'success');
-    } catch (error) {
-        showMessage('Errore durante l\'esportazione completa', 'error');
-        console.error('Errore export:', error);
-    }
-}
-/* ===== FINE FUNZIONI IMPORT/EXPORT INTEGRATE ===== */
-
-/* ===== INIZIO FUNZIONE STAMPA ===== */
-function stampaDati() {
-    showMessage('Funzione stampa in fase di sviluppo', 'info');
-    // TODO: Implementazione futura della stampa
-}
-/* ===== FINE FUNZIONE STAMPA ===== */
-
-/* ===== INIZIO FUNZIONE INFO ===== */
-function showInfo() {
-    const infoMessage = `
-REGISTRO DI CASSA - CERBERO v1.0
-
-Funzionalità:
-• Gestione completa turni di cassa
-• Tracciamento entrate e uscite
-• Calcolo automatico differenze
-• Riepilogo in tempo reale
-• Storage unificato con sistema CERBERO
-
-Logica di calcolo:
-• Totale Entrate = Fondi Inizio + Entrate Turno
-• Totale Uscite = Fondi Fine + Uscite Turno
-• Differenza = Entrate - Uscite
-
-Campi gestiti:
-• Fondo Cassa: formato euro completo (€ 1.200,54)
-• Monete: formato euro completo (€ 1.200,54)
-• Litri Self: formato virgola decimale (990,04)
-• Importo Self: formato euro completo (€ 1.682,58)
-
-FORMATO CORRETTO CAMPI SELF:
-• SELF L: 990,04 (virgola per decimali)
-• SELF €: € 1.682,58 (formato euro standard)
-
-Storage unificato:
-• Compatibile con tutte le pagine CERBERO
-• Backup automatico e sincronizzazione
-• Persistenza dati tra sessioni
-
-Colori:
-• Verde: Entrate
-• Rosso: Uscite
-• Azzurro: Prodotti/Spese
-
-Salvataggio automatico attivo in localStorage.
-    `;
-    alert(infoMessage);
-}
-/* ===== FINE FUNZIONE INFO ===== */
-
-/* ===== INIZIO EVENT LISTENERS ===== */
-document.addEventListener('DOMContentLoaded', function() {
-    try {
-        // Carica dati salvati
-        RegistroManager.loadSavedData();
-
-        // Auto-aggiornamento riepilogo con debounce
-        let updateTimeout;
-        document.addEventListener('input', function(e) {
-            if (e.target.classList.contains('grid-input') || e.target.classList.contains('table-input')) {
-                // Formatta input importo in tempo reale  
-                if (e.target.classList.contains('importo')) {
-                    formatImportoInput(e.target);
-                }
-
-                // CORRETTO: Formatta input euro in tempo reale (solo cifre, virgola e punti)
-                if (e.target.classList.contains('grid-input') && !e.target.classList.contains('litri-self')) {
-                    // Durante l'input, permetti solo cifre, virgola e punti per separatori migliaia
-                    let value = e.target.value.replace(/[^\d,.]/g, '');
-                    e.target.value = value;
-                }
-
-                // CORRETTO: Formatta input litri SELF in tempo reale
-                if (e.target.classList.contains('litri-self')) {
-                    // Durante l'input, permetti solo cifre e virgola
-                    let value = e.target.value.replace(/[^\d,]/g, '');
-                    e.target.value = value;
-                }
-
-                // Aggiorna riepilogo con debounce
-                clearTimeout(updateTimeout);
-                updateTimeout = setTimeout(() => {
-                    RegistroManager.updateRiepilogo();
-                    RegistroManager.autoSave();
-                }, 500);
+        initializeThemeSwitcher();
+        initializeInfoButton();
+        loadData();
+        const entrateManager = SectionHandler.create('entrate');
+        const usciteManager = SectionHandler.create('uscite');
+        if (entrateManager) entrateManager.render();
+        if (usciteManager) usciteManager.render();
+        const fondiInputs = document.querySelectorAll('.top-row-grid .grid-input');
+        fondiInputs.forEach(input => {
+            if (input && input.id) {
+                const value = pageState.fondi[input.id] || '';
+                input.value = (value.trim() !== '' && !isNaN(parseNumber(value))) ? formatter.currency.format(parseNumber(value)) : '';
             }
         });
-
-        // Formattazione euro sui campi grid al blur
-        document.addEventListener('blur', function(e) {
-            if (e.target.classList.contains('grid-input') && !e.target.classList.contains('litri-self')) {
-                const value = parseEuro(e.target.value);
-                if (value > 0) {
-                    e.target.value = formatEuro(value);
-                }
-                RegistroManager.updateRiepilogo();
-                RegistroManager.autoSave();
-            }
-
-            // CORRETTO: Formattazione litri SELF al blur
-            if (e.target.classList.contains('litri-self')) {
-                formatLitriSelf(e.target);
-                RegistroManager.updateRiepilogo();
-                RegistroManager.autoSave();
-            }
-
-            // Formattazione automatica per importi al blur
-            if (e.target.classList.contains('importo')) {
-                let value = e.target.value.replace(/[^\d,]/g, '');
-                
-                if (value && !value.includes(',')) {
-                    // Aggiungi ,00 solo al blur se non c'è virgola
-                    value = value + ',00';
-                } else if (value.endsWith(',')) {
-                    // Se finisce con virgola, aggiungi 00
-                    value = value + '00';
-                } else if (value.includes(',')) {
-                    // Se ha virgola ma decimali incompleti
-                    const parts = value.split(',');
-                    if (parts[1].length === 1) {
-                        value = parts[0] + ',' + parts[1] + '0';
-                    }
-                }
-                
-                e.target.value = value;
-                formatImportoInput(e.target);
-                RegistroManager.updateRiepilogo();
-                RegistroManager.autoSave();
-            }
-
-        }, true);
-
-        // Calcolo iniziale
-        RegistroManager.updateRiepilogo();
-        console.log('✅ CERBERO Registro inizializzato correttamente');
-        showMessage('Sistema Registro caricato', 'success');
+        updateTopSummary();
+        fondiInputs.forEach(input => {
+            input.addEventListener('blur', e => {
+                if (e.target.value.trim() !== '') e.target.value = formatter.currency.format(parseNumber(e.target.value));
+                saveData(); updateTopSummary();
+            });
+            input.addEventListener('focus', e => {
+                const parsedValue = parseNumber(e.target.value);
+                e.target.value = parsedValue !== 0 ? String(parsedValue).replace('.', ',') : '';
+            });
+            input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+        });
     } catch (error) {
-        console.error('❌ Errore nell\'inizializzazione registro:', error);
-        showMessage('Errore nell\'inizializzazione del sistema', 'error');
+        console.error("Errore durante l'inizializzazione: ", error);
+        showMessage("Errore critico nell'avvio dell'applicazione.", 'error');
     }
-});
-/* ===== FINE EVENT LISTENERS ===== */
+}
 
-/* ===== INIZIO GESTIONE ERRORI ===== */
-window.addEventListener('error', function(e) {
-    console.error('Errore JavaScript:', e.error);
-    showMessage('Si è verificato un errore. Controlla la console.', 'error');
-});
-/* ===== FINE GESTIONE ERRORI ===== */
-
-/* ===== INIZIO SALVATAGGIO AUTOMATICO ===== */
-window.addEventListener('beforeunload', function(e) {
-    if (RegistroManager) {
-        RegistroManager.autoSave();
-    }
-});
-/* ===== FINE SALVATAGGIO AUTOMATICO ===== */
-
-/* ===== FUNZIONI ESPOSTE GLOBALMENTE ===== */
-window.exportRegistroData = function() {
-    try {
-        const exportData = {
-            timestamp: new Date().toISOString(),
-            version: '1.0',
-            registro: RegistroManager.getAllData()
-        };
-
-        const dataStr = JSON.stringify(exportData, null, 2);
-        const dataBlob = new Blob([dataStr], {type: 'application/json'});
-        const url = URL.createObjectURL(dataBlob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `cerbero_registro_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        showMessage('Registro esportato con successo!', 'success');
-    } catch (error) {
-        showMessage('Errore durante l\'esportazione', 'error');
-    }
-};
-
-window.clearRegistroData = function() {
-    if (RegistroManager) {
-        RegistroManager.clearAllData();
-    }
-};
-
-window.getRegistroSummary = function() {
-    if (RegistroManager) {
-        return RegistroManager.getStatistics();
-    }
-    return { entrateCount: 0, usciteCount: 0, totaleEntrate: 0, totaleUscite: 0, differenza: 0 };
-};
-
-/* ===== FINE JAVASCRIPT ===== */
+window.addEventListener('error', event => { console.error('Errore JavaScript globale:', event.error); showMessage('Si è verificato un errore imprevisto', 'error'); });
+window.addEventListener('unhandledrejection', event => { console.error('Promise rifiutata non gestita:', event.reason); showMessage('Errore nell\'operazione asincrona', 'error'); });
+document.addEventListener('DOMContentLoaded', initializePage);

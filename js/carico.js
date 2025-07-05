@@ -1,907 +1,778 @@
-/* ===== GESTIONE CARICO CARBURANTI - CERBERO UNIFICATO ===== */
+/* ===== GESTIONE CARICO CARBURANTI - CERBERO ===== */
 
-/* ===== GESTIONE STORAGE UNIFICATO ===== */
-const Storage = {
-    KEYS: {
-        NOTES: 'cerbero_notes',
-        TODO_LIST: 'cerbero_todo',
-        CURRENT_TURNO: 'cerbero_turno',
-        DISPENSERS: 'cerbero_dispensers',
-        CARICO_TOTALS: 'cerbero_carico_totals',
-        CARICO_HISTORY: 'cerbero_carico_history',
-        VENDITE_DATA: 'cerbero_vendite',
-        MONETARIO_DATA: 'cerbero_monetario',
-        CREDITO_DATA: 'cerbero_credito',
-        REGISTRO_DATA: 'cerbero_registro'
-    },
-
-    save: function(key, data) {
-        try {
-            if (key === this.KEYS.NOTES) {
-                localStorage.setItem(key, data);
-                return true;
-            }
-            localStorage.setItem(key, JSON.stringify(data));
-            return true;
-        } catch (error) {
-            console.error('Errore nel salvare i dati:', error);
-            return false;
-        }
-    },
-
-    load: function(key, defaultValue = null) {
-        try {
-            const data = localStorage.getItem(key);
-            if (!data) return defaultValue;
-            
-            if (key === this.KEYS.NOTES) {
-                return data;
-            }
-            return JSON.parse(data);
-        } catch (error) {
-            console.error('Errore nel caricare i dati per', key, ':', error);
-            if (key === this.KEYS.NOTES) {
-                const rawData = localStorage.getItem(key);
-                return rawData || defaultValue;
-            }
-            return defaultValue;
-        }
-    },
-
-    remove: function(key) {
-        try {
-            localStorage.removeItem(key);
-            return true;
-        } catch (error) {
-            console.error('Errore nel rimuovere i dati:', error);
-            return false;
-        }
+/* ===== GESTIONE TEMA ===== */
+function applyTheme(theme) {
+    const lightIcon = document.getElementById('theme-icon-light');
+    const darkIcon = document.getElementById('theme-icon-dark');
+    document.body.classList.toggle('dark-theme', theme === 'dark');
+    if (lightIcon && darkIcon) {
+        lightIcon.classList.toggle('theme-icon-hidden', theme === 'dark');
+        darkIcon.classList.toggle('theme-icon-hidden', theme !== 'dark');
     }
-};
-
-/* ===== UTILITY PER TOAST MESSAGES ===== */
-function showMessage(message, type = 'info') {
-    const toast = document.createElement('div');
-    toast.className = `toast-message toast-${type}`;
-    toast.textContent = message;
-    
-    const colors = {
-        success: '#28a745',
-        error: '#dc3545',
-        info: '#17a2b8',
-        warning: '#ffc107'
-    };
-    
-    toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: ${colors[type] || colors.info};
-        color: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        z-index: 1001;
-        font-family: 'Montserrat', sans-serif;
-        font-weight: 600;
-        font-size: 14px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-        animation: slideIn 0.3s ease;
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOut 0.3s ease';
-        setTimeout(() => {
-            if (toast.parentNode) {
-                toast.parentNode.removeChild(toast);
-            }
-        }, 300);
-    }, 3000);
+    Storage.save(Storage.KEYS.THEME, theme);
 }
 
-/* ===== FORMATTAZIONE NUMERI ===== */
-const formatter = {
-    // Per litri (numeri interi con separatore migliaia)
-    liters: (value) => {
-        if (typeof value !== 'number' || isNaN(value)) {
-            return '0';
+function initializeThemeSwitcher() {
+    const themeSwitcher = document.getElementById('theme-switcher');
+    if (themeSwitcher) {
+        themeSwitcher.addEventListener('click', (e) => {
+            e.preventDefault();
+            const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+            applyTheme(newTheme);
+        });
+    }
+    const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
+    applyTheme(savedTheme);
+}
+
+/* ===== NUOVA FUNZIONE PER MODALE INFO ===== */
+function initializeInfoButton() {
+    try {
+        const infoBtn = document.getElementById('info-btn');
+        const infoModal = document.getElementById('info-modal');
+        const modalCloseBtn = infoModal ? infoModal.querySelector('.modal-close-btn') : null;
+        
+        if (infoBtn && infoModal) {
+            infoBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                infoModal.classList.add('active');
+            });
+            
+            if (modalCloseBtn) {
+                modalCloseBtn.addEventListener('click', () => {
+                    infoModal.classList.remove('active');
+                });
+            }
+            
+            infoModal.addEventListener('click', (e) => {
+                if (e.target === infoModal) {
+                    infoModal.classList.remove('active');
+                }
+            });
         }
-        return new Intl.NumberFormat('it-IT', {
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0,
-            useGrouping: true
-        }).format(Math.round(value));
+    } catch (error) {
+        console.error('Errore inizializzazione pulsante info:', error);
+    }
+}
+
+/* ===== UTILITY PER MESSAGGI E MODALI ===== */
+function showMessage(message, type = 'info') {
+    try {
+        const allowedTypes = ['error', 'warning', 'info'];
+        if (!allowedTypes.includes(type)) {
+            return;
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `toast-message toast-${type}`;
+        toast.textContent = message;
+        
+        const colors = {
+            error: '#FF3547',
+            info: '#0ABAB5', 
+            warning: '#FFD700'
+        };
+        
+        toast.style.cssText = `
+            position: fixed; top: 20px; right: 20px;
+            background: ${colors[type] || colors.info};
+            color: ${type === 'warning' ? '#333' : 'white'};
+            padding: 15px 20px; z-index: 1001; font-family: 'Montserrat', sans-serif; font-weight: 600;
+            font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); border-radius: 20px;
+            max-width: 350px; word-wrap: break-word;
+            animation: slideIn 0.3s ease-out;
+        `;
+        document.body.appendChild(toast);
+        setTimeout(() => {
+            toast.style.animation = 'slideOut 0.3s ease forwards';
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+        }, 3000);
+    } catch (error) {
+        console.error('Errore visualizzazione messaggio:', error);
+        alert(message);
+    }
+}
+
+function showConfirmModal(title, text, onConfirm) {
+    const modal = document.getElementById('confirm-modal');
+    if (!modal) {
+        if(confirm(`${title}\n${text}`)) onConfirm();
+        return;
+    }
+    modal.querySelector('#confirm-modal-title').textContent = title;
+    modal.querySelector('#confirm-modal-text').textContent = text;
+    const btnOk = modal.querySelector('#confirm-modal-ok');
+    const newBtnOk = btnOk.cloneNode(true);
+    btnOk.parentNode.replaceChild(newBtnOk, btnOk);
+    const hideModal = () => modal.classList.remove('active');
+    newBtnOk.addEventListener('click', () => { onConfirm(); hideModal(); }, { once: true });
+    modal.querySelector('#confirm-modal-cancel').addEventListener('click', hideModal, { once: true });
+    modal.classList.add('active');
+}
+
+/* ===== FORMATTAZIONE NUMERI E DATE ===== */
+const formatter = {
+    liters: (value) => {
+        if (typeof value !== 'number' || isNaN(value)) return '0';
+        return new Intl.NumberFormat('it-IT').format(Math.round(value)); 
     },
-    
-    // Per differenze (con segno)
-    diff: new Intl.NumberFormat('it-IT', { 
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-        signDisplay: 'auto', 
-        useGrouping: true
-    })
+    diff: new Intl.NumberFormat('it-IT', { signDisplay: 'always' }),
+    toLocaleDate: (date) => {
+        if (!(date instanceof Date) || isNaN(date)) return '';
+        return date.toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' });
+    }
 };
 
-/* ===== GESTIONE CARICO UNIFICATA ===== */
+const parseDate = (dateStr) => {
+    if (!dateStr || typeof dateStr !== 'string') return null;
+    let date = null;
+    if (dateStr.includes('/')) {
+        const parts = dateStr.split('/');
+        if (parts.length === 3) {
+            const day = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1;
+            const year = parseInt(parts[2], 10);
+            date = new Date(year, month, day, 12, 0, 0, 0);
+        }
+    } else if (dateStr.includes('-')) {
+        const isoDate = dateStr.split('T')[0];
+        const parts = isoDate.split('-');
+        if (parts.length === 3) {
+            const year = parseInt(parts[0], 10);
+            const month = parseInt(parts[1], 10) - 1;
+            const day = parseInt(parts[2], 10);
+            date = new Date(year, month, day, 12, 0, 0, 0);
+        }
+    }
+    return (date && !isNaN(date)) ? date : null;
+};
+
+const createDateTimestamp = (dateStr) => {
+    const parsedDate = parseDate(dateStr);
+    if (!parsedDate) return null;
+    const year = parsedDate.getFullYear();
+    const month = parsedDate.getMonth();
+    const day = parsedDate.getDate();
+    const localDate = new Date(year, month, day, 12, 0, 0, 0);
+    const timezoneOffset = localDate.getTimezoneOffset() * 60000;
+    const adjustedDate = new Date(localDate.getTime() - timezoneOffset);
+    return adjustedDate.toISOString();
+};
+
+/* ===== GESTIONE CARICO ===== */
 class CargoManager {
     constructor() {
-        this.cargoData = this.loadCargoData();
+        const loadedHistory = Storage.load(Storage.KEYS.CARICO_HISTORY, []);
+        this.cargoData = {
+            totals: Storage.load(Storage.KEYS.CARICO_TOTALS, {}),
+            history: Array.isArray(loadedHistory) ? loadedHistory : [],
+            rimanenze: Storage.load(Storage.KEYS.CARICO_RIMANENZE, {})
+        };
+        if (!Array.isArray(loadedHistory)) {
+             console.warn("Dati 'history' di Carico corrotti, l'array è stato resettato.");
+        }
         this.currentYear = new Date().getFullYear();
         this.chart = null;
+        this.isEditingHistory = false;
         this.init();
-    }
-
-    loadCargoData() {
-        // Carica dati dal storage unificato
-        const totals = Storage.load(Storage.KEYS.CARICO_TOTALS, {
-            benzina: 0,
-            gasolio: 0,
-            diesel: 0,
-            hvolution: 0
-        });
-        
-        const history = Storage.load(Storage.KEYS.CARICO_HISTORY, []);
-        
-        // Struttura unificata
-        return {
-            totals: totals,
-            history: history
-        };
-    }
-
-    saveCargoData() {
-        try {
-            const totalSuccess = Storage.save(Storage.KEYS.CARICO_TOTALS, this.cargoData.totals);
-            const historySuccess = Storage.save(Storage.KEYS.CARICO_HISTORY, this.cargoData.history);
-            
-            if (totalSuccess && historySuccess) {
-                console.log('💾 Dati carico salvati in localStorage');
-                return true;
-            } else {
-                console.error('❌ Errore nel salvare i dati carico');
-                return false;
-            }
-        } catch (error) {
-            console.error('❌ Errore critico nel salvataggio carico:', error);
-            return false;
-        }
     }
 
     init() {
         this.bindEvents();
-        this.loadRimanenze();
+        this.loadRimanenzeUI();
         this.updateTotals();
-        this.loadHistory();
-        this.updateChart();
+        this.renderHistory();
+        this.renderChart();
         this.updateYearDisplay();
+        this.initializeCollapseState();
+    }
+
+    safeBind(elementId, event, handler) {
+        const element = document.getElementById(elementId);
+        if (element) {
+            element.addEventListener(event, handler);
+        } else {
+            console.warn(`Elemento non trovato: #${elementId}. Impossibile associare l'evento.`);
+        }
     }
 
     bindEvents() {
-        // Modal events
-        const btnNuovo = document.getElementById('btn-nuovo-carico');
-        const btnClose = document.getElementById('btn-close-modal');
-        const btnCancel = document.getElementById('btn-cancel-modal');
-        const form = document.getElementById('newLoadForm');
-        
-        if (btnNuovo) btnNuovo.addEventListener('click', () => this.openModal());
-        if (btnClose) btnClose.addEventListener('click', () => this.closeModal());
-        if (btnCancel) btnCancel.addEventListener('click', () => this.closeModal());
-        if (form) form.addEventListener('submit', (e) => this.saveNewCargo(e));
-        
-        // Action buttons
-        const btnExport = document.getElementById('btn-esporta');
-        const btnImport = document.getElementById('btn-importa');
-        const btnReset = document.getElementById('btn-reset');
-        
-        if (btnExport) btnExport.addEventListener('click', () => this.exportData());
-        if (btnImport) btnImport.addEventListener('click', () => this.importData());
-        if (btnReset) btnReset.addEventListener('click', () => this.resetYear());
-        
-        // Rimanenze events
-        ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(product => {
-            const input = document.getElementById(`rimanenza-${product}`);
-            if (input) {
-                input.addEventListener('blur', () => this.saveRimanenze());
-            }
+        this.safeBind('btn-nuovo-carico', 'click', () => this.openModal());
+        this.safeBind('btn-close-modal', 'click', () => this.closeModal());
+        this.safeBind('btn-cancel-modal', 'click', () => this.closeModal());
+        this.safeBind('newLoadForm', 'submit', (e) => this.saveNewCargo(e));
+        this.safeBind('btn-esporta', 'click', () => this.exportData());
+        this.safeBind('btn-importa', 'click', () => this.importData());
+        this.safeBind('btn-stampa', 'click', () => showMessage('Funzione di stampa non ancora disponibile.', 'info'));
+        this.safeBind('btn-reset', 'click', () => this.resetYear());
+        this.safeBind('newLoadModal', 'click', (e) => {
+            if (e.target.id === 'newLoadModal') this.closeModal();
         });
-
-        // Date input default to today
-        const dateInput = document.getElementById('load-date');
-        if (dateInput) {
-            dateInput.value = new Date().toISOString().split('T')[0];
-        }
-
-        // Click su overlay per chiudere modal
-        const overlay = document.getElementById('newLoadModal');
-        if (overlay) {
-            overlay.addEventListener('click', (e) => {
-                if (e.target === overlay) {
-                    this.closeModal();
-                }
-            });
-        }
-
-        console.log('Eventi carico inizializzati correttamente');
+        this.safeBind('collapse-history-btn', 'click', () => this.toggleHistoryCollapse());
+        this.safeBind('edit-history-btn', 'click', () => this.toggleEditMode());
+        
+        ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(p => {
+            this.safeBind(`rimanenza-${p}`, 'change', () => this.saveRimanenzeFromUI());
+        });
     }
 
+    importData() {
+        showConfirmModal('Importare Dati Carico?', 'I dati attuali verranno sovrascritti.', () => {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = '.json';
+            fileInput.onchange = (event) => {
+                const file = event.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const data = JSON.parse(e.target.result);
+                        if (data.caricoTotals || data.caricoHistory || data.caricoRimanenze) {
+                            if (data.caricoTotals) this.cargoData.totals = data.caricoTotals;
+                            if (data.caricoHistory && Array.isArray(data.caricoHistory)) {
+                                this.cargoData.history = data.caricoHistory.map(entry => ({...entry, date: createDateTimestamp(entry.date) || entry.date }));
+                            }
+                            if (data.caricoRimanenze) this.cargoData.rimanenze = data.caricoRimanenze;
+                        } else if (data.totals || data.history || data.rimanenze) {
+                            if (data.totals) this.cargoData.totals = data.totals;
+                            if (data.history && Array.isArray(data.history)) {
+                                this.cargoData.history = data.history.map(entry => ({...entry, date: createDateTimestamp(entry.date) || entry.date }));
+                            }
+                            if (data.rimanenze) this.cargoData.rimanenze = data.rimanenze;
+                        } else {
+                            return showMessage('File non valido per il carico.', 'warning');
+                        }
+                        this.saveAndRefresh();
+                        this.loadRimanenzeUI();
+                        showMessage('Dati carico importati con successo!', 'info');
+                    } catch (err) {
+                        showMessage('File non valido o corrotto.', 'error');
+                        console.error('Errore importazione carico:', err);
+                    }
+                };
+                reader.readAsText(file);
+            };
+            fileInput.click();
+        });
+    }
+
+    exportData() {
+        this.saveAndRefresh();
+        const exportableHistory = this.cargoData.history.map(entry => ({...entry, date: formatter.toLocaleDate(parseDate(entry.date)) }));
+        const dataToExport = {
+            exportDate: new Date().toISOString(),
+            exportType: 'carico',
+            totals: this.cargoData.totals,
+            history: exportableHistory,
+            rimanenze: this.cargoData.rimanenze
+        };
+        const dataStr = JSON.stringify(dataToExport, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `cerbero_carico_${this.currentYear}.json`;
+        link.click();
+        URL.revokeObjectURL(url);
+        showMessage('Dati carico esportati!', 'info');
+    }
+
+    saveAndRefresh() {
+        this.saveRimanenzeFromUI(false); 
+        this.updateTotals();
+        this.renderHistory();
+        this.renderChart();
+        Storage.save(Storage.KEYS.CARICO_TOTALS, this.cargoData.totals);
+        Storage.save(Storage.KEYS.CARICO_HISTORY, this.cargoData.history);
+        Storage.save(Storage.KEYS.CARICO_RIMANENZE, this.cargoData.rimanenze);
+    }
+    
+    toggleHistoryCollapse() { 
+        const content = document.getElementById('history-box-content');
+        const btn = document.getElementById('collapse-history-btn');
+        const editBtn = document.getElementById('edit-history-btn');
+        
+        if (content && btn) {
+            const isCollapsed = content.classList.toggle('collapsed');
+            btn.classList.toggle('collapsed', isCollapsed);
+            
+            if (editBtn) {
+                editBtn.style.display = isCollapsed ? 'none' : 'inline-block';
+            }
+            
+            if (isCollapsed && this.isEditingHistory) {
+                this.isEditingHistory = false;
+                if (editBtn) {
+                    editBtn.classList.remove('editing');
+                    editBtn.title = 'Modifica carichi';
+                }
+                this.renderHistory();
+            }
+            
+            Storage.save(Storage.KEYS.HISTORY_COLLAPSED, isCollapsed.toString());
+        }
+    }
+
+    initializeCollapseState() {
+        const isCollapsed = Storage.load(Storage.KEYS.HISTORY_COLLAPSED) === 'true';
+        const editBtn = document.getElementById('edit-history-btn');
+        
+        if (isCollapsed) {
+            const content = document.getElementById('history-box-content');
+            const btn = document.getElementById('collapse-history-btn');
+            if(content) content.classList.add('collapsed');
+            if(btn) btn.classList.add('collapsed');
+            if(editBtn) editBtn.style.display = 'none';
+        } else {
+            if(editBtn) editBtn.style.display = 'inline-block';
+        }
+    }
+    
     openModal() {
         const modal = document.getElementById('newLoadModal');
-        if (modal) {
+        if(modal) {
             modal.classList.add('active');
-            const dateInput = document.getElementById('load-date');
-            if (dateInput) {
-                dateInput.focus();
-            }
+            document.getElementById('load-date').value = formatter.toLocaleDate(new Date());
+            document.getElementById('load-driver').focus();
         }
     }
 
     closeModal() {
         const modal = document.getElementById('newLoadModal');
-        const form = document.getElementById('newLoadForm');
-        const dateInput = document.getElementById('load-date');
-        
-        if (modal) modal.classList.remove('active');
-        if (form) form.reset();
-        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+        if(modal) {
+            modal.classList.remove('active');
+            document.getElementById('newLoadForm').reset();
+        }
     }
 
     saveNewCargo(e) {
         e.preventDefault();
-        
-        console.log('=== SALVATAGGIO CARICO ===');
+        const dateValue = document.getElementById('load-date').value;
+        const timestamp = createDateTimestamp(dateValue);
 
-        // Funzione helper per ottenere valori con fallback
-        const getValueSafe = (id, defaultValue = 0) => {
-            const element = document.getElementById(id);
-            if (!element) {
-                console.warn(`Campo ${id} non trovato`);
-                return defaultValue;
-            }
-            const value = parseInt(element.value) || defaultValue;
-            return value;
-        };
-
-        const getTextSafe = (id, defaultValue = '') => {
-            const element = document.getElementById(id);
-            if (!element) {
-                console.warn(`Campo ${id} non trovato`);
-                return defaultValue;
-            }
-            return element.value.trim() || defaultValue;
-        };
+        if (!timestamp) {
+            return showMessage('Data non valida. Usare il formato GG/MM/AAAA.', 'warning');
+        }
         
-        // Parsing sicuro dei valori dai campi del modal
         const formData = {
-            date: getTextSafe('load-date'),
-            driver: getTextSafe('load-driver'),
-            benzina: getValueSafe('load-benzina'),
-            diffBenzina: getValueSafe('load-diff-benzina'),
-            gasolio: getValueSafe('load-gasolio'),
-            diffGasolio: getValueSafe('load-diff-gasolio'),
-            diesel: getValueSafe('load-diesel'),
-            diffDiesel: getValueSafe('load-diff-diesel'),
-            hvolution: getValueSafe('load-hvolution'),
-            diffHvolution: getValueSafe('load-diff-hvolution'),
+            date: timestamp,
+            driver: document.getElementById('load-driver').value.trim(),
+            benzina: parseInt(document.getElementById('load-benzina').value) || 0,
+            diffBenzina: parseInt(document.getElementById('load-diff-benzina').value) || 0,
+            gasolio: parseInt(document.getElementById('load-gasolio').value) || 0,
+            diffGasolio: parseInt(document.getElementById('load-diff-gasolio').value) || 0,
+            diesel: parseInt(document.getElementById('load-diesel').value) || 0,
+            diffDiesel: parseInt(document.getElementById('load-diff-diesel').value) || 0,
+            hvolution: parseInt(document.getElementById('load-hvolution').value) || 0,
+            diffHvolution: parseInt(document.getElementById('load-diff-hvolution').value) || 0,
             timestamp: new Date().toISOString()
         };
-
-        console.log('Dati elaborati:', formData);
-
-        // Validazioni
+        
         if (!formData.driver) {
-            showMessage('Inserire il nome dell\'autista', 'warning');
-            return;
+            return showMessage('Il nome dell\'autista è obbligatorio.', 'warning');
+        }
+        if (formData.benzina === 0 && formData.gasolio === 0 && formData.diesel === 0 && formData.hvolution === 0) {
+            return showMessage('Inserire almeno un prodotto caricato.', 'warning');
         }
 
-        if (!formData.date) {
-            showMessage('Inserire la data del carico', 'warning');
-            return;
-        }
-
-        if (formData.benzina === 0 && formData.gasolio === 0 && 
-            formData.diesel === 0 && formData.hvolution === 0) {
-            showMessage('Inserire almeno un prodotto', 'warning');
-            return;
-        }
-
-        // Aggiungi al history nel storage unificato
         this.cargoData.history.push(formData);
-        this.cargoData.history.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-        // Salva e aggiorna
-        this.saveCargoData();
-        this.updateTotals();
-        this.loadHistory();
-        this.updateChart();
+        this.saveAndRefresh();
         this.closeModal();
-        
-        showMessage('Carico salvato con successo!', 'success');
-        console.log('=== FINE SALVATAGGIO CARICO ===');
-    }
-
-    updateTotals() {
-        const currentYearData = this.cargoData.history.filter(cargo => 
-            new Date(cargo.date).getFullYear() === this.currentYear
-        );
-
-        const totals = {
-            benzina: 0,
-            gasolio: 0,
-            diesel: 0,
-            hvolution: 0
-        };
-
-        const diffs = {
-            benzina: 0,
-            gasolio: 0,
-            diesel: 0,
-            hvolution: 0
-        };
-
-        currentYearData.forEach(cargo => {
-            totals.benzina += cargo.benzina || 0;
-            totals.gasolio += cargo.gasolio || 0;
-            totals.diesel += cargo.diesel || 0;
-            totals.hvolution += cargo.hvolution || 0;
-            
-            diffs.benzina += cargo.diffBenzina || 0;
-            diffs.gasolio += cargo.diffGasolio || 0;
-            diffs.diesel += cargo.diffDiesel || 0;
-            diffs.hvolution += cargo.diffHvolution || 0;
-        });
-
-        // Aggiorna totali nello storage unificato
-        this.cargoData.totals = totals;
-
-        // Aggiorna i campi
-        Object.keys(totals).forEach(product => {
-            const litriInput = document.getElementById(`litri-${product}`);
-            const diffInput = document.getElementById(`diff-${product}`);
-            const rimanenzaInput = document.getElementById(`rimanenza-${product}`);
-            const totaleInput = document.getElementById(`totale-${product}`);
-
-            if (litriInput) {
-                litriInput.value = formatter.liters(totals[product]);
-            }
-            if (diffInput) {
-                const diffValue = diffs[product];
-                diffInput.value = formatter.diff.format(diffValue);
-                
-                // Colora il campo differenza
-                if (diffValue > 0) {
-                    diffInput.style.background = 'rgba(40, 167, 69, 0.1)';
-                    diffInput.style.color = '#28a745';
-                } else if (diffValue < 0) {
-                    diffInput.style.background = 'rgba(220, 53, 69, 0.1)';
-                    diffInput.style.color = '#dc3545';
-                } else {
-                    diffInput.style.background = 'rgba(0, 86, 179, 0.05)';
-                    diffInput.style.color = '#64748b';
-                }
-            }
-            if (totaleInput) {
-                const rimanenza = this.getRimanenza(product);
-                const totale = totals[product] + rimanenza;
-                totaleInput.value = formatter.liters(totale);
-            }
-        });
-    }
-
-    getRimanenza(product) {
-        const input = document.getElementById(`rimanenza-${product}`);
-        if (input) {
-            const value = input.value.replace(/\./g, '');
-            return parseInt(value) || 0;
-        }
-        return 0;
-    }
-
-    loadRimanenze() {
-        // Le rimanenze sono gestite direttamente negli input per semplicità
-        // Potrebbero essere migrate nello storage unificato in futuro
-        ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(product => {
-            const input = document.getElementById(`rimanenza-${product}`);
-            if (input && !input.value) {
-                input.value = '0';
-            }
-        });
-    }
-
-    saveRimanenze() {
-        ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(product => {
-            const input = document.getElementById(`rimanenza-${product}`);
-            if (input) {
-                const value = input.value.replace(/\./g, '');
-                const numValue = parseInt(value) || 0;
-                input.value = formatter.liters(numValue);
-            }
-        });
-        
-        this.updateTotals();
-        this.saveCargoData();
-    }
-
-    loadHistory() {
-        const tbody = document.getElementById('history-tbody');
-        if (!tbody) {
-            console.log('ERRORE: Tabella history-tbody non trovata!');
-            return;
-        }
-
-        tbody.innerHTML = '';
-
-        const currentYearHistory = this.cargoData.history.filter(cargo => 
-            new Date(cargo.date).getFullYear() === this.currentYear
-        );
-
-        if (currentYearHistory.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 20px; color: #64748b;">Nessun carico registrato per il ${this.currentYear}</td></tr>`;
-            return;
-        }
-
-        currentYearHistory.forEach((cargo, index) => {
-            const row = document.createElement('tr');
-            
-            row.innerHTML = `
-                <td>${new Date(cargo.date).toLocaleDateString('it-IT')}</td>
-                <td>${formatter.liters(cargo.benzina || 0)}</td>
-                <td style="color: ${(cargo.diffBenzina || 0) > 0 ? '#28a745' : (cargo.diffBenzina || 0) < 0 ? '#dc3545' : '#64748b'};">
-                    ${(cargo.diffBenzina || 0) > 0 ? '+' : ''}${cargo.diffBenzina || 0}
-                </td>
-                <td>${formatter.liters(cargo.gasolio || 0)}</td>
-                <td style="color: ${(cargo.diffGasolio || 0) > 0 ? '#28a745' : (cargo.diffGasolio || 0) < 0 ? '#dc3545' : '#64748b'};">
-                    ${(cargo.diffGasolio || 0) > 0 ? '+' : ''}${cargo.diffGasolio || 0}
-                </td>
-                <td>${formatter.liters(cargo.diesel || 0)}</td>
-                <td style="color: ${(cargo.diffDiesel || 0) > 0 ? '#28a745' : (cargo.diffDiesel || 0) < 0 ? '#dc3545' : '#64748b'};">
-                    ${(cargo.diffDiesel || 0) > 0 ? '+' : ''}${cargo.diffDiesel || 0}
-                </td>
-                <td>${formatter.liters(cargo.hvolution || 0)}</td>
-                <td style="color: ${(cargo.diffHvolution || 0) > 0 ? '#28a745' : (cargo.diffHvolution || 0) < 0 ? '#dc3545' : '#64748b'};">
-                    ${(cargo.diffHvolution || 0) > 0 ? '+' : ''}${cargo.diffHvolution || 0}
-                </td>
-                <td>${cargo.driver || ''}</td>
-                <td>
-                    <button class="delete-btn" onclick="cargoManager.deleteCargo('${cargo.timestamp}')" title="Elimina carico">×</button>
-                </td>
-            `;
-            tbody.appendChild(row);
-        });
+        showMessage('Carico salvato con successo!', 'info');
     }
 
     deleteCargo(timestamp) {
-        if (confirm('Eliminare questo carico?')) {
-            const originalIndex = this.cargoData.history.findIndex(cargo => 
-                cargo.timestamp === timestamp
-            );
-            
-            if (originalIndex !== -1) {
-                this.cargoData.history.splice(originalIndex, 1);
-                this.saveCargoData();
-                this.updateTotals();
-                this.loadHistory();
-                this.updateChart();
-                showMessage('Carico eliminato', 'success');
+        showConfirmModal(
+            'Eliminare Carico?',
+            'Sei sicuro di voler eliminare questo carico dalla cronologia?',
+            () => {
+                this.cargoData.history = this.cargoData.history.filter(c => c.timestamp !== timestamp);
+                this.saveAndRefresh();
+                showMessage('Carico eliminato.', 'info');
             }
-        }
+        );
     }
 
-    updateChart() {
-        const canvas = document.getElementById('carichiChart');
-        if (!canvas) {
-            console.log('Canvas non trovato');
+    toggleEditMode() {
+        this.isEditingHistory = !this.isEditingHistory;
+        this.renderHistory();
+        
+        const editBtn = document.getElementById('edit-history-btn');
+        if (editBtn) {
+            editBtn.classList.toggle('editing', this.isEditingHistory);
+            editBtn.title = this.isEditingHistory ? 'Fine modifica' : 'Modifica carichi';
+        }
+        
+        showMessage(
+            this.isEditingHistory ? 'Modalità modifica attivata' : 'Modalità modifica disattivata', 
+            'info'
+        );
+    }
+
+    editCargo(timestamp) {
+        const cargo = this.cargoData.history.find(c => c.timestamp === timestamp);
+        if (!cargo) return;
+
+        this.showEditCargoModal(cargo, (updatedCargo) => {
+            const index = this.cargoData.history.findIndex(c => c.timestamp === timestamp);
+            if (index !== -1) {
+                this.cargoData.history[index] = { ...updatedCargo, timestamp };
+                this.saveAndRefresh();
+                showMessage('Carico modificato con successo!', 'info');
+            }
+        });
+    }
+
+    showEditCargoModal(cargo, onConfirm) {
+        const existingModal = document.getElementById('edit-cargo-modal');
+        if (existingModal) existingModal.remove();
+
+        const cargoDate = parseDate(cargo.date);
+        const formattedDate = cargoDate ? formatter.toLocaleDate(cargoDate) : '';
+
+        const modalHTML = `
+            <div class="modal-overlay" id="edit-cargo-modal">
+                <div class="modal">
+                    <div class="modal-header">
+                        <h3 class="modal-title">Modifica Carico</h3>
+                        <button class="modal-close" id="edit-close-modal">&times;</button>
+                    </div>
+                    <div class="modal-content">
+                        <form class="modal-form" id="editCargoForm">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Data Carico</label>
+                                    <input type="text" class="form-input" id="edit-load-date" value="${formattedDate}" placeholder="GG/MM/AAAA" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Autista</label>
+                                    <input type="text" class="form-input" id="edit-load-driver" value="${cargo.driver || ''}" placeholder="Nome autista" required>
+                                </div>
+                            </div>
+                            <div class="form-group full-width">
+                                <label class="form-label">Quantità Prodotti e Differenze</label>
+                                <div class="product-inputs">
+                                    <div class="product-input-group">
+                                        <div class="product-input-label benzina">Benzina</div>
+                                        <input type="number" class="form-input" id="edit-load-benzina" value="${cargo.benzina || 0}" placeholder="0" step="1000" min="0">
+                                        <input type="number" class="form-input product-diff-input" id="edit-load-diff-benzina" value="${cargo.diffBenzina || 0}" placeholder="+/- 0">
+                                    </div>
+                                    <div class="product-input-group">
+                                        <div class="product-input-label gasolio">Gasolio</div>
+                                        <input type="number" class="form-input" id="edit-load-gasolio" value="${cargo.gasolio || 0}" placeholder="0" step="1000" min="0">
+                                        <input type="number" class="form-input product-diff-input" id="edit-load-diff-gasolio" value="${cargo.diffGasolio || 0}" placeholder="+/- 0">
+                                    </div>
+                                    <div class="product-input-group">
+                                        <div class="product-input-label diesel">Diesel+</div>
+                                        <input type="number" class="form-input" id="edit-load-diesel" value="${cargo.diesel || 0}" placeholder="0" step="1000" min="0">
+                                        <input type="number" class="form-input product-diff-input" id="edit-load-diff-diesel" value="${cargo.diffDiesel || 0}" placeholder="+/- 0">
+                                    </div>
+                                    <div class="product-input-group">
+                                        <div class="product-input-label hvolution">HVOlution</div>
+                                        <input type="number" class="form-input" id="edit-load-hvolution" value="${cargo.hvolution || 0}" placeholder="0" step="1000" min="0">
+                                        <input type="number" class="form-input product-diff-input" id="edit-load-diff-hvolution" value="${cargo.diffHvolution || 0}" placeholder="+/- 0">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="modal-actions">
+                                <button type="button" class="action-btn secondary" id="edit-cancel-modal">Annulla</button>
+                                <button type="button" class="action-btn warning" id="edit-delete-modal">Elimina Carico</button>
+                                <button type="submit" class="action-btn">Salva Modifiche</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        document.body.insertAdjacentHTML('beforeend', modalHTML);
+
+        const modal = document.getElementById('edit-cargo-modal');
+        const form = document.getElementById('editCargoForm');
+        
+        const hideModal = () => {
+            modal.classList.remove('active');
+            setTimeout(() => modal.remove(), 300);
+        };
+
+        document.getElementById('edit-close-modal').addEventListener('click', hideModal);
+        document.getElementById('edit-cancel-modal').addEventListener('click', hideModal);
+
+        document.getElementById('edit-delete-modal').addEventListener('click', () => {
+            hideModal();
+            this.deleteCargo(cargo.timestamp);
+        });
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const dateValue = document.getElementById('edit-load-date').value;
+            const timestamp = createDateTimestamp(dateValue);
+
+            if (!timestamp) {
+                showMessage('Data non valida. Usare il formato GG/MM/AAAA.', 'warning');
+                return;
+            }
+
+            const updatedCargo = {
+                date: timestamp,
+                driver: document.getElementById('edit-load-driver').value.trim(),
+                benzina: parseInt(document.getElementById('edit-load-benzina').value) || 0,
+                diffBenzina: parseInt(document.getElementById('edit-load-diff-benzina').value) || 0,
+                gasolio: parseInt(document.getElementById('edit-load-gasolio').value) || 0,
+                diffGasolio: parseInt(document.getElementById('edit-load-diff-gasolio').value) || 0,
+                diesel: parseInt(document.getElementById('edit-load-diesel').value) || 0,
+                diffDiesel: parseInt(document.getElementById('edit-load-diff-diesel').value) || 0,
+                hvolution: parseInt(document.getElementById('edit-load-hvolution').value) || 0,
+                diffHvolution: parseInt(document.getElementById('edit-load-diff-hvolution').value) || 0
+            };
+            
+            if (!updatedCargo.driver) {
+                showMessage('Il nome dell\'autista è obbligatorio.', 'warning');
+                return;
+            }
+            if (updatedCargo.benzina === 0 && updatedCargo.gasolio === 0 && updatedCargo.diesel === 0 && updatedCargo.hvolution === 0) {
+                showMessage('Inserire almeno un prodotto caricato.', 'warning');
+                return;
+            }
+
+            onConfirm(updatedCargo);
+            hideModal();
+        });
+
+        modal.addEventListener('click', (e) => {
+            if (e.target.id === 'edit-cargo-modal') hideModal();
+        });
+
+        modal.classList.add('active');
+        document.getElementById('edit-load-driver').focus();
+    }
+    
+    updateTotals() {
+        const currentYearData = this.cargoData.history.filter(c => {
+            const cargoDate = parseDate(c.date);
+            return cargoDate && cargoDate.getFullYear() === this.currentYear;
+        });
+        
+        const totals = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0 };
+        const diffs = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0 };
+        const diffsPositive = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0 };
+        const diffsNegative = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0 };
+        
+        currentYearData.forEach(cargo => {
+            totals.benzina += cargo.benzina || 0;
+            diffs.benzina += cargo.diffBenzina || 0;
+            if (cargo.diffBenzina > 0) diffsPositive.benzina += cargo.diffBenzina;
+            else diffsNegative.benzina += cargo.diffBenzina;
+
+            totals.gasolio += cargo.gasolio || 0;
+            diffs.gasolio += cargo.diffGasolio || 0;
+            if (cargo.diffGasolio > 0) diffsPositive.gasolio += cargo.diffGasolio;
+            else diffsNegative.gasolio += cargo.diffGasolio;
+
+            totals.diesel += cargo.diesel || 0;
+            diffs.diesel += cargo.diffDiesel || 0;
+            if (cargo.diffDiesel > 0) diffsPositive.diesel += cargo.diffDiesel;
+            else diffsNegative.diesel += cargo.diffDiesel;
+
+            totals.hvolution += cargo.hvolution || 0;
+            diffs.hvolution += cargo.diffHvolution || 0;
+            if (cargo.diffHvolution > 0) diffsPositive.hvolution += cargo.diffHvolution;
+            else diffsNegative.hvolution += cargo.diffHvolution;
+        });
+        
+        this.cargoData.totals = totals;
+        this.renderTotals(totals, diffs, diffsPositive, diffsNegative); 
+    }
+    
+    renderTotals(totals, diffs, diffsPositive, diffsNegative) {
+        ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(p => {
+            const litriEl = document.getElementById(`litri-${p}`);
+            if (litriEl) litriEl.value = formatter.liters(totals[p]);
+
+            const piuEl = document.getElementById(`piu-${p}`);
+            if (piuEl) piuEl.value = formatter.liters(diffsPositive[p] || 0);
+
+            const menoEl = document.getElementById(`meno-${p}`);
+            if (menoEl) menoEl.value = formatter.liters(diffsNegative[p] || 0); 
+
+            const diffInput = document.getElementById(`diff-${p}`);
+            if (diffInput) {
+                const diffValue = diffs[p];
+                diffInput.value = formatter.diff.format(diffValue);
+                diffInput.style.color = diffValue > 0 ? 'var(--success)' : diffValue < 0 ? 'var(--danger)' : 'var(--text-secondary)';
+            }
+            const rimanenza = this.cargoData.rimanenze[p] || 0;
+            const totaleEl = document.getElementById(`totale-${p}`);
+            if (totaleEl) totaleEl.value = formatter.liters(totals[p] + diffs[p] + rimanenza);
+        });
+    }
+
+    renderHistory() {
+        const tbody = document.getElementById('history-tbody');
+        if(!tbody) return;
+        tbody.innerHTML = '';
+        
+        const table = document.querySelector('.history-table');
+        if (table) {
+            table.classList.toggle('editing', this.isEditingHistory);
+        }
+        
+        const currentYearHistory = this.cargoData.history.filter(c => {
+            const cargoDate = parseDate(c.date);
+            return cargoDate && cargoDate.getFullYear() === this.currentYear;
+        });
+        
+        if (currentYearHistory.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="11" style="text-align:center; padding: 20px;">Nessun carico per il ${this.currentYear}</td></tr>`;
             return;
         }
-
-        // Destroy existing chart
-        if (this.chart) {
-            this.chart.destroy();
-        }
-
-        // Usa i totali calcolati
-        const totals = this.cargoData.totals;
-
-        // Crea nuovo grafico con una singola barra per prodotto
-        try {
-            this.chart = new Chart(canvas, {
-                type: 'bar',
-                data: {
-                    labels: ['BENZINA', 'GASOLIO', 'DIESEL+', 'HVOLUTION'],
-                    datasets: [{
-                        data: [totals.benzina, totals.gasolio, totals.diesel, totals.hvolution],
-                        backgroundColor: ['#28a746', '#ff9f00', '#fe5d26', '#007bff'],
-                        borderRadius: {
-                            topLeft: 20,
-                            topRight: 20,
-                            bottomLeft: 0,
-                            bottomRight: 0
-                        },
-                        borderSkipped: 'bottom'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false },
-                        tooltip: { enabled: false }
-                    },
-                    scales: {
-                        x: { display: false },
-                        y: { display: false }
-                    }
+        
+        currentYearHistory
+            .sort((a, b) => (parseDate(b.date) || 0) - (parseDate(a.date) || 0))
+            .forEach((cargo) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${formatter.toLocaleDate(parseDate(cargo.date)) || 'Data non valida'}</td>
+                    <td>${formatter.liters(cargo.benzina || 0)}</td>
+                    <td>${formatter.diff.format(cargo.diffBenzina || 0)}</td>
+                    <td>${formatter.liters(cargo.gasolio || 0)}</td>
+                    <td>${formatter.diff.format(cargo.diffGasolio || 0)}</td>
+                    <td>${formatter.liters(cargo.diesel || 0)}</td>
+                    <td>${formatter.diff.format(cargo.diffDiesel || 0)}</td>
+                    <td>${formatter.liters(cargo.hvolution || 0)}</td>
+                    <td>${formatter.diff.format(cargo.diffHvolution || 0)}</td>
+                    <td>${cargo.driver || ''}</td>
+                    <td>
+                        <button class="edit-btn" data-timestamp="${cargo.timestamp}">✎</button>
+                    </td>
+                `;
+                
+                const editBtn = row.querySelector('.edit-btn');
+                
+                if (editBtn) {
+                    editBtn.addEventListener('click', () => this.editCargo(cargo.timestamp));
                 }
             });
-        } catch (error) {
-            console.error('Errore nella creazione del grafico:', error);
-        }
+    }
+    
+    renderChart() {
+        const canvas = document.getElementById('carichiChart');
+        if (!canvas) return;
+        if (this.chart) this.chart.destroy();
+        if (typeof Chart === 'undefined') return;
+
+        const totals = this.cargoData.totals;
+
+        const rootStyles = getComputedStyle(document.documentElement);
+        const productColors = {
+            benzina: rootStyles.getPropertyValue('--product-benzina').trim(),
+            gasolio: rootStyles.getPropertyValue('--product-gasolio').trim(),
+            diesel: rootStyles.getPropertyValue('--product-diesel').trim(),
+            hvolution: rootStyles.getPropertyValue('--product-hvolution').trim()
+        };
+
+        this.chart = new Chart(canvas, {
+            type: 'bar',
+            data: {
+                labels: ['Benzina', 'Gasolio', 'Diesel+', 'HVOlution'],
+                datasets: [{ 
+                    label: 'Litri Caricati', 
+                    data: [totals.benzina || 0, totals.gasolio || 0, totals.diesel || 0, totals.hvolution || 0], 
+                    backgroundColor: [
+                        productColors.benzina,
+                        productColors.gasolio,
+                        productColors.diesel,
+                        productColors.hvolution
+                    ], 
+                    borderRadius: 8 
+                }]
+            },
+            options: {
+                responsive: true, 
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {  
+                    x: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') } },  
+                    y: { ticks: { color: getComputedStyle(document.body).getPropertyValue('--text-secondary') } }  
+                }
+            }
+        });
     }
 
     updateYearDisplay() {
-        const titleElement = document.getElementById('box-title-anno');
+        const year = this.currentYear;
+        const boxTitle = document.getElementById('box-title-anno');
         const rimanenzaHeader = document.getElementById('rimanenza-header');
-        
-        if (titleElement) {
-            titleElement.textContent = `TOTALE ANNO (${this.currentYear})`;
-        }
-        if (rimanenzaHeader) {
-            rimanenzaHeader.textContent = `RIMANENZA (${this.currentYear - 1})`;
-        }
+
+        if(boxTitle) boxTitle.textContent = `TOTALE ANNO (${year})`;
+        if(rimanenzaHeader) rimanenzaHeader.textContent = `RIMANENZA (${year - 1})`;
     }
 
-    exportData() {
-        try {
-            const dataToExport = {
-                timestamp: new Date().toISOString(),
-                version: '1.0',
-                carico: {
-                    totals: this.cargoData.totals,
-                    history: this.cargoData.history,
-                    year: this.currentYear
-                }
-            };
-
-            const dataStr = JSON.stringify(dataToExport, null, 2);
-            const dataBlob = new Blob([dataStr], {type: 'application/json'});
-            const url = URL.createObjectURL(dataBlob);
-            
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `cerbero_carico_${this.currentYear}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            showMessage('Dati carico esportati con successo!', 'success');
-        } catch (error) {
-            showMessage('Errore durante l\'esportazione', 'error');
-            console.error('Export error:', error);
-        }
-    }
-
-    importData() {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        
-        input.addEventListener('change', (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
-            
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    
-                    if (confirm('Importare i dati di carico? Questo sovrascriverà i dati attuali.')) {
-                        if (importedData.carico) {
-                            if (importedData.carico.history) {
-                                this.cargoData.history = importedData.carico.history;
-                            }
-                            
-                            if (importedData.carico.totals) {
-                                this.cargoData.totals = importedData.carico.totals;
-                            }
-                            
-                            this.saveCargoData();
-                            this.loadRimanenze();
-                            this.updateTotals();
-                            this.loadHistory();
-                            this.updateChart();
-                            
-                            showMessage('Dati carico importati con successo!', 'success');
-                        } else {
-                            showMessage('File non contiene dati di carico validi', 'warning');
-                        }
-                    }
-                } catch (error) {
-                    showMessage('Errore: file non valido', 'error');
-                    console.error('Import error:', error);
-                }
-            };
-            reader.readAsText(file);
+    saveRimanenzeFromUI(triggerRefresh = true) {
+        ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(p => {
+            const input = document.getElementById(`rimanenza-${p}`);
+            if (input) this.cargoData.rimanenze[p] = parseInt(input.value.replace(/\./g, '')) || 0;
         });
-        
-        input.click();
+        Storage.save(Storage.KEYS.CARICO_RIMANENZE, this.cargoData.rimanenze);
+        if (triggerRefresh) {
+            this.updateTotals();
+        }
+    }
+
+    loadRimanenzeUI() {
+        ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(p => {
+            const input = document.getElementById(`rimanenza-${p}`);
+            if (input) input.value = formatter.liters(this.cargoData.rimanenze[p] || 0);
+        });
     }
 
     resetYear() {
-        if (confirm(`Eliminare tutti i dati di carico per l'anno ${this.currentYear}?\nQuesta azione non può essere annullata.`)) {
-            this.cargoData.history = this.cargoData.history.filter(cargo => 
-                new Date(cargo.date).getFullYear() !== this.currentYear
-            );
-            
-            // Reset totali
-            this.cargoData.totals = {
-                benzina: 0,
-                gasolio: 0,
-                diesel: 0,
-                hvolution: 0
-            };
-            
-            this.saveCargoData();
-            this.updateTotals();
-            this.loadHistory();
-            this.updateChart();
-            
-            showMessage(`Dati ${this.currentYear} eliminati`, 'success');
-        }
-    }
-
-    // Metodo per sincronizzare con il backup completo
-    syncWithSystemData(systemData) {
-        if (systemData && systemData.carico) {
-            if (systemData.carico.totals) {
-                this.cargoData.totals = systemData.carico.totals;
-            }
-            if (systemData.carico.history) {
-                this.cargoData.history = systemData.carico.history;
-            }
-            
-            this.saveCargoData();
-            this.loadRimanenze();
-            this.updateTotals();
-            this.loadHistory();
-            this.updateChart();
-            return true;
-        }
-        return false;
-    }
-
-    // Cancella tutti i dati del carico
-    clearAllData() {
-        if (confirm('Cancellare tutti i dati del carico? Questa azione non può essere annullata.')) {
-            this.cargoData = {
-                totals: { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0 },
-                history: []
-            };
-            
-            this.saveCargoData();
-            this.updateTotals();
-            this.loadHistory();
-            this.updateChart();
-            
-            // Reset rimanenze
-            ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(product => {
-                const input = document.getElementById(`rimanenza-${product}`);
-                if (input) input.value = '0';
-            });
-            
-            showMessage('Tutti i dati del carico sono stati cancellati', 'info');
-        }
-    }
-
-    // Ottieni statistiche del carico
-    getStatistics() {
-        const currentYearHistory = this.cargoData.history.filter(cargo => 
-            new Date(cargo.date).getFullYear() === this.currentYear
-        );
-        
-        return {
-            totalCarichi: currentYearHistory.length,
-            totaleLitri: Object.values(this.cargoData.totals).reduce((sum, val) => sum + val, 0),
-            prodotti: this.cargoData.totals,
-            lastUpdate: currentYearHistory.length > 0 ? 
-                Math.max(...currentYearHistory.map(c => new Date(c.timestamp).getTime())) : null
-        };
-    }
-}
-
-/* ===== FUNZIONI IMPORT/EXPORT INTEGRATE ===== */
-function importaDatiCompleti() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    
-    input.addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            try {
-                const importedData = JSON.parse(e.target.result);
+        showConfirmModal(
+            `Resettare Anno ${this.currentYear}?`,
+            `Questa azione eliminerà tutti i dati di carico e le rimanenze per l'anno corrente. L'azione non può essere annullata.`,
+            () => {
+                this.cargoData.history = this.cargoData.history.filter(c => {
+                    const cargoDate = parseDate(c.date);
+                    return !cargoDate || cargoDate.getFullYear() !== this.currentYear;
+                });
                 
-                if (confirm('Importare TUTTI i dati? Questo sovrascriverà i dati attuali di tutte le sezioni.')) {
-                    let importSuccess = false;
-                    
-                    // Importa dati Carico
-                    if (importedData.carico && cargoManager) {
-                        if (cargoManager.syncWithSystemData(importedData)) {
-                            importSuccess = true;
-                        }
-                    }
-                    
-                    // Importa altri dati del sistema
-                    if (importedData.erogatori) {
-                        Storage.save(Storage.KEYS.DISPENSERS, importedData.erogatori);
-                        importSuccess = true;
-                    }
-                    
-                    if (importedData.monetario) {
-                        Storage.save(Storage.KEYS.MONETARIO_DATA, importedData.monetario);
-                        importSuccess = true;
-                    }
-                    
-                    if (importedData.registro) {
-                        Storage.save(Storage.KEYS.REGISTRO_DATA, importedData.registro);
-                        importSuccess = true;
-                    }
-                    
-                    if (importedData.vendite) {
-                        Storage.save(Storage.KEYS.VENDITE_DATA, importedData.vendite);
-                        importSuccess = true;
-                    }
-                    
-                    if (importedData.credito) {
-                        Storage.save(Storage.KEYS.CREDITO_DATA, importedData.credito);
-                        importSuccess = true;
-                    }
-                    
-                    if (importSuccess) {
-                        showMessage('Dati importati con successo!', 'success');
-                    } else {
-                        showMessage('Nessun dato valido trovato nel file', 'warning');
-                    }
-                }
-            } catch (error) {
-                showMessage('Errore: file non valido', 'error');
-                console.error('Errore import:', error);
+                this.cargoData.rimanenze = {};
+                this.saveAndRefresh();
+                this.loadRimanenzeUI();
+                showMessage(`Dati per l'anno ${this.currentYear} cancellati.`, 'info');
             }
-        };
-        reader.readAsText(file);
-    });
-    
-    input.click();
-}
-
-function esportaDatiCompleti() {
-    try {
-        const dataToExport = {
-            timestamp: new Date().toISOString(),
-            version: '1.0',
-            
-            // Dati Carico
-            carico: {
-                totals: Storage.load(Storage.KEYS.CARICO_TOTALS, {}),
-                history: Storage.load(Storage.KEYS.CARICO_HISTORY, [])
-            },
-            
-            // Dati Erogatori
-            erogatori: Storage.load(Storage.KEYS.DISPENSERS, {}),
-            
-            // Dati Monetario
-            monetario: Storage.load(Storage.KEYS.MONETARIO_DATA, {}),
-            
-            // Dati Registro
-            registro: Storage.load(Storage.KEYS.REGISTRO_DATA, {}),
-            
-            // Altri dati delle pagine
-            vendite: Storage.load(Storage.KEYS.VENDITE_DATA, {}),
-            credito: Storage.load(Storage.KEYS.CREDITO_DATA, {})
-        };
-
-        const dataStr = JSON.stringify(dataToExport, null, 2);
-        const dataBlob = new Blob([dataStr], {type: 'application/json'});
-        const url = URL.createObjectURL(dataBlob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `cerbero_backup_completo_${new Date().toISOString().split('T')[0]}.json`;
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-        
-        showMessage('Backup completo esportato con successo!', 'success');
-    } catch (error) {
-        showMessage('Errore durante l\'esportazione completa', 'error');
-        console.error('Errore export:', error);
+        );
     }
-}
-
-function stampaDati() {
-    showMessage('Funzione stampa in fase di sviluppo', 'info');
-}
-
-/* ===== FUNZIONI GLOBALI ===== */
-function showInfo() {
-    const infoMessage = `
-GESTIONE CARICO - CERBERO v1.0
-
-Funzionalità:
-• Registrazione carichi carburanti per anno
-• Calcolo automatico totali e differenze
-• Grafico statistiche prodotti
-• Gestione rimanenze anno precedente
-• Storage unificato con sistema CERBERO
-
-Prodotti gestiti:
-• Benzina
-• Gasolio
-• Diesel+
-• Hvolution
-
-Storage unificato:
-• Compatibile con tutte le pagine CERBERO
-• Backup automatico e sincronizzazione
-• Persistenza dati tra sessioni
-
-Grafici:
-• Visualizzazione totali per prodotto
-• Aggiornamento automatico
-• Colori distintivi per categoria
-
-I dati vengono salvati automaticamente in localStorage.
-    `;
-    alert(infoMessage);
 }
 
 /* ===== INIZIALIZZAZIONE ===== */
-let cargoManager;
-
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        cargoManager = new CargoManager();
-        console.log('✅ CERBERO Carico inizializzato correttamente');
-        showMessage('Sistema Carico caricato', 'success');
+        if (typeof Storage === 'undefined') {
+            showMessage("Errore critico: storage.js non caricato.", "error");
+            return;
+        }
+        
+        initializeThemeSwitcher();
+        initializeInfoButton(); // AGGIUNTA CHIAMATA
+        
+        window.cargoManager = new CargoManager();
+        
     } catch (error) {
-        console.error('❌ Errore nell\'inizializzazione carico:', error);
-        showMessage('Errore nell\'inizializzazione del sistema', 'error');
+        console.error('Errore critico durante l\'inizializzazione di Carico:', error);
+        showMessage('Errore critico nell\'avvio del modulo Carico', 'error');
     }
 });
 
-/* ===== GESTIONE ERRORI GLOBALI ===== */
-window.addEventListener('error', function(e) {
-    console.error('Errore JavaScript:', e.error);
-    showMessage('Si è verificato un errore. Controlla la console.', 'error');
-});
-
-/* ===== SALVATAGGIO AUTOMATICO PRIMA DI USCIRE ===== */
-window.addEventListener('beforeunload', function(e) {
-    if (cargoManager) {
-        cargoManager.saveCargoData();
+window.addEventListener('beforeunload', () => {
+    try {
+        if (window.cargoManager) {
+            window.cargoManager.saveAndRefresh();
+        }
+    } catch (error) {
+        console.error('Errore durante il salvataggio finale:', error);
     }
 });
-
-/* ===== FUNZIONI ESPOSTE GLOBALMENTE ===== */
-window.exportCargoData = function() {
-    if (cargoManager) {
-        cargoManager.exportData();
-    }
-};
-
-window.clearCargoData = function() {
-    if (cargoManager) {
-        cargoManager.clearAllData();
-    }
-};
-
-window.getCargoSummary = function() {
-    if (cargoManager) {
-        return cargoManager.getStatistics();
-    }
-    return { totalCarichi: 0, totaleLitri: 0, prodotti: {}, lastUpdate: null };
-};
