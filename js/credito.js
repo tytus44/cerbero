@@ -210,30 +210,30 @@ class CreditManager {
         if (!client) return;
     
         const modal = document.getElementById('client-detail-modal');
-        const modalBody = document.getElementById('modal-body-content');
+        const modalBody = document.getElementById('modal-body-content'); // Questo è il div con class="modal-inner-content"
     
         const balance = this.getClientBalance(clientId);
         const isEssepi = client.name.trim().toLowerCase() === 'essepi';
         const serviziValue = isEssepi ? (client.transactions || []).filter(t => t.description.toLowerCase() === 'acconto').reduce((total, t) => total + (Math.abs(t.amount) * 0.10), 0) : 0;
         const finalBalance = balance - serviziValue;
         const balanceColor = finalBalance < 0 ? 'var(--danger)' : (finalBalance > 0 ? 'var(--success)' : 'var(--text-secondary)');
-        const serviziHTML = isEssepi && serviziValue > 0 ? `<div class="client-total" style="border-top: 2px solid var(--primary-blue); padding-top: 15px;"><span>Servizi (10%):</span><span class="total-value" style="color: var(--danger);">- ${formatter.currency.format(serviziValue)}</span></div>` : '';
+        const serviziHTML = isEssepi && serviziValue > 0 ? `<div class="client-total"><span>Servizi (10%):</span><span class="total-value" style="color: var(--danger);">- ${formatter.currency.format(serviziValue)}</span></div>` : '';
         const today = formatter.date(new Date());
         
-        const transactionsHTML = (client.transactions || []).length > 0 ? [...client.transactions].sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `<div class="transaction-item"><div class="transaction-details">${t.description}<div class="transaction-date">${formatter.dateTime(t.date)}</div></div><div class="transaction-right-side"><div class="transaction-amount" style="color: ${t.amount > 0 ? 'var(--success)' : 'var(--danger)'}">${t.amount > 0 ? '+' : '-'}${formatter.currency.format(Math.abs(t.amount))}</div><button class="transaction-delete-btn" onclick="window.creditManager.deleteTransaction('${clientId}', '${t.id}')">×</button></div></div>`).join('') : '<p style="text-align:center; font-size:12px; color: var(--text-secondary); padding: 10px 0;">Nessuna transazione.</p>';
+        // Ho rimosso padding-left e padding-right da transaction-item e client-total nell'HTML generato
+        // Per lasciare che il padding del .modal-inner-content gestisca lo spazio orizzontale
+        const transactionsHTML = (client.transactions || []).length > 0 ? [...client.transactions].sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `<div class="transaction-item"><div class="transaction-details">${t.description}<div class="transaction-date">${formatter.dateTime(t.date)}</div></div><div class="transaction-right-side"><div class="transaction-amount" style="color: ${t.amount > 0 ? 'var(--success)' : 'var(--danger)'}">${t.amount > 0 ? '+' : '-'}${formatter.currency.format(Math.abs(t.amount))}</div><button class="transaction-delete-btn" onclick="window.creditManager.deleteTransaction('${clientId}', '${t.id}')">×</button></div></div>`).join('') : '<p class="no-transactions-message">Nessuna transazione.</p>';
         
         const clientNameHTML = `<input type="text" class="client-name-input" value="${client.name}">`;
         const moreOptionsIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"/></svg>`;
         
         modalBody.innerHTML = `
-            <div class="box summary-box">
-                <div class="client-header">${clientNameHTML}<div class="client-actions-wrapper"><div class="client-actions"><button class="client-acconto-btn" title="Acconto"></button><button class="client-salda-btn" title="Salda" ${finalBalance >= 0 ? 'disabled' : ''}></button><button class="client-print-btn" title="Stampa"></button><button class="client-delete-btn" title="Elimina"></button></div><button class="client-more-options-btn" title="Altro">${moreOptionsIcon}</button></div></div>
-                <div class="transaction-form-grid"><input type="text" class="grid-input date-input" value="${today}"><input type="text" class="grid-input desc-input" placeholder="Descrizione"><input type="text" class="grid-input amount-input" placeholder="Importo"></div>
-                <div class="history-toggle">MOSTRA / NASCONDI STORICO</div>
-                <div class="transactions-container">${transactionsHTML}</div>
-                ${serviziHTML}
-                <div class="client-total"><span>SALDO FINALE:</span><span class="total-value" style="color: ${balanceColor}">${formatter.currency.format(finalBalance)}</span></div>
-            </div>`;
+            <div class="client-header">${clientNameHTML}<div class="client-actions-wrapper"><div class="client-actions"><button class="client-acconto-btn" title="Acconto"></button><button class="client-salda-btn" title="Salda" ${finalBalance >= 0 ? 'disabled' : ''}></button><button class="client-print-btn" title="Stampa"></button><button class="client-delete-btn" title="Elimina"></button></div><button class="client-more-options-btn" title="Altro">${moreOptionsIcon}</button></div></div>
+            <div class="transaction-form-grid"><input type="text" class="grid-input date-input" value="${today}"><input type="text" class="grid-input desc-input" placeholder="Descrizione"><input type="text" class="grid-input amount-input" placeholder="Importo"></div>
+            <div class="history-toggle">MOSTRA / NASCONDI STORICO</div>
+            <div class="transactions-container">${transactionsHTML}</div>
+            ${serviziHTML}
+            <div class="client-total"><span>SALDO FINALE:</span><span class="total-value" style="color: ${balanceColor}">${formatter.currency.format(finalBalance)}</span></div>`;
     
         this.bindModalEvents(clientId, modal);
         modal.classList.add('active');
@@ -248,7 +248,7 @@ class CreditManager {
 
         modal.onclick = (e) => { if (e.target === modal) hideModal(); };
         
-        const content = modal.querySelector('.box');
+        const content = modal.querySelector('.modal-inner-content'); // Seleziona il div con la nuova classe
         
         content.querySelector('.client-more-options-btn').addEventListener('click', e => content.querySelector('.client-actions').classList.toggle('is-open'));
 

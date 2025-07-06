@@ -70,7 +70,7 @@ function showMessage(message, type = 'info') {
         
         const colors = {
             error: '#FF3547',
-            info: '#0ABAB5',
+            info: '#0ABAB5', 
             warning: '#FFD700'
         };
         
@@ -560,7 +560,7 @@ const VenditeManager = {
             }
         });
     },
-
+    
     getProductColors: function(products) {
         const productColorMap = {
             'benzina': '#00C851',

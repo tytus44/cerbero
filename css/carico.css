@@ -61,9 +61,64 @@ body.dark-theme {
     --primary-blue-light: rgba(59, 130, 246, 0.2);
 }
 
-body.dark-theme .nav a { color: #e2e8f0 !important; }
-body.dark-theme .nav a:hover { color: #ffffff !important; background-color: var(--primary-blue-light); }
-body.dark-theme .nav a.active { background: var(--primary-blue); color: #ffffff !important; }
+/* Sfondo e testo dei link di navigazione nel tema scuro */
+body.dark-theme .nav a { color: var(--text-secondary) !important; }
+body.dark-theme .nav a:hover {
+    color: var(--text-primary) !important; /* Testo più chiaro in hover */
+    background-color: var(--primary-blue-light);
+}
+body.dark-theme .nav a.active {
+    background: var(--primary-blue);
+    color: #ffffff !important;
+}
+
+/* Sottolineatura dei link di navigazione nel tema scuro */
+body.dark-theme .nav a::before {
+    background: var(--text-primary); /* Colore chiaro per la sottolineatura */
+}
+
+/* Tema scuro per le icone del menu */
+body.dark-theme .nav a i {
+    color: var(--text-secondary) !important;
+}
+
+body.dark-theme .nav a:hover i {
+    color: var(--text-primary) !important;
+}
+
+body.dark-theme .nav a.active i {
+    color: #ffffff !important;
+}
+
+/* Colore delle icone dell'header nel tema scuro */
+body.dark-theme #info-btn i,
+body.dark-theme #theme-switcher i {
+    color: var(--text-primary);
+}
+
+/* Campi input e display nel tema scuro */
+body.dark-theme .grid-input {
+    background: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+body.dark-theme .grid-input[readonly] {
+    background-color: var(--bg-display);
+    color: var(--text-primary);
+}
+
+/* Scrollbar nel tema scuro */
+body.dark-theme ::-webkit-scrollbar-track {
+    background: transparent; /* Traccia completamente trasparente */
+}
+body.dark-theme ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2); /* Grigio chiaro per il pollice */
+    border: none; /* Rimuovi bordo */
+}
+body.dark-theme ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-blue); /* Blu in hover */
+}
+
 
 /* ===== STILI BASE ===== */
 * {
@@ -79,6 +134,28 @@ body {
     font-size: 16px;
     overflow-x: hidden;
 }
+
+/* Stili di base per le scrollbar (per tema chiaro) */
+::-webkit-scrollbar {
+    width: 8px; /* Larghezza della scrollbar verticale */
+    height: 8px; /* Altezza della scrollbar orizzontale */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Traccia completamente trasparente */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* Grigio chiaro per il pollice */
+    border-radius: 10px;
+    border: none; /* Rimuovi bordo */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-blue); /* Blu in hover */
+}
+
 
 .container {
     max-width: 1400px;
@@ -117,8 +194,10 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    flex-shrink: 0;
 }
 
+/* ===== MENU NAVIGAZIONE UNIFICATO ===== */
 .nav { 
     display: flex; 
     align-items: center; 
@@ -129,28 +208,45 @@ body {
 .nav ul { 
     list-style: none; 
     display: flex; 
-    gap: 8px; 
+    gap: 8px; /* Allineato con credito.css */
     margin: 0;
     padding: 0;
     align-items: center;
 }
 
-.nav a { 
-    text-decoration: none; 
-    color: var(--text-secondary); 
-    font-weight: 600; 
-    padding: 12px 20px; 
-    border-radius: 50px; 
-    transition: all 0.3s ease; 
+.nav a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 12px 20px; /* Allineato con credito.css */
+    border-radius: var(--radius-pill);
+    transition: all 0.3s ease;
     position: relative;
     line-height: 1;
     display: flex;
     align-items: center;
-    font-size: 14px;
-    height: 44px;
+    font-size: 14px; /* Allineato con credito.css */
+    height: 44px; /* Allineato con credito.css */
     box-sizing: border-box;
+    gap: 8px; /* Spazio tra icona e testo */
 }
 
+/* Stili per le icone del menu */
+.nav a i {
+    font-size: 16px; /* Allineato con credito.css */
+    color: var(--text-secondary); /* Colore base icona */
+    transition: color 0.3s ease;
+}
+
+.nav a:hover i {
+    color: var(--primary-blue); /* Colore icona in hover */
+}
+
+.nav a.active i {
+    color: var(--bg-white) !important; /* Colore icona quando attivo */
+}
+
+/* Sottolineatura animata */
 .nav a::before {
     content: '';
     position: absolute;
@@ -167,14 +263,14 @@ body {
     width: 60%;
 }
 
-.nav a:hover { 
-    color: var(--primary-blue); 
-    background-color: var(--primary-blue-light); 
+.nav a:hover {
+    color: var(--primary-blue);
+    background-color: var(--primary-blue-light);
 }
 
-.nav a.active { 
-    background: var(--primary-blue); 
-    color: var(--bg-white) !important; 
+.nav a.active {
+    background: var(--primary-blue);
+    color: var(--bg-white) !important;
     box-shadow: var(--shadow-medium);
 }
 
@@ -185,9 +281,11 @@ body {
 .header-actions { 
     display: flex; 
     align-items: center; 
+    justify-content: flex-end;
     gap: 10px; 
 }
 
+/* Stili per pulsanti icona header (FONT AWESOME) */
 #theme-switcher,
 #info-btn { 
     display: flex; 
@@ -208,14 +306,12 @@ body {
     transform: scale(1.1) rotate(180deg); 
 }
 
-#info-btn svg {
-    stroke: var(--text-primary);
-    fill: none;
-}
-
-#theme-switcher svg { 
-    fill: var(--text-primary); 
-    transition: all 0.3s ease;
+/* Colore delle icone Font Awesome nell'header */
+#info-btn i,
+#theme-switcher i {
+    font-size: 20px;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .theme-icon-hidden { 
@@ -272,7 +368,7 @@ body {
     transform: scaleX(1);
 }
 .summary-box.box:hover { 
-    transform: translateY(-3px); 
+    transform: none; /* Rimosso translateY(-3px) */
     box-shadow: var(--shadow-heavy); 
 }
 
@@ -283,29 +379,87 @@ body {
     align-items: center; justify-content: center;
     transition: background-color 0.2s, transform 0.3s ease-out;
 }
-.collapse-btn svg { width: 24px; height: 24px; fill: var(--text-secondary); transition: fill 0.2s, transform 0.3s ease-out; }
+.collapse-btn i { /* Assicurati che l'icona Font Awesome abbia un colore di base */
+    font-size: 24px;
+    color: var(--text-secondary);
+    transition: color 0.2s, transform 0.3s ease-out;
+}
 .collapse-btn:hover { background-color: var(--primary-blue-light); }
-.collapse-btn:hover svg { fill: var(--primary-blue); }
-.collapse-btn.collapsed svg { transform: rotate(-180deg); }
+.collapse-btn:hover i { color: var(--primary-blue); }
+.collapse-btn.collapsed i { transform: rotate(-180deg); }
 
 .collapsible-content { overflow: hidden; transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out, border 0.5s ease-in-out; }
 .collapsible-content.collapsed { max-height: 0; padding-top: 0; padding-bottom: 0; border-top: none; }
 
 /* ===== PULSANTE MODIFICA STORICO ===== */
+/* Stili base per il pulsante edit (renderlo simile a theme-switcher/info-btn) */
 .edit-history-btn {
-    width: 36px; height: 36px;
-    background-color: var(--primary-blue);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z'/%3E%3C/svg%3E");
-    background-repeat: no-repeat; background-position: center; background-size: 20px 20px;
-    border-radius: 50%; cursor: pointer; border: none; transition: all 0.3s ease;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2); margin-left: 10px;
+    width: 40px; /* Larghezza come theme-switcher/info-btn */
+    height: 40px; /* Altezza come theme-switcher/info-btn */
+    border-radius: 50%;
+    background: var(--bg-display); /* Sfondo come theme-switcher/info-btn */
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: none; /* Rimuovi ombra di default */
+    margin-left: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
-.edit-history-btn:hover { background-color: var(--primary-blue-hover); transform: scale(1.1); box-shadow: 0 4px 8px rgba(0,0,0,0.3); }
+/* Stili per l'icona Font Awesome all'interno di .edit-history-btn */
+.edit-history-btn i {
+    font-size: 20px; /* Dimensione dell'icona come theme-switcher/info-btn */
+    color: var(--text-primary); /* Colore dell'icona come theme-switcher/info-btn */
+    transition: all 0.3s ease;
+}
+
+.edit-history-btn:hover { 
+    background-color: var(--primary-blue-light); /* Hover come theme-switcher/info-btn */
+    transform: scale(1.1); /* Effetto scalatura in hover */
+    box-shadow: none; 
+}
+.edit-history-btn:hover i {
+    color: var(--primary-blue); /* Cambia colore icona in hover */
+}
+
+/* Stili quando il pulsante edit è in modalità 'editing' */
 .edit-history-btn.editing {
     background-color: var(--success);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'/%3E%3C/svg%3E");
 }
-.edit-history-btn.editing:hover { background-color: var(--success-hover); }
+.edit-history-btn.editing i {
+    color: white; /* Icona bianca quando è editing */
+}
+.edit-history-btn.editing:hover { 
+    background-color: var(--success-hover); 
+}
+.edit-history-btn.editing:hover i {
+    color: white;
+}
+
+/* Tema scuro per .edit-history-btn */
+body.dark-theme .edit-history-btn {
+    background: var(--bg-display);
+}
+body.dark-theme .edit-history-btn i {
+    color: var(--text-primary);
+}
+body.dark-theme .edit-history-btn:hover {
+    background-color: var(--primary-blue-light);
+}
+body.dark-theme .edit-history-btn:hover i {
+    color: var(--text-primary);
+}
+body.dark-theme .edit-history-btn.editing {
+    background-color: var(--success);
+}
+body.dark-theme .edit-history-btn.editing i {
+    color: white;
+}
+body.dark-theme .edit-history-btn.editing:hover {
+    background-color: var(--success-hover);
+}
+
 
 /* ===== LAYOUT & GRIDS ===== */
 .main-container { display: grid; grid-template-columns: 1fr 400px; gap: 20px; }
@@ -328,25 +482,151 @@ body {
 body.dark-theme .grid-input { background: var(--bg-primary); border-color: var(--bg-display); color: var(--text-primary); }
 body.dark-theme .grid-input[readonly] { background: var(--bg-display); }
 
-/* ===== PULSANTI ACTION BAR ===== */
-.action-bar { display: flex; justify-content: center; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
-.action-btn {
-    font-size: 14px; padding: 12px 25px; border: none; border-radius: var(--radius-large);
-    cursor: pointer; font-weight: 600; text-transform: uppercase; font-family: 'Montserrat', sans-serif;
-    color: white; background: var(--primary-blue); position: relative; overflow: hidden;
-    transition: all 0.3s ease;
+/* ===== PULSANTI TESTUALI UNIFICATI ===== */
+.action-bar { 
+    display: flex; 
+    justify-content: center; 
+    gap: 15px; 
+    margin-bottom: 30px; 
+    flex-wrap: wrap; 
 }
-.action-btn::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent); transition: left 0.5s ease; }
-.action-btn:hover::before { left: 100%; }
-.action-btn:hover { background: var(--primary-blue-hover); box-shadow: 0 4px 15px rgba(9, 63, 180, 0.3); transform: translateY(-2px); }
-.action-btn.secondary { background: #6c757d; }
-.action-btn.secondary:hover { background: #868e96; }
-#btn-stampa { background: #7F8CAA; }
-#btn-stampa:hover { background: #9AA5C4; }
-#btn-nuovo-carico { background: var(--success); }
-#btn-nuovo-carico:hover { background: var(--success-hover); }
-#btn-reset { background: var(--danger); }
-#btn-reset:hover { background: #FF1A2D; }
+
+/* Stili base per TUTTI i pulsanti testuali */
+.action-btn,
+.modal-actions .action-btn {
+    font-size: 14px;
+    padding: 12px 25px;
+    height: 44px;
+    text-decoration: none;
+    color: var(--text-secondary); /* Colore uniforme per tutti */
+    background: none; /* Sfondo trasparente per tutti */
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Spazio tra icona e testo */
+    box-shadow: none;
+}
+
+/* Sottolineatura animata per TUTTI i pulsanti testuali */
+.action-btn::before,
+.modal-actions .action-btn::before {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-blue);
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+    z-index: 1;
+}
+
+/* Effetto hover UNIFORME per tutti i pulsanti testuali */
+.action-btn:hover,
+.modal-actions .action-btn:hover {
+    color: var(--primary-blue);
+    background-color: var(--primary-blue-light);
+    box-shadow: none;
+    transform: none;
+}
+
+/* Larghezza della sottolineatura in hover per TUTTI i pulsanti testuali */
+.action-btn:hover::before,
+.modal-actions .action-btn::before {
+    width: 60%;
+}
+
+/* Tema scuro UNIFORME per tutti i pulsanti testuali */
+body.dark-theme .action-btn,
+body.dark-theme .modal-actions .action-btn {
+    color: var(--text-secondary);
+    background: none;
+}
+
+body.dark-theme .action-btn:hover,
+body.dark-theme .modal-actions .action-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--primary-blue-light);
+    box-shadow: none;
+}
+
+body.dark-theme .action-btn::before,
+body.dark-theme .modal-actions .action-btn::before {
+    background: var(--text-primary);
+}
+
+/* Pulsanti disabilitati */
+.action-btn:disabled {
+    background: #adb5bd;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+.action-btn:disabled:hover {
+    background: #adb5bd;
+    color: white;
+}
+
+.action-btn:disabled::before {
+    display: none;
+}
+
+/* PULSANTI ICONA TONDI (Modal Close) */
+.modal-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Tutti tondi */
+    background: none; /* Sfondo trasparente di base */
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none;
+    line-height: 1; /* Per centrare bene le icone */
+    flex-shrink: 0;
+}
+
+/* Nascondi la pseudo-classe ::before (sottolineatura) per i pulsanti icona */
+.modal-close-btn::before {
+    display: none;
+}
+
+/* PULSANTE CHIUSURA MODAL (Ora uniforme: sfondo trasparente, hover rosso) */
+.modal-close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 24px; /* Dimensione dell'icona 'x' */
+    font-weight: bold;
+    color: var(--text-secondary); /* Colore base dell'icona */
+    background-color: transparent; /* Sfondo trasparente di base */
+}
+.modal-close-btn:hover {
+    background-color: var(--danger); /* Sfondo rosso in hover */
+    color: white; /* Testo/icona bianco in hover */
+    transform: none; /* Rimuovi lo scale se non lo vuoi */
+}
+/* Tema scuro per il pulsante di chiusura modale */
+body.dark-theme .modal-close-btn {
+    color: var(--text-secondary);
+}
+body.dark-theme .modal-close-btn:hover {
+    background-color: var(--danger);
+    color: white;
+}
 
 /* ===== CHART & TABLE ===== */
 .chart-container-adaptive { position: relative; width: 100%; height: 100%; min-height: 280px;}
@@ -357,8 +637,74 @@ body.dark-theme .grid-input[readonly] { background: var(--bg-display); }
 .history-table thead th { background: var(--primary-blue); color: white; font-size: 12px; text-transform: uppercase; position: sticky; top: 0; z-index: 10; }
 .history-table tbody td { border-bottom: 1px solid var(--primary-blue-light); }
 .history-table tbody tr:hover { background: var(--primary-blue-light); }
-.edit-btn { background: var(--primary-blue); color: white; border: none; border-radius: 50%; width: 28px; height: 28px; cursor: pointer; font-size: 14px; font-weight: bold; transition: all 0.3s ease; display: none; align-items: center; justify-content: center; margin: 0 auto; }
-.edit-btn:hover { background: var(--primary-blue-hover); transform: scale(1.1); }
+.edit-btn { 
+    width: 40px; /* Larghezza come theme-switcher/info-btn */
+    height: 40px; /* Altezza come theme-switcher/info-btn */
+    border-radius: 50%;
+    background: var(--bg-display); /* Sfondo come theme-switcher/info-btn */
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: none; /* Rimuovi ombra di default */
+    margin: 0 auto; /* Centra orizzontalmente nella cella */
+    display: none; /* Nascondi di default, mostrato solo in modalità editing */
+    align-items: center; 
+    justify-content: center; 
+}
+/* Stili per l'icona Font Awesome all'interno di .edit-btn */
+.edit-btn i {
+    font-size: 20px; /* DIMENSIONE ICONA CORRETTA (20px) */
+    color: var(--text-primary); /* Colore dell'icona come theme-switcher/info-btn */
+    transition: all 0.3s ease;
+}
+
+.edit-btn:hover { 
+    background-color: var(--primary-blue-light); /* Hover come theme-switcher/info-btn */
+    transform: scale(1.1); /* Effetto scalatura in hover */
+    box-shadow: none; 
+}
+.edit-btn:hover i {
+    color: var(--primary-blue); /* Cambia colore icona in hover */
+}
+
+/* Stili quando il pulsante edit è in modalità 'editing' */
+.edit-btn.editing {
+    background-color: var(--success);
+}
+.edit-btn.editing i {
+    color: white; /* Icona bianca quando è editing */
+}
+.edit-btn.editing:hover { 
+    background-color: var(--success-hover); 
+}
+.edit-btn.editing:hover i {
+    color: white;
+}
+
+/* Tema scuro per .edit-btn */
+body.dark-theme .edit-btn {
+    background: var(--bg-display);
+}
+body.dark-theme .edit-btn i {
+    color: var(--text-primary);
+}
+body.dark-theme .edit-btn:hover {
+    background-color: var(--primary-blue-light);
+}
+body.dark-theme .edit-btn:hover i {
+    color: var(--text-primary);
+}
+body.dark-theme .edit-btn.editing {
+    background-color: var(--success);
+}
+body.dark-theme .edit-btn.editing i {
+    color: white;
+}
+body.dark-theme .edit-btn.editing:hover {
+    background-color: var(--success-hover);
+}
+
+
 .history-table.editing .edit-btn { display: flex; }
 
 /* ===== MODAL ===== */
@@ -399,8 +745,6 @@ body.dark-theme .grid-input[readonly] { background: var(--bg-display); }
 }
 .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--primary-blue-light); }
 .modal-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: var(--primary-blue); }
-.modal-close-btn, .modal-close { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--text-secondary); }
-.modal-close-btn:hover, .modal-close:hover { color: var(--danger); }
 .modal-content { padding: 20px; text-align: center; } /* MODIFICATO */
 .modal-content p { font-size: 16px; line-height: 1.6; }
 .modal-form { display: flex; flex-direction: column; gap: 15px; }
@@ -440,14 +784,24 @@ body.dark-theme .product-diff-input { background: var(--bg-primary); border-colo
 
 /* Stili Modale Info */
 .modal-info-icon {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 15px;
+    font-size: 60px; /* Dimensione per icona Font Awesome */
+    color: var(--primary-blue); /* Colore base */
+    margin: 0 auto 20px;
     display: block;
-    filter: brightness(0) saturate(100%) invert(27%) sepia(89%) saturate(1651%) hue-rotate(213deg) brightness(97%) contrast(101%);
+    text-align: center;
     transition: all 0.3s ease;
 }
-.modal-info-icon:hover { transform: scale(1.05); }
+.modal-info-icon:hover {
+    color: var(--info); /* Colore hover */
+    transform: scale(1.1);
+}
+body.dark-theme .modal-info-icon {
+    color: var(--text-primary);
+}
+body.dark-theme .modal-info-icon:hover {
+    color: var(--info);
+}
+
 .info-modal-content {
     text-align: center; /* AGGIUNTO */
 }
@@ -483,7 +837,8 @@ body.dark-theme .product-diff-input { background: var(--bg-primary); border-colo
 }
 @media (max-width: 768px) {
     .header { flex-direction: column; gap: 15px; }
-    .nav ul { flex-wrap: wrap; justify-content: center; }
+    .nav ul { gap: 5px; flex-wrap: wrap; justify-content: center; }
+    .nav a { font-size: 12px; padding: 10px 15px; }
     .carico-grid { grid-template-columns: 80px 1fr; }
     .action-bar { flex-direction: column; align-items: center; }
     .action-bar .action-btn { width: 100%; max-width: 300px; }

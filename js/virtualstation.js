@@ -38,6 +38,7 @@ function initializeInfoButton() {
     try {
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
+        // Seleziona il bottone di chiusura del modale, ora con l'icona Font Awesome
         const modalCloseBtn = infoModal ? infoModal.querySelector('.modal-close-btn') : null;
         
         if (infoBtn && infoModal) {
@@ -286,7 +287,8 @@ class VirtualstationManager {
                 deleteBtnContainer.style.display = 'none';
             } else {
                 deleteBtnContainer.style.display = 'flex';
-                const deleteBtn = deleteBtnContainer.querySelector('.delete-turn-btn');
+                // Assicurati che il selettore sia corretto per l'icona Font Awesome
+                const deleteBtn = deleteBtnContainer.querySelector('.delete-turn-btn'); 
                 if (deleteBtn) {
                     deleteBtn.dataset.turnIndex = turnIndex;
                     deleteBtn.onclick = () => this.confirmDeleteTurn(turnIndex);
@@ -329,7 +331,7 @@ class VirtualstationManager {
         const turnElement = document.getElementById(`turn-block-${turnIndex}`);
         if (turnElement) turnElement.remove();
         this.turnManagers = this.turnManagers.filter(manager => manager.turnIndex !== turnIndex.toString());
-        let reindexedData = { globalTotals: this.data.globalTotals };
+        let reindexedData = { globalTotals: this.data.globalTotals || {} };
         let reindexedManagers = [];
         let currentNewIndex = 0;
         const sortedTurnKeys = Object.keys(this.data).filter(key => key.startsWith('turn-')).sort((a,b) => parseInt(a.split('-')[1]) - parseInt(b.split('-')[1]));
@@ -349,7 +351,8 @@ class VirtualstationManager {
                         reindexedDeleteBtnContainer.style.display = 'none';
                     } else {
                         reindexedDeleteBtnContainer.style.display = 'flex';
-                        const reindexedDeleteBtn = reindexedDeleteBtnContainer.querySelector('.delete-turn-btn');
+                        // Aggiorna il selettore per l'icona Font Awesome
+                        const reindexedDeleteBtn = reindexedDeleteBtnContainer.querySelector('.delete-turn-btn'); 
                         if(reindexedDeleteBtn) {
                             reindexedDeleteBtn.dataset.turnIndex = currentNewIndex;
                             reindexedDeleteBtn.onclick = () => this.confirmDeleteTurn(currentNewIndex);

@@ -38,6 +38,7 @@ function initializeInfoButton() {
     try {
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
+        // Seleziona il bottone di chiusura del modale per il Registro, che ora ha un'icona FA
         const modalCloseBtn = infoModal ? infoModal.querySelector('.modal-close-btn') : null;
         
         if (infoBtn && infoModal) {
@@ -148,7 +149,7 @@ function showMessage(message, type = 'info') {
         toast.textContent = message;
         
         const colors = {
-            error: '#FF3547', info: '#0ABAB5', warning: '#FFD700', success: '#4CAF50'
+            error: '#FF3547', info: '#0ABAB5', warning: '#FFD700', success: '#4CAF50' // Updated success color
         };
         
         toast.style.cssText = `
@@ -189,6 +190,7 @@ function showConfirmModal(title, text, onConfirm) {
         if (titleEl) titleEl.textContent = title;
         if (textEl) textEl.textContent = text;
         
+        // Clona i bottoni per rimuovere listeners precedenti (soluzione robusta)
         const newBtnOk = btnOk.cloneNode(true);
         btnOk.parentNode.replaceChild(newBtnOk, btnOk);
         newBtnOk.addEventListener('click', () => { onConfirm(); modal.classList.remove('active'); }, { once: true });
@@ -245,7 +247,20 @@ function setupAutocomplete(inputElement, suggestionsArray) {
     inputElement.parentNode.insertBefore(inputWrapper, inputElement);
     inputWrapper.appendChild(inputElement);
     inputWrapper.appendChild(suggestionsContainer);
+    
+    // Posizionamento del container di suggerimenti
+    // Questo era il problema di posizionamento, ora lo leghiamo all'inputWrapper
+    const positionSuggestions = () => {
+        const rect = inputElement.getBoundingClientRect();
+        suggestionsContainer.style.top = `${rect.bottom}px`;
+        suggestionsContainer.style.left = `${rect.left}px`;
+        suggestionsContainer.style.width = `${rect.width}px`;
+        suggestionsContainer.style.position = 'fixed'; // Usa fixed per uscire dal flusso del wrapper se necessario
+    };
+
+    inputElement.addEventListener('focus', positionSuggestions);
     inputElement.addEventListener('input', function() {
+        positionSuggestions(); // Aggiorna posizione ad ogni input
         let val = this.value;
         suggestionsContainer.innerHTML = '';
         currentFocus = -1;
@@ -289,6 +304,7 @@ function setupAutocomplete(inputElement, suggestionsArray) {
         }
     });
 }
+
 
 const pageState = { fondi: {}, entrate: [], uscite: [] };
 
@@ -421,7 +437,7 @@ const SectionHandler = {
                         <div class="transaction-details">${e.description || 'N/D'}<div class="transaction-date">${formatter.dateTime(e.date)}</div></div>
                         <div class="transaction-right-side">
                             <div class="transaction-amount">${formatter.currency.format(e.amount || 0)}</div>
-                            <button class="transaction-delete-btn" data-id="${e.id}">×</button>
+                            <button class="transaction-delete-btn" data-id="${e.id}"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </div>`).join('') : '<p style="text-align:center; font-size:12px; color:var(--text-secondary); padding:10px 0;">Nessuna voce registrata.</p>';
                 
@@ -449,14 +465,29 @@ const SectionHandler = {
                     const descInput = container.querySelector(`#${this.type}-desc`);
                     amountInput.addEventListener('blur', e => { if (e.target.value.trim() !== '') e.target.value = formatter.currency.format(parseNumber(e.target.value)); });
                     amountInput.addEventListener('keydown', e => { if (e.key === 'Enter') this.addEntry(); });
-                    if (descInput) descInput.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim() !== '' && (document.querySelector('.autocomplete-suggestions').style.display === 'none' || document.querySelector('.autocomplete-suggestions').getElementsByClassName('active-suggestion').length === 0)) { e.preventDefault(); amountInput.focus(); } });
+                    if (descInput) descInput.addEventListener('keydown', e => { 
+                        // Solo triggera l'aggiunta se la descrizione non è vuota E non ci sono suggerimenti visibili o attivi
+                        const autocompleteSuggestions = document.querySelector('.autocomplete-suggestions');
+                        const hasActiveSuggestion = autocompleteSuggestions && autocompleteSuggestions.style.display !== 'none' && autocompleteSuggestions.getElementsByClassName('active-suggestion').length > 0;
+
+                        if (e.key === 'Enter' && e.target.value.trim() !== '' && !hasActiveSuggestion) { 
+                            e.preventDefault(); 
+                            amountInput.focus(); 
+                        } 
+                    });
                 }
                 const historyToggle = container.querySelector('.history-toggle');
                 historyToggle.addEventListener('click', () => {
                     const transactionsContainer = container.querySelector('.transactions-container');
                     transactionsContainer.classList.toggle('is-expanded');
                 });
-                container.querySelectorAll('.transaction-delete-btn').forEach(btn => btn.addEventListener('click', e => this.deleteEntry(e.target.dataset.id)));
+                container.querySelectorAll('.transaction-delete-btn').forEach(btn => btn.addEventListener('click', e => {
+                    // Trova l'elemento genitore <li> per ottenere il data-id
+                    const listItem = e.target.closest('.transaction-delete-btn');
+                    if (listItem) {
+                        this.deleteEntry(listItem.dataset.id);
+                    }
+                }));
             }
         };
     }
@@ -514,11 +545,15 @@ function importaDatiCompleti() {
                 reader.onload = e => {
                     try {
                         const data = JSON.parse(e.target.result);
+                        // Cerca "registro" come chiave principale o le chiavi dirette fondi/entrate/uscite
                         let registroData = data.registro || (data.fondi || data.entrate || data.uscite ? data : null);
                         if (!registroData) throw new Error('Formato file non riconosciuto');
+                        
+                        // Assicurati che le proprietà esistano, anche se vuote
                         registroData.fondi = registroData.fondi || {};
                         registroData.entrate = Array.isArray(registroData.entrate) ? registroData.entrate : [];
                         registroData.uscite = Array.isArray(registroData.uscite) ? registroData.uscite : [];
+                        
                         Storage.save(Storage.KEYS.REGISTRO_DATA, registroData);
                         showMessage('Dati registro importati con successo!', 'success');
                         setTimeout(() => location.reload(), 1000);

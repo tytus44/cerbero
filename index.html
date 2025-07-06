@@ -6,6 +6,8 @@
     <title>CERBERO - Centro di Controllo</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
 
     <link rel="stylesheet" href="css/index.css">
     
@@ -16,32 +18,22 @@
         <div class="header-brand">CERBERO</div>
         <nav class="nav">
             <ul>
-                <li><a href="index.html" class="active">HOME</a></li>
-                <li><a href="pagine/registro.html">REGISTRO</a></li>
-                <li><a href="pagine/monetario.html">MONETARIO</a></li>
-                <li><a href="pagine/virtualstation.html">VIRTUALSTATION</a></li>
-                <li><a href="pagine/vendite.html">VENDITE</a></li>
-                <li><a href="pagine/credito.html">CREDITO</a></li>
-                <li><a href="pagine/carico.html">CARICO</a></li>
+                <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i>HOME</a></li>
+                <li><a href="pagine/registro.html"><i class="fa-solid fa-book"></i>REGISTRO</a></li>
+                <li><a href="pagine/monetario.html"><i class="fa-solid fa-coins"></i>MONETARIO</a></li>
+                <li><a href="pagine/virtualstation.html"><i class="fa-solid fa-gas-pump"></i>VIRTUALSTATION</a></li>
+                <li><a href="pagine/vendite.html"><i class="fa-solid fa-chart-line"></i>VENDITE</a></li>
+                <li><a href="pagine/credito.html"><i class="fa-solid fa-credit-card"></i>CREDITO</a></li>
+                <li><a href="pagine/carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
             </ul>
         </nav>
         <div class="header-actions">
             <a href="#" id="info-btn" title="Informazioni">
-                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="12" y1="16" x2="12" y2="12"></line>
-                    <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                </svg>
+                <i class="fa-solid fa-circle-info"></i>
             </a>
             <a href="#" id="theme-switcher" title="Cambia Tema">
-                <svg id="theme-icon-light" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px">
-                    <path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0-.39.39-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0 .39-.39.39-1.03 0-1.41l-1.06-1.06zm1.06-10.96c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36c.39-.39.39-1.03 0-1.41-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06z"/>
-                </svg>
-                <svg id="theme-icon-dark" class="theme-icon-hidden" xmlns="http://www.w3.org/2000/svg" enable-background="new 0 0 24 24" height="24px" viewBox="0 0 24 24" width="24px">
-                    <g><rect fill="none" height="24" width="24"/></g>
-                    <g><path d="M12,3c-4.97,0-9,4.03-9,9s4.03,9,9,9s9-4.03,9-9c0-0.46-0.04-0.92-0.11-1.36c-0.98,1.37-2.58,2.26-4.39,2.26 c-2.98,0-5.4-2.42-5.4-5.4c0-1.81,0.89-3.42,2.26-4.39C12.92,3.04,12.46,3,12,3L12,3z"/>
-                    </g>
-                </svg>
+                <i id="theme-icon-light" class="fa-solid fa-sun"></i>
+                <i id="theme-icon-dark" class="fa-solid fa-moon theme-icon-hidden"></i>
             </a>
         </div>
     </header>
@@ -51,14 +43,14 @@
             <h1 class="page-title">CENTRO DI CONTROLLO</h1>
 
             <div class="action-bar">
-                <button class="action-btn" onclick="importaDatiCompleti()">IMPORTA TUTTO</button>
-                <button class="action-btn" onclick="esportaTuttiIDati()">ESPORTA TUTTO</button>
-                <button class="action-btn success" onclick="confirmNewDay()">NUOVA GIORNATA</button>
+                <button class="action-btn" onclick="importaDatiCompleti()"><i class="fa-solid fa-download"></i>IMPORTA TUTTO</button>
+                <button class="action-btn" onclick="esportaTuttiIDati()"><i class="fa-solid fa-upload"></i>ESPORTA TUTTO</button>
+                <button class="action-btn success" onclick="confirmNewDay()"><i class="fa-solid fa-calendar-plus"></i>NUOVA GIORNATA</button>
             </div>
 
             <div class="dashboard-grid">
                 <section class="box summary-box giornata-box">
-                    <div class="box-header">GIORNATA</div>
+                    <div class="box-header"><i class="fa-solid fa-clock"></i><span>GIORNATA</span></div>
                     <div class="box-content">
                         <div class="giornata-content">
                             <div class="time-date">
@@ -81,16 +73,16 @@
 
                 <section class="box summary-box box-libero-1">
                     <div class="box-header">
-                        <span>INCASSO</span>
-                        <button class="reset-fatturato-btn" id="reset-manual-fatturato-btn" title="Azzera il fatturato manuale e usa quello automatico da Virtualstation">✓</button>
+                        <i class="fa-solid fa-sack-dollar"></i><span>INCASSO</span>
+                        <button class="reset-fatturato-btn" id="reset-manual-fatturato-btn" title="Azzera il fatturato manuale e usa quello automatico da Virtualstation">
+                            <i class="fa-solid fa-rotate"></i>
+                        </button>
                     </div>
                     <div class="box-content corrispettivi-content">
-                        
                         <div class="corrispettivi-group">
                             <span class="corrispettivi-label">FATTURATO TOTALE</span>
                             <input type="text" class="corrispettivi-input" id="corrispettivi-fatturato" placeholder="€ 0,00" inputmode="decimal">
                         </div>
-
                         <div class="corrispettivi-group">
                             <span class="corrispettivi-label">IMPONIBILE</span>
                             <span class="corrispettivi-value" id="corrispettivi-imponibile">€ 0,00</span>
@@ -107,10 +99,9 @@
                 </section>
 
                 <section class="box summary-box vendite-summary-box">
-                    <div class="box-header">RIEPILOGO VENDITE</div>
+                    <div class="box-header"><i class="fa-solid fa-list-check"></i><span>RIEPILOGO VENDITE</span></div>
                     <div class="box-content">
-                        <ul id="product-liters-summary">
-                            </ul>
+                        <ul id="product-liters-summary"></ul>
                         <div class="servito-percentage-summary">
                             <div class="label">Percentuale Servito</div>
                             <div class="value" id="servito-percentage-value">0%</div>
@@ -120,40 +111,35 @@
                         </div>
                     </div>
                 </section>
+                
                 <section class="box summary-box note-box" id="notes-card">
-                    <div class="box-header">NOTE</div>
+                    <div class="box-header"><i class="fa-solid fa-pen-to-square"></i><span>NOTE</span></div>
                     <div class="box-content">
                         <textarea id="notesArea" placeholder="Scrivi le tue note qui..."></textarea>
                     </div>
                 </section>
 
                 <section class="box summary-box calendario-box" id="calendar-card">
-                    <div class="box-header">CALENDARIO</div>
+                    <div class="box-header"><i class="fa-solid fa-calendar-days"></i><span>CALENDARIO</span></div>
                     <div class="box-content">
                         <div class="calendar-header">
-                            <button id="calendarPrev">‹</button>
+                            <button id="calendarPrev"><i class="fa-solid fa-chevron-left"></i></button>
                             <h4 id="calendarTitle"></h4>
-                            <button id="calendarNext">›</button>
+                            <button id="calendarNext"><i class="fa-solid fa-chevron-right"></i></button>
                         </div>
                         <div class="calendar-grid">
-                            <div class="weekday">LU</div>
-                            <div class="weekday">MA</div>
-                            <div class="weekday">ME</div>
-                            <div class="weekday">GI</div>
-                            <div class="weekday">VE</div>
-                            <div class="weekday">SA</div>
-                            <div class="weekday">DO</div>
+                            <div class="weekday">LU</div><div class="weekday">MA</div><div class="weekday">ME</div><div class="weekday">GI</div><div class="weekday">VE</div><div class="weekday">SA</div><div class="weekday">DO</div>
                         </div>
                         <div class="calendar-grid" id="calendarDates"></div>
                     </div>
                 </section>
                 
                 <section class="box summary-box todo-box" id="todo-card">
-                    <div class="box-header">TO-DO LIST</div>
+                    <div class="box-header"><i class="fa-solid fa-list-ul"></i><span>TO-DO LIST</span></div>
                     <div class="box-content">
                         <div class="todo-input-group">
                             <input type="text" id="newTodoInput" placeholder="Aggiungi task del turno...">
-                            <button id="addTodoBtn">+</button>
+                            <button id="addTodoBtn"><i class="fa-solid fa-plus"></i></button>
                         </div>
                         <ul id="todo-list"></ul>
                     </div>
@@ -171,8 +157,8 @@
                 <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
             </div>
             <div class="modal-actions">
-                <button class="action-btn secondary" id="confirm-modal-cancel">Annulla</button>
-                <button class="action-btn" id="confirm-modal-ok">Conferma</button>
+                <button class="action-btn secondary" id="confirm-modal-cancel"><i class="fa-solid fa-xmark"></i>Annulla</button>
+                <button class="action-btn" id="confirm-modal-ok"><i class="fa-solid fa-check"></i>Conferma</button>
             </div>
         </div>
     </div>
@@ -181,10 +167,10 @@
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">Informazioni Progetto</h3>
-                <button class="modal-close-btn" title="Chiudi">&times;</button>
+                <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-content info-modal-content">
-                <img class="modal-info-icon" src="/svg/cerbero.svg" alt="Logo Cerbero">
+                <i class="fa-solid fa-circle-info modal-info-icon"></i>
                 <h1 class="info-modal-brand">CERBERO</h1>
                 <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
                 <p class="programmer-info">

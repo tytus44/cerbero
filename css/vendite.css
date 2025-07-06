@@ -51,9 +51,64 @@ body.dark-theme {
     --primary-blue-light: rgba(59, 130, 246, 0.2);
 }
 
-body.dark-theme .nav a { color: #e2e8f0 !important; }
-body.dark-theme .nav a:hover { color: #ffffff !important; background-color: var(--primary-blue-light); }
-body.dark-theme .nav a.active { background: var(--primary-blue); color: #ffffff !important; }
+/* Sfondo e testo dei link di navigazione nel tema scuro */
+body.dark-theme .nav a { color: var(--text-secondary) !important; }
+body.dark-theme .nav a:hover {
+    color: var(--text-primary) !important; /* Testo più chiaro in hover */
+    background-color: var(--primary-blue-light);
+}
+body.dark-theme .nav a.active {
+    background: var(--primary-blue);
+    color: #ffffff !important;
+}
+
+/* Sottolineatura dei link di navigazione nel tema scuro */
+body.dark-theme .nav a::before {
+    background: var(--text-primary); /* Colore chiaro per la sottolineatura */
+}
+
+/* Tema scuro per le icone del menu */
+body.dark-theme .nav a i {
+    color: var(--text-secondary) !important;
+}
+
+body.dark-theme .nav a:hover i {
+    color: var(--text-primary) !important;
+}
+
+body.dark-theme .nav a.active i {
+    color: #ffffff !important;
+}
+
+/* Colore delle icone dell'header nel tema scuro */
+body.dark-theme #info-btn i,
+body.dark-theme #theme-switcher i {
+    color: var(--text-primary);
+}
+
+/* Campi input e display nel tema scuro */
+body.dark-theme .grid-input {
+    background: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+body.dark-theme .display-field {
+    background: var(--bg-display);
+    color: var(--text-primary);
+}
+
+/* Scrollbar nel tema scuro */
+body.dark-theme ::-webkit-scrollbar-track {
+    background: transparent; /* Traccia completamente trasparente */
+}
+body.dark-theme ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2); /* Grigio chiaro per il pollice */
+    border: none; /* Rimuovi bordo */
+}
+body.dark-theme ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-blue); /* Blu in hover */
+}
+
 
 /* ===== STILI BASE ===== */
 * {
@@ -69,6 +124,28 @@ body {
     font-size: 16px;
     overflow-x: hidden;
 }
+
+/* Stili di base per le scrollbar (per tema chiaro) */
+::-webkit-scrollbar {
+    width: 8px; /* Larghezza della scrollbar verticale */
+    height: 8px; /* Altezza della scrollbar orizzontale */
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Traccia completamente trasparente */
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2); /* Grigio chiaro per il pollice */
+    border-radius: 10px;
+    border: none; /* Rimuovi bordo */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-blue); /* Blu in hover */
+}
+
 
 .container {
     max-width: 1400px;
@@ -107,8 +184,10 @@ body {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    flex-shrink: 0;
 }
 
+/* ===== MENU NAVIGAZIONE UNIFICATO ===== */
 .nav { 
     display: flex; 
     align-items: center; 
@@ -125,13 +204,13 @@ body {
     align-items: center;
 }
 
-.nav a { 
-    text-decoration: none; 
-    color: var(--text-secondary); 
-    font-weight: 600; 
-    padding: 12px 20px; 
-    border-radius: 50px; 
-    transition: all 0.3s ease; 
+.nav a {
+    text-decoration: none;
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: var(--radius-pill);
+    transition: all 0.3s ease;
     position: relative;
     line-height: 1;
     display: flex;
@@ -139,8 +218,25 @@ body {
     font-size: 14px;
     height: 44px;
     box-sizing: border-box;
+    gap: 8px; /* Spazio tra icona e testo */
 }
 
+/* Stili per le icone del menu */
+.nav a i {
+    font-size: 16px; /* Dimensione icona */
+    color: var(--text-secondary); /* Colore base icona */
+    transition: color 0.3s ease;
+}
+
+.nav a:hover i {
+    color: var(--primary-blue); /* Colore icona in hover */
+}
+
+.nav a.active i {
+    color: var(--bg-white) !important; /* Colore icona quando attivo */
+}
+
+/* Sottolineatura animata */
 .nav a::before {
     content: '';
     position: absolute;
@@ -157,14 +253,14 @@ body {
     width: 60%;
 }
 
-.nav a:hover { 
-    color: var(--primary-blue); 
-    background-color: var(--primary-blue-light); 
+.nav a:hover {
+    color: var(--primary-blue);
+    background-color: var(--primary-blue-light);
 }
 
-.nav a.active { 
-    background: var(--primary-blue); 
-    color: var(--bg-white) !important; 
+.nav a.active {
+    background: var(--primary-blue);
+    color: var(--bg-white) !important;
     box-shadow: var(--shadow-medium);
 }
 
@@ -175,9 +271,11 @@ body {
 .header-actions { 
     display: flex; 
     align-items: center; 
+    justify-content: flex-end;
     gap: 10px; 
 }
 
+/* Stili per pulsanti icona header (FONT AWESOME) */
 #theme-switcher,
 #info-btn { 
     display: flex; 
@@ -198,14 +296,12 @@ body {
     transform: scale(1.1) rotate(180deg); 
 }
 
-#info-btn svg {
-    stroke: var(--text-primary);
-    fill: none;
-}
-
-#theme-switcher svg { 
-    fill: var(--text-primary); 
-    transition: all 0.3s ease;
+/* Colore delle icone Font Awesome nell'header */
+#info-btn i,
+#theme-switcher i {
+    font-size: 20px;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 .theme-icon-hidden { 
@@ -217,21 +313,24 @@ body {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-bottom: 25px;
+    margin-bottom: 30px;
     flex-wrap: wrap;
-    align-items: flex-end;
+    align-items: flex-end; /* Allinea tutti gli elementi al bottom per uniformità */
 }
+
 .form-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
+
 .form-label {
     font-weight: 600;
     color: var(--text-secondary);
     font-size: 14px;
     text-align: center;
 }
+
 .grid-input {
     width: 100%;
     padding: 10px 15px;
@@ -262,29 +361,145 @@ body.dark-theme .grid-input {
 .date-actions {
     display: flex;
     gap: 10px;
+    align-items: flex-end; /* Allinea i pulsanti al bottom del loro container */
 }
 
-/* ===== PULSANTI CON EFFETTO LUMINOSO ===== */
-.action-btn {
-    font-size: 14px; padding: 12px 25px; border: none; border-radius: var(--radius-large);
-    cursor: pointer; font-weight: 600; text-transform: uppercase;
-    font-family: 'Montserrat', sans-serif; color: white;
-    background: var(--primary-blue); position: relative; overflow: hidden;
+/* ===== PULSANTI TESTUALI UNIFICATI ===== */
+.action-btn,
+.modal-actions .action-btn {
+    font-size: 14px;
+    padding: 12px 25px;
+    height: 44px;
+    text-decoration: none;
+    color: var(--text-secondary); /* Colore uniforme per tutti */
+    background: none; /* Sfondo trasparente per tutti */
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    overflow: hidden;
     transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px; /* Spazio tra icona e testo */
+    box-shadow: none;
 }
-.action-btn::before {
-    content: ''; position: absolute; top: 0; left: -100%;
-    width: 100%; height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-    transition: left 0.5s ease;
+
+/* Sottolineatura animata per TUTTI i pulsanti testuali */
+.action-btn::before,
+.modal-actions .action-btn::before {
+    content: '';
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: var(--primary-blue);
+    transform: translateX(-50%);
+    transition: width 0.3s ease;
+    z-index: 1;
 }
-.action-btn:hover::before { left: 100%; }
-.action-btn:hover { background: var(--primary-blue-hover); box-shadow: 0 4px 15px rgba(9, 63, 180, 0.3); transform: translateY(-2px); }
-.action-btn.print { background: #7F8CAA !important; }
-.action-btn.print:hover { background: #9AA5C4 !important; box-shadow: 0 4px 15px rgba(127, 140, 170, 0.3) !important; }
-.action-btn:disabled { background: #adb5bd; cursor: not-allowed; opacity: 0.6; transform: none; box-shadow: none; }
-.action-btn:disabled::before { display: none; }
-.action-btn:focus-visible { outline: none; box-shadow: 0 0 0 3px var(--primary-blue-light); }
+
+/* Effetto hover UNIFORME per tutti i pulsanti testuali */
+.action-btn:hover,
+.modal-actions .action-btn:hover {
+    color: var(--primary-blue);
+    background-color: var(--primary-blue-light);
+    box-shadow: none;
+    transform: none;
+}
+
+/* Larghezza della sottolineatura in hover per TUTTI i pulsanti testuali */
+.action-btn:hover::before,
+.modal-actions .action-btn:hover::before {
+    width: 60%;
+}
+
+/* Tema scuro UNIFORME per tutti i pulsanti testuali */
+body.dark-theme .action-btn,
+body.dark-theme .modal-actions .action-btn {
+    color: var(--text-secondary);
+    background: none;
+}
+
+body.dark-theme .action-btn:hover,
+body.dark-theme .modal-actions .action-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--primary-blue-light);
+    box-shadow: none;
+}
+
+body.dark-theme .action-btn::before,
+body.dark-theme .modal-actions .action-btn::before {
+    background: var(--text-primary);
+}
+
+/* Pulsanti disabilitati */
+.action-btn:disabled {
+    background: #adb5bd;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+
+.action-btn:disabled:hover {
+    background: #adb5bd;
+    color: white;
+}
+
+.action-btn:disabled::before {
+    display: none;
+}
+
+/* PULSANTI ICONA TONDI (Modal Close) */
+.modal-close-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%; /* Tutti tondi */
+    background: none; /* Sfondo trasparente di base */
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none;
+    line-height: 1; /* Per centrare bene le icone */
+    flex-shrink: 0;
+}
+
+/* Nascondi la pseudo-classe ::before (sottolineatura) per i pulsanti icona */
+.modal-close-btn::before {
+    display: none;
+}
+
+/* PULSANTE CHIUSURA MODAL (Ora uniforme: sfondo trasparente, hover rosso) */
+.modal-close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 24px; /* Dimensione dell'icona 'x' */
+    font-weight: bold;
+    color: var(--text-secondary); /* Colore base dell'icona */
+    background-color: transparent; /* Sfondo trasparente di base */
+}
+.modal-close-btn:hover {
+    background-color: var(--danger); /* Sfondo rosso in hover */
+    color: white; /* Testo/icona bianco in hover */
+    transform: none; /* Rimuovi lo scale se non lo vuoi */
+}
+/* Tema scuro per il pulsante di chiusura modale */
+body.dark-theme .modal-close-btn {
+    color: var(--text-secondary);
+}
+body.dark-theme .modal-close-btn:hover {
+    background-color: var(--danger);
+    color: white;
+}
 
 /* ===== STATS ROW & BOX ===== */
 .stats-row {
@@ -324,7 +539,8 @@ body.dark-theme .grid-input {
     transform: scaleX(1);
 }
 .summary-box.box:hover { 
-    transform: translateY(-3px); 
+    /* Rimuovi l'animazione di sollevamento per questi box */
+    transform: none; /* rimosso translateY(-3px) */
     box-shadow: var(--shadow-heavy); 
 }
 
@@ -401,22 +617,31 @@ body.dark-theme .grid-input {
 }
 .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--primary-blue-light); }
 .modal-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: var(--primary-blue); }
-.modal-close-btn { font-size: 24px; font-weight: bold; color: var(--text-secondary); background: none; border: none; cursor: pointer; line-height: 1; }
-.modal-close-btn:hover { color: var(--danger); }
+
 .modal-content { padding: 20px; text-align: center; }
 .modal-content p { font-size: 16px; line-height: 1.6; }
+.modal-actions { display: flex; gap: 12px; justify-content: flex-end; padding: 20px; border-top: 1px solid var(--primary-blue-light); }
 
+/* ===== STILI PER MODALE INFO ===== */
 .modal-info-icon {
-    width: 70px;
-    height: 70px;
-    margin: 0 auto 15px;
+    font-size: 60px; /* Dimensione per icona Font Awesome */
+    color: var(--primary-blue); /* Colore base per l'icona FA */
+    margin: 0 auto 20px;
     display: block;
-    filter: brightness(0) saturate(100%) invert(27%) sepia(89%) saturate(1651%) hue-rotate(213deg) brightness(97%) contrast(101%);
+    text-align: center;
     transition: all 0.3s ease;
 }
 .modal-info-icon:hover {
-    transform: scale(1.05);
+    color: var(--info); /* Colore hover */
+    transform: scale(1.1);
 }
+body.dark-theme .modal-info-icon { /* Tema scuro per l'icona info del modale */
+    color: var(--text-primary);
+}
+body.dark-theme .modal-info-icon:hover {
+    color: var(--info);
+}
+
 .info-modal-content .info-modal-brand {
     font-size: 38px;
     font-weight: 800;
@@ -470,8 +695,22 @@ body.dark-theme .grid-input {
     .nav ul { gap: 5px; flex-wrap: wrap; justify-content: center;}
     .nav a { font-size: 12px; padding: 10px 15px; }
     .page-title { font-size: 20px; }
-    .action-bar { flex-direction: column; align-items: stretch; }
-    .date-actions { flex-direction: column; }
+    .action-bar { 
+        flex-direction: column; 
+        align-items: center; 
+        margin-bottom: 25px; 
+    }
+    .date-actions { 
+        flex-direction: column; 
+        width: 100%;
+        align-items: stretch;
+    }
     .stats-row, .charts-grid { grid-template-columns: 1fr; }
-    .action-bar .action-btn { width: 100%; max-width: 300px; margin: 0 auto; }
+    .action-bar .action-btn { 
+        width: 100%; 
+        max-width: 300px; 
+        margin: 0 auto;
+    }
+    .modal-actions { flex-direction: column; gap: 8px; }
+    .modal-actions .action-btn { width: 100%; }
 }

@@ -40,6 +40,7 @@ function initializeInfoModal() {
         const infoModal = document.getElementById('info-modal');
 
         if (infoBtn && infoModal) {
+            // Seleziona il bottone di chiusura del modale per Monetario, che ora ha un'icona FA
             const closeBtn = infoModal.querySelector('.modal-close-btn');
             
             infoBtn.addEventListener('click', (e) => {
@@ -100,6 +101,7 @@ function showConfirmModal(title, text, onConfirm) {
         modal.querySelector('#confirm-modal-title').textContent = title;
         modal.querySelector('#confirm-modal-text').textContent = text;
         const btnOk = modal.querySelector('#confirm-modal-ok');
+        // Clona i bottoni per rimuovere listeners precedenti (soluzione robusta)
         const newBtnOk = btnOk.cloneNode(true);
         btnOk.parentNode.replaceChild(newBtnOk, btnOk);
         
@@ -290,7 +292,7 @@ function displayOrderHistory() {
                 </div>
                 <div class="order-products">${order.products}</div>
             </div>
-            <button class="order-delete-btn" data-order-index="${index}" title="Elimina ordine">×</button>
+            <button class="order-delete-btn" data-order-index="${index}" title="Elimina ordine"><i class="fa-solid fa-xmark"></i></button>
         </div>
     `).join('');
 }
@@ -361,15 +363,18 @@ class VersamentoManager {
     }
     
     updateUI() {
-        let total = 0;
+        let totalValue = 0;
+        let totalCount = 0; // Nuovo totale per il numero di banconote
         this.denominations.forEach(denom => {
             const quantity = this.data[`banconote${denom}`] || 0;
-            total += denom * quantity;
+            totalValue += denom * quantity;
+            totalCount += quantity; // Aggiorna il totale del numero di banconote
             const qtyInput = document.querySelector(`.spinner-input-group[data-denom="${denom}"] .spinner-value`);
             if (qtyInput && document.activeElement !== qtyInput) qtyInput.value = quantity > 0 ? quantity.toString() : '';
             document.getElementById(`valore-${denom}`).value = formatter.currency.format(denom * quantity);
         });
-        document.getElementById('versamento-totale').textContent = formatter.currency.format(total);
+        document.getElementById('versamento-total-banconote').textContent = totalCount.toString(); // Aggiorna il display del totale banconote
+        document.getElementById('versamento-total-importo').textContent = formatter.currency.format(totalValue); // Aggiorna il display del totale importo
     }
 }
 
@@ -509,6 +514,7 @@ function importaDatiCompleti() {
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
+                    // Controllo più robusto delle chiavi per l'importazione
                     if (data.monetario) Storage.save(Storage.KEYS.MONETARIO_DATA, data.monetario);
                     if (data.versamento) Storage.save(Storage.KEYS.VERSAMENTO_DATA, data.versamento);
                     if (data.ordini) Storage.save(Storage.KEYS.ORDER_HISTORY, data.ordini);
@@ -540,6 +546,7 @@ function esportaDatiCompleti() {
 /* ===== SUPPORTO TASTIERA PER CALCOLATRICE ===== */
 function initializeCalculatorKeyboard() {
     document.addEventListener('keydown', (e) => {
+        // Ignora gli eventi se l'utente sta digitando in un campo input o textarea
         if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
 
         const key = e.key;
@@ -572,15 +579,15 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
         initializeThemeSwitcher();
         initializeInfoModal();
-        new VersamentoManager();
+        new VersamentoManager(); // Inizializza il VersamentoManager
         window.pricingManager = new PricingManager();
         updateCalculatorDisplay();
         initializeCalculatorKeyboard();
 
         document.getElementById('save-order-btn')?.addEventListener('click', saveOrder);
         document.getElementById('order-history-content')?.addEventListener('click', (e) => {
-            if (e.target.classList.contains('order-delete-btn')) {
-                deleteOrder(parseInt(e.target.dataset.orderIndex));
+            if (e.target.closest('.order-delete-btn')) { // Usa closest per l'icona interna
+                deleteOrder(parseInt(e.target.closest('.order-delete-btn').dataset.orderIndex));
             }
         });
         document.querySelectorAll('button.action-btn[onclick^="calculateVAT"]').forEach(btn => {
