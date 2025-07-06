@@ -720,6 +720,35 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
+        // MOBILE MENU LOGIC (START)
+        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+        const mobileOverlay = document.getElementById('mobile-menu-overlay');
+
+        if (hamburgerBtn && mainNav && mobileOverlay) {
+            hamburgerBtn.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+                document.body.classList.toggle('no-scroll'); // Optional: prevent scrolling background
+            });
+
+            mobileOverlay.addEventListener('click', () => {
+                mainNav.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.classList.remove('no-scroll'); // Optional
+            });
+
+            // Close menu if a nav link is clicked
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('active');
+                    mobileOverlay.classList.remove('active');
+                    document.body.classList.remove('no-scroll'); // Optional
+                });
+            });
+        }
+        // MOBILE MENU LOGIC (END)
+
         initializeThemeSwitcher();
         initializeInfoButton(); // AGGIUNTA CHIAMATA
         VenditeManager.init();

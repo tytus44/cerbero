@@ -14,7 +14,10 @@
 
     <header class="header">
         <div class="header-brand">CERBERO</div>
-        <nav class="nav">
+        <button class="hamburger-menu-btn" id="hamburger-menu-btn" aria-label="Apri menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav class="nav" id="main-nav">
             <ul>
                 <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
                 <li><a href="registro.html"><i class="fa-solid fa-book"></i>REGISTRO</a></li>
@@ -35,6 +38,8 @@
             </a>
         </div>
     </header>
+
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
 
     <div class="container">
         <h1 class="page-title">GESTIONE CREDITO</h1>
@@ -61,10 +66,19 @@
                 <i class="fas fa-search search-icon"></i>
                 <button id="clearSearchBtn" title="Pulisci ricerca">&times;</button>
             </div>
-            <button class="action-btn success" id="addNewClientBtn">Aggiungi Cliente</button>
-            <button class="action-btn" onclick="importaDatiCompleti()">Importa</button>
-            <button class="action-btn" onclick="esportaDatiCompleti()">Esporta</button>
-            <button class="action-btn" id="stampaDatiBtn" onclick="stampaDati()">Stampa</button>
+            <!-- Add icons to action bar buttons -->
+            <button class="action-btn success" id="addNewClientBtn">
+                <i class="fa-solid fa-user-plus"></i> Aggiungi Cliente
+            </button>
+            <button class="action-btn" onclick="importaDatiCompleti()">
+                <i class="fa-solid fa-download"></i> Importa
+            </button>
+            <button class="action-btn" onclick="esportaDatiCompleti()">
+                <i class="fa-solid fa-upload"></i> Esporta
+            </button>
+            <button class="action-btn" id="stampaDatiBtn" onclick="stampaDati()">
+                <i class="fa-solid fa-print"></i> Stampa
+            </button>
         </div>
 
         <main id="clientsGrid">
@@ -132,7 +146,7 @@
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">Informazioni Progetto</h3>
-                <button class="modal-close-btn" title="Chiudi">&times;</button>
+                <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-content info-modal-content">
                 <i class="modal-info-icon fa-solid fa-circle-info"></i>

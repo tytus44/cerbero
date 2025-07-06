@@ -1,6 +1,37 @@
 /* ===== CERBERO REGISTRO JAVASCRIPT - VERSIONE CORRETTA ===== */
 
-/* ===== 1. UTILITY GLOBALI E FUNZIONI HELPER ===== */
+/* ===== 1. UTILITY GLOBALI E FUNZIONI HELPER (Definizioni Globali) ===== */
+
+// Funzioni di utilità per parsing e formattazione che devono essere globalmente disponibili
+function parseNumber(value) {
+    if (typeof value !== 'string' || value.trim() === '') return 0;
+    const cleanedValue = value.replace(/€|\s/g, '').replace(/\./g, '').replace(',', '.');
+    const parsed = parseFloat(cleanedValue);
+    return isNaN(parsed) ? 0 : parsed;
+}
+
+function parseItalianDate(dateString) {
+    if (!dateString || typeof dateString !== 'string') return null;
+    const parts = dateString.trim().split('/');
+    if (parts.length === 3) {
+        const day = parseInt(parts[0], 10), month = parseInt(parts[1], 10) - 1, year = parseInt(parts[2], 10);
+        const date = new Date(year, month, day);
+        if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) return date;
+    }
+    return null;
+}
+
+function setupDateInputAutoComplete(input) {
+    if (!input) return;
+    const formatDate = () => {
+        const parts = input.value.trim().match(/^(\d{1,2})[\/-](\d{1,2})$/);
+        if (parts) {
+            input.value = `${String(parts[1]).padStart(2, '0')}/${String(parts[2]).padStart(2, '0')}/${new Date().getFullYear()}`;
+        }
+    };
+    input.addEventListener('blur', formatDate);
+    input.addEventListener('keydown', e => { if (e.key === 'Enter') formatDate(); });
+}
 
 function applyTheme(theme) {
     try {
@@ -218,24 +249,7 @@ const formatter = {
     })
 };
 
-function parseNumber(value) {
-    if (typeof value !== 'string' || value.trim() === '') return 0;
-    const cleanedValue = value.replace(/€|\s/g, '').replace(/\./g, '').replace(',', '.');
-    const parsed = parseFloat(cleanedValue);
-    return isNaN(parsed) ? 0 : parsed;
-}
-
-function parseItalianDate(dateString) {
-    if (!dateString || typeof dateString !== 'string') return null;
-    const parts = dateString.trim().split('/');
-    if (parts.length === 3) {
-        const day = parseInt(parts[0], 10), month = parseInt(parts[1], 10) - 1, year = parseInt(parts[2], 10);
-        const date = new Date(year, month, day);
-        if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) return date;
-    }
-    return null;
-}
-
+// Autocomplete e Parsing per Date e Numeri (Spostati all'inizio per visibilità globale)
 function setupAutocomplete(inputElement, suggestionsArray) {
     if (!inputElement || !Array.isArray(suggestionsArray)) return;
     let currentFocus = -1;
@@ -248,19 +262,17 @@ function setupAutocomplete(inputElement, suggestionsArray) {
     inputWrapper.appendChild(inputElement);
     inputWrapper.appendChild(suggestionsContainer);
     
-    // Posizionamento del container di suggerimenti
-    // Questo era il problema di posizionamento, ora lo leghiamo all'inputWrapper
     const positionSuggestions = () => {
         const rect = inputElement.getBoundingClientRect();
         suggestionsContainer.style.top = `${rect.bottom}px`;
         suggestionsContainer.style.left = `${rect.left}px`;
         suggestionsContainer.style.width = `${rect.width}px`;
-        suggestionsContainer.style.position = 'fixed'; // Usa fixed per uscire dal flusso del wrapper se necessario
+        suggestionsContainer.style.position = 'fixed'; 
     };
 
     inputElement.addEventListener('focus', positionSuggestions);
     inputElement.addEventListener('input', function() {
-        positionSuggestions(); // Aggiorna posizione ad ogni input
+        positionSuggestions(); 
         let val = this.value;
         suggestionsContainer.innerHTML = '';
         currentFocus = -1;
@@ -457,7 +469,9 @@ const SectionHandler = {
                     </div>`;
                 this.addEventListeners(container);
                 const descInput = container.querySelector(`#${this.type}-desc`);
+                const dateInput = container.querySelector(`#${this.type}-date`); // Seleziona il date input
                 if (descInput) setupAutocomplete(descInput, getCreditClients());
+                if (dateInput) setupDateInputAutoComplete(dateInput); // Applica autocomplete alla data
             },
             addEventListeners(container) {
                 const amountInput = container.querySelector(`#${this.type}-amount`);
@@ -586,6 +600,40 @@ function stampaDati() { showMessage('Funzione di stampa non ancora implementata.
 
 function initializePage() {
     try {
+        if (typeof Storage === 'undefined' || !Storage.KEYS) {
+            console.error("Storage o Storage.KEYS non definiti.");
+            return;
+        }
+
+        // MOBILE MENU LOGIC (START)
+        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+        const mobileOverlay = document.getElementById('mobile-menu-overlay');
+
+        if (hamburgerBtn && mainNav && mobileOverlay) {
+            hamburgerBtn.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+                document.body.classList.toggle('no-scroll'); // Optional: prevent scrolling background
+            });
+
+            mobileOverlay.addEventListener('click', () => {
+                mainNav.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.classList.remove('no-scroll'); // Optional
+            });
+
+            // Close menu if a nav link is clicked
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('active');
+                    mobileOverlay.classList.remove('active');
+                    document.body.classList.remove('no-scroll'); // Optional
+                });
+            });
+        }
+        // MOBILE MENU LOGIC (END)
+
         initializeThemeSwitcher();
         initializeInfoButton();
         loadData();

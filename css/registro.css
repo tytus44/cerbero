@@ -147,6 +147,7 @@ body {
     color: var(--text-primary);
     font-size: 16px;
     line-height: 1.5;
+    overflow-x: hidden; /* Prevent horizontal scroll for mobile menu */
 }
 
 /* Stili di base per le scrollbar (per tema chiaro) */
@@ -213,7 +214,7 @@ body {
     flex-shrink: 0;
 }
 
-/* ===== MENU NAVIGAZIONE UNIFICATO ===== */
+/* ===== MENU NAVIGAZIONE (Desktop & Mobile) ===== */
 .nav { 
     display: flex; 
     align-items: center; 
@@ -711,7 +712,6 @@ body.dark-theme .summary-label {
 .history-toggle {
     text-align: center;
     cursor: pointer;
-    color: var(--text-secondary);
     font-size: 14px; /* Aumentato font-size */
     font-weight: 600;
     padding: 12px 20px; /* Aumentato padding per renderlo più "pulsante" */
@@ -721,6 +721,8 @@ body.dark-theme .summary-label {
     transition: all 0.2s ease;
     display: block; /* Essenziale per margin: auto */
     width: fit-content; /* O width: auto per contenere il testo */
+    /* Colore testo e hover gestiti per tema scuro/chiaro */
+    color: var(--text-secondary); /* Default per tema chiaro */
 }
 .history-toggle:hover {
     background-color: var(--primary-blue-light);
@@ -886,18 +888,131 @@ body.dark-theme .history-toggle:hover {
 @keyframes slideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-  .top-row-grid, .bottom-row-grid { grid-template-columns: 1fr; gap: 20px; }
-  .bottom-row-grid { margin-top: 20px; }
+/* Mobile Menu Specific Styles */
+.hamburger-menu-btn {
+    display: none; /* Hidden by default for desktop */
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.3s ease;
+    order: 2; /* Puts it between brand and header-actions on desktop */
 }
+.hamburger-menu-btn:hover {
+    color: var(--primary-blue);
+}
+body.dark-theme .hamburger-menu-btn {
+    color: var(--text-primary);
+}
+body.dark-theme .hamburger-menu-btn:hover {
+    color: var(--primary-blue);
+}
+
+.mobile-menu-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 99; /* Below modals, above content */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.mobile-menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+body.no-scroll {
+    overflow: hidden; /* Prevent scrolling background when menu is open */
+}
+
 @media (max-width: 992px) {
-    .header { flex-direction: column; gap: 15px; }
+    .nav {
+        /* Hide by default on smaller screens */
+        display: flex; /* Override display: none for mobile menu setup */
+        position: fixed;
+        top: 0;
+        left: -250px; /* Hidden off-screen */
+        width: 250px; /* Width of the off-canvas menu */
+        height: 100%;
+        background: var(--bg-white);
+        box-shadow: var(--shadow-heavy);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 70px; /* Space for header if it's sticky */
+        transition: left 0.3s ease-in-out;
+        z-index: 100; /* Above overlay */
+    }
+    .nav.active {
+        left: 0; /* Slide in when active */
+    }
+    body.dark-theme .nav {
+        background: var(--bg-primary); /* Dark theme background for menu */
+    }
+    
+    .nav ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 0; /* Remove gap between list items */
+    }
+    .nav li {
+        width: 100%;
+        border-bottom: 1px solid var(--primary-blue-light); /* Separator for menu items */
+    }
+    .nav li:last-child {
+        border-bottom: none;
+    }
+    .nav a {
+        padding: 15px 20px; /* Larger tap area for menu items */
+        justify-content: flex-start; /* Align text and icon to left */
+        border-radius: 0; /* Remove pill shape for full width */
+        width: 100%;
+    }
+    .nav a::before {
+        display: none; /* Hide underline animation for mobile menu items */
+    }
+    .nav a:hover {
+        background-color: var(--primary-blue-light); /* Keep hover effect */
+    }
+    body.dark-theme .nav a:hover {
+        background-color: var(--bg-display); /* Dark theme hover for menu items */
+    }
+
+    .hamburger-menu-btn {
+        display: block; /* Show hamburger button */
+        margin-left: 10px; /* Space from theme switcher */
+        order: 1; /* Ensure it's positioned correctly in the header flexbox */
+    }
+
+    .header-brand {
+        flex-grow: 1; /* Allow brand to take available space */
+        text-align: center; /* Center brand if desired */
+    }
+    
+    .header-actions {
+        order: 3; /* Move actions to after brand, before hamburger */
+        margin-left: 0; /* Remove auto margin */
+    }
+
+    /* Layout specific to Registro */
+    .top-row-grid, .bottom-row-grid { 
+        grid-template-columns: 1fr; /* Stack columns vertically */
+        gap: 20px; 
+    }
+    .bottom-row-grid { margin-top: 20px; }
 }
 @media (max-width: 768px) {
   .container { padding: 15px 20px; }
-  .header { flex-direction: column; gap: 15px; }
-  .nav ul { flex-wrap: wrap; justify-content: center; gap: 5px; }
-  .nav a { padding: 10px 15px; font-size: 12px; }
+  .header { flex-direction: column; gap: 15px; } /* Adjust header to stack vertically on very small screens */
+  /* Re-adjust nav and hamburger if header changes flex-direction */
+  .nav { padding-top: 15px; } /* Less padding if header is stacked */
+  
   .page-title { font-size: 20px; }
   .action-bar { flex-direction: column; align-items: center; }
   .action-bar .action-btn { width: 100%; max-width: 300px; }

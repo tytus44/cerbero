@@ -187,12 +187,21 @@ body {
     flex-shrink: 0;
 }
 
-/* ===== MENU NAVIGAZIONE UNIFICATO ===== */
+/* ===== MENU NAVIGAZIONE (Desktop) ===== */
 .nav { 
-    display: flex; 
+    display: flex; /* Always flex for desktop */
     align-items: center; 
     flex: 1; 
     justify-content: center; 
+    position: static; /* Reset from fixed for desktop */
+    left: auto; /* Reset from -250px for desktop */
+    width: auto; /* Reset from fixed width for desktop */
+    height: auto; /* Reset from 100% height for desktop */
+    background: transparent; /* Reset from white/primary for desktop */
+    box-shadow: none; /* Reset from heavy shadow for desktop */
+    flex-direction: row; /* Reset from column for desktop */
+    padding-top: 0; /* Reset from 70px for desktop */
+    z-index: auto; /* Reset from 100 for desktop */
 }
 
 .nav ul { 
@@ -202,6 +211,7 @@ body {
     margin: 0;
     padding: 0;
     align-items: center;
+    flex-direction: row; /* Ensure row direction for desktop */
 }
 
 .nav a {
@@ -275,6 +285,11 @@ body {
     gap: 10px; 
 }
 
+/* Hamburger Menu Button - Hidden by default for desktop */
+.hamburger-menu-btn {
+    display: none; /* Hide on desktop */
+}
+
 /* Stili per pulsanti icona header (FONT AWESOME) */
 #theme-switcher,
 #info-btn { 
@@ -308,12 +323,36 @@ body {
     display: none !important; 
 }
 
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 99; /* Below modals, above content */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.mobile-menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+body.no-scroll {
+    overflow: hidden; /* Prevent scrolling background when menu is open */
+}
+
+
 /* ===== ACTION BAR & DATE SELECTOR ===== */
 .action-bar {
     display: flex;
     justify-content: center;
     gap: 15px;
-    margin-bottom: 30px;
+    margin-bottom: 30px; /* Aumentato da 25px a 30px per più spazio sotto */
     flex-wrap: wrap;
     align-items: flex-end; /* Allinea tutti gli elementi al bottom per uniformità */
 }
@@ -688,28 +727,120 @@ body.dark-theme .modal-info-icon:hover {
 @keyframes slideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
 
 /* ===== RESPONSIVE ===== */
+@media (max-width: 992px) {
+    .header { 
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px; 
+    }
+    .header-brand {
+        font-size: 28px; 
+        flex-grow: 0; 
+        text-align: left; 
+    }
+    .header-actions {
+        order: 3; 
+        margin-left: auto; 
+    }
+
+    /* Show hamburger menu and hide desktop nav */
+    .hamburger-menu-btn {
+        display: block; /* Show hamburger button */
+        margin-left: 10px; 
+        order: 1; /* Position hamburger button before the brand on mobile */
+    }
+    .nav {
+        /* Mobile menu specific styles - OFF-CANVAS */
+        display: flex; 
+        position: fixed;
+        top: 0;
+        left: -250px; /* Hidden off-screen */
+        width: 250px; 
+        height: 100%;
+        background: var(--bg-white);
+        box-shadow: var(--shadow-heavy);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 70px; 
+        transition: left 0.3s ease-in-out;
+        z-index: 100; 
+    }
+    .nav.active {
+        left: 0; /* Slide in when active */
+    }
+    body.dark-theme .nav {
+        background: var(--bg-primary); 
+    }
+    
+    .nav ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 0; 
+    }
+    .nav li {
+        width: 100%;
+        border-bottom: 1px solid var(--primary-blue-light); 
+    }
+    .nav li:last-child {
+        border-bottom: none;
+    }
+    .nav a {
+        padding: 15px 20px; 
+        justify-content: flex-start; 
+        border-radius: 0; 
+        width: 100%;
+    }
+    .nav a::before {
+        display: none; /* Hide underline animation for mobile menu items */
+    }
+    .nav a:hover {
+        background-color: var(--primary-blue-light); 
+    }
+    body.dark-theme .nav a:hover {
+        background-color: var(--bg-display); 
+    }
+
+    /* Adjust Vendite specific layout for smaller screens */
+    .stats-row, .charts-grid { 
+        grid-template-columns: 1fr; /* Stack boxes vertically */
+    }
+}
+
 @media (max-width: 768px) {
     .container { padding: 15px 20px; }
-    .header { flex-direction: column; gap: 15px; }
-    .header-brand { font-size: 28px; }
-    .nav ul { gap: 5px; flex-wrap: wrap; justify-content: center;}
-    .nav a { font-size: 12px; padding: 10px 15px; }
+    /* Header flex-direction might change to column on very small screens,
+     but here it remains row and items adjust */
+    .header { 
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between;
+    }
+    /* Re-adjust nav positioning relative to the header staying as a row */
+    .hamburger-menu-btn {
+        order: 1; /* Always first on mobile */
+    }
+    .header-brand {
+        order: 2; 
+        text-align: center; 
+    }
+    .header-actions {
+        order: 3; 
+    }
+
     .page-title { font-size: 20px; }
     .action-bar { 
         flex-direction: column; 
         align-items: center; 
-        margin-bottom: 25px; 
+    }
+    .action-bar .action-btn { 
+        width: 100%; 
+        max-width: 300px; 
     }
     .date-actions { 
         flex-direction: column; 
         width: 100%;
         align-items: stretch;
-    }
-    .stats-row, .charts-grid { grid-template-columns: 1fr; }
-    .action-bar .action-btn { 
-        width: 100%; 
-        max-width: 300px; 
-        margin: 0 auto;
     }
     .modal-actions { flex-direction: column; gap: 8px; }
     .modal-actions .action-btn { width: 100%; }

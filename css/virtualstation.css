@@ -129,6 +129,7 @@ body {
     color: var(--text-primary);
     font-size: 16px;
     line-height: 1.5;
+    overflow-x: hidden; /* Prevent horizontal scroll for mobile menu */
 }
 
 /* Stili di base per le scrollbar (per tema chiaro) */
@@ -194,12 +195,21 @@ body {
     flex-shrink: 0;
 }
 
-/* ===== MENU NAVIGAZIONE UNIFICATO ===== */
+/* ===== MENU NAVIGAZIONE (Desktop) ===== */
 .nav { 
-    display: flex; 
+    display: flex; /* Always flex for desktop */
     align-items: center; 
     flex: 1; 
     justify-content: center; 
+    position: static; /* Reset from fixed for desktop */
+    left: auto; /* Reset from -250px for desktop */
+    width: auto; /* Reset from fixed width for desktop */
+    height: auto; /* Reset from 100% height for desktop */
+    background: transparent; /* Reset from white/primary for desktop */
+    box-shadow: none; /* Reset from heavy shadow for desktop */
+    flex-direction: row; /* Reset from column for desktop */
+    padding-top: 0; /* Reset from 70px for desktop */
+    z-index: auto; /* Reset from 100 for desktop */
 }
 
 .nav ul { 
@@ -209,6 +219,7 @@ body {
     margin: 0;
     padding: 0;
     align-items: center;
+    flex-direction: row; /* Ensure row direction for desktop */
 }
 
 .nav a {
@@ -282,6 +293,11 @@ body {
     gap: 10px; 
 }
 
+/* Hamburger Menu Button - Hidden by default for desktop */
+.hamburger-menu-btn {
+    display: none; /* Hide on desktop */
+}
+
 /* Stili per pulsanti icona header (FONT AWESOME) */
 #theme-switcher,
 #info-btn { 
@@ -313,6 +329,29 @@ body {
 
 .theme-icon-hidden { 
     display: none !important; 
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 99; /* Below modals, above content */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.mobile-menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+body.no-scroll {
+    overflow: hidden; /* Prevent scrolling background when menu is open */
 }
 
 
@@ -373,6 +412,13 @@ body {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px var(--primary-blue-light);
     outline: none;
+}
+
+body.dark-theme .grid-input,
+body.dark-theme .turn-number-input {
+    background-color: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
 }
 
 .box-content {
@@ -472,13 +518,6 @@ body {
     outline: none;
 }
 
-body.dark-theme .grid-input,
-body.dark-theme .turn-number-input {
-    background-color: var(--bg-primary);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
 .grid-header {
     font-weight: 700;
     color: var(--text-secondary);
@@ -540,6 +579,11 @@ body.dark-theme .turn-number-input {
     justify-content: center;
     gap: 10px; /* Spazio tra icona e testo */
     box-shadow: none;
+}
+
+/* Icona specifica per il pulsante ordina carburanti */
+.action-btn .fa-euro-sign {
+    font-size: 16px; /* Dimensione dell'icona € */
 }
 
 /* Sottolineatura animata per TUTTI i pulsanti testuali */
@@ -664,7 +708,7 @@ body.dark-theme .modal-close-btn:hover {
     font-size: 24px; /* Dimensione icona */
     color: var(--text-secondary); /* Colore base icona */
     transition: color 0.3s ease;
-    display: block; /* Per assicurare la corretta visualizzazione e il colore */
+    display: block; /* For correct icon display and color */
 }
 .delete-turn-btn:hover {
     background-color: var(--danger); /* Sfondo rosso in hover */
@@ -782,7 +826,7 @@ body.dark-theme .total-overall-box .box-header-title, body.dark-overall-box .dis
 /* ===== STILI PER MODALE INFO ===== */
 .modal-info-icon {
     font-size: 60px; /* Dimensione per icona Font Awesome */
-    color: var(--primary-blue); /* Colore base per l'icona FA */
+    color: var(--primary-blue); /* Colore base */
     margin: 0 auto 20px;
     display: block;
     text-align: center;
@@ -837,20 +881,175 @@ body.dark-theme .modal-info-icon:hover {
 @keyframes slideOut { from { opacity: 1; transform: translateX(0); } to { opacity: 0; transform: translateX(100px); } }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 1200px) {
-    .main-grid { grid-template-columns: 1fr; }
-    .global-summary-grid { grid-template-columns: repeat(2, 1fr); }
+/* Mobile Menu Specific Styles */
+.hamburger-menu-btn {
+    display: none; /* Hidden by default for desktop */
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--text-primary);
+    cursor: pointer;
+    padding: 8px;
+    transition: color 0.3s ease;
+    /* order will be handled in media queries */
 }
+.hamburger-menu-btn:hover {
+    color: var(--primary-blue);
+}
+body.dark-theme .hamburger-menu-btn {
+    color: var(--text-primary);
+}
+body.dark-theme .hamburger-menu-btn:hover {
+    color: var(--primary-blue);
+}
+
+.mobile-menu-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 99; /* Below modals, above content */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.mobile-menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+body.no-scroll {
+    overflow: hidden; /* Prevent scrolling background when menu is open */
+}
+
+@media (max-width: 992px) {
+    /* Header layout for tablets/small laptops */
+    .header { 
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px; 
+    }
+    .header-brand {
+        font-size: 28px; 
+        flex-grow: 0; /* Don't let it grow on mobile to avoid pushing content */
+        text-align: left; /* Keep brand left-aligned for mobile */
+    }
+    .header-actions {
+        order: 3; /* Actions remain on the right */
+        margin-left: auto; /* Push actions to the right */
+    }
+
+    /* Show hamburger menu and hide desktop nav */
+    .hamburger-menu-btn {
+        display: block; /* Show hamburger button */
+        margin-left: 10px; 
+        order: 1; /* Position hamburger button before the brand on mobile */
+    }
+    .nav {
+        /* Mobile menu specific styles - OFF-CANVAS */
+        display: flex; /* Override desktop display settings */
+        position: fixed;
+        top: 0;
+        left: -250px; /* Hidden off-screen */
+        width: 250px; /* Width of the off-canvas menu */
+        height: 100%;
+        background: var(--bg-white);
+        box-shadow: var(--shadow-heavy);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 70px; /* Space for fixed header */
+        transition: left 0.3s ease-in-out;
+        z-index: 100; /* Above overlay */
+    }
+    .nav.active {
+        left: 0; /* Slide in when active */
+    }
+    body.dark-theme .nav {
+        background: var(--bg-primary); 
+    }
+    
+    .nav ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 0; 
+    }
+    .nav li {
+        width: 100%;
+        border-bottom: 1px solid var(--primary-blue-light); 
+    }
+    .nav li:last-child {
+        border-bottom: none;
+    }
+    .nav a {
+        padding: 15px 20px; 
+        justify-content: flex-start; 
+        border-radius: 0; 
+        width: 100%;
+    }
+    .nav a::before {
+        display: none; /* Hide underline animation for mobile menu items */
+    }
+    .nav a:hover {
+        background-color: var(--primary-blue-light); 
+    }
+    body.dark-theme .nav a:hover {
+        background-color: var(--bg-display); 
+    }
+
+    /* Adjust main grid for smaller screens */
+    .main-grid { grid-template-columns: 1fr; } /* Single column layout for main content */
+    .global-summary-grid { grid-template-columns: repeat(2, 1fr); } /* Keep 2 columns for summary if space allows */
+}
+
 @media (max-width: 768px) {
-    .container { padding: 15px 20px; }
-    .header { flex-direction: column; gap: 15px; }
-    .nav ul { gap: 5px; flex-wrap: wrap; justify-content: center;}
-    .nav a { font-size: 12px; padding: 10px 15px; }
-    .page-title { font-size: 20px; }
-    .action-bar { flex-direction: column; align-items: center; }
-    .action-bar .action-btn { width: 100%; max-width: 300px; }
-    .global-summary-grid { grid-template-columns: 1fr; }
-    .virtualstation-grid { grid-template-columns: 80px 1fr; }
-    .modal-actions { flex-direction: column; gap: 8px; }
-    .modal-actions .action-btn { width: 100%; }
+  .container { padding: 15px 20px; }
+  /* Header flex-direction might change to column on very small screens,
+     but here it remains row and items adjust */
+  .header { 
+    flex-direction: row; 
+    align-items: center;
+    justify-content: space-between;
+  }
+  /* Re-adjust nav positioning relative to the header staying as a row */
+  .hamburger-menu-btn {
+    order: 1; /* Always first on mobile */
+  }
+  .header-brand {
+    order: 2; 
+    text-align: center; 
+  }
+  .header-actions {
+    order: 3; 
+  }
+
+  /* Specific adjustments for Virtualstation content on smaller screens */
+  .page-title { font-size: 20px; }
+  .action-bar { flex-direction: column; align-items: center; }
+  .action-bar .action-btn { width: 100%; max-width: 300px; }
+  
+  .global-summary-grid { grid-template-columns: 1fr; } /* Stack summary boxes vertically */
+  .virtualstation-grid { grid-template-columns: 80px 1fr; } /* Adjust fuel grid */
+  
+  .modal-actions { flex-direction: column; gap: 8px; }
+  .modal-actions .action-btn { width: 100%; }
+}
+@media (max-width: 480px) {
+  .box-content { padding: 12px; }
+  .modal { margin: 10px; max-width: calc(100vw - 20px); }
+  /* Further adjust virtualstation grid for very small phones if needed */
+  .virtualstation-grid { grid-template-columns: 1fr; } /* Stack columns even more */
+  .virtualstation-grid .grid-header:nth-child(2), /* Hide IperSelf/Servito/Self-Service headers for products */
+  .virtualstation-grid .grid-header:nth-child(3),
+  .virtualstation-grid .grid-header:nth-child(4) {
+      display: none;
+  }
+  .virtualstation-grid input[data-type="iperself"],
+  .virtualstation-grid input[data-type="servito"],
+  .virtualstation-grid input[data-type="self-service"] {
+      grid-column: 2 / span 1; /* Span input across remaining column */
+  }
 }

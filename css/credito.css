@@ -88,6 +88,7 @@ body {
     font-family: 'Montserrat', sans-serif;
     background-color: var(--bg-primary);
     color: var(--text-primary);
+    overflow-x: hidden; /* Prevent horizontal scroll for mobile menu */
 }
 
 /* Stili di base per le scrollbar (per tema chiaro) */
@@ -168,12 +169,21 @@ body {
     flex-shrink: 0;
 }
 
-/* ===== MENU NAVIGAZIONE UNIFICATO ===== */
+/* ===== MENU NAVIGAZIONE (Desktop) ===== */
 .nav { 
-    display: flex; 
+    display: flex; /* Always flex for desktop */
     align-items: center; 
     flex: 1; 
     justify-content: center; 
+    position: static; /* Reset from fixed for desktop */
+    left: auto; /* Reset from -250px for desktop */
+    width: auto; /* Reset from fixed width for desktop */
+    height: auto; /* Reset from 100% height for desktop */
+    background: transparent; /* Reset from white/primary for desktop */
+    box-shadow: none; /* Reset from heavy shadow for desktop */
+    flex-direction: row; /* Reset from column for desktop */
+    padding-top: 0; /* Reset from 70px for desktop */
+    z-index: auto; /* Reset from 100 for desktop */
 }
 
 .nav ul { 
@@ -183,15 +193,16 @@ body {
     margin: 0; 
     padding: 0; 
     align-items: center;
+    flex-direction: row; /* Ensure row direction for desktop */
 }
 
-.nav a {
-    text-decoration: none;
-    color: var(--text-secondary);
-    font-weight: 600;
+.nav a { 
+    text-decoration: none; 
+    color: var(--text-secondary); 
+    font-weight: 600; 
     padding: 12px 20px; /* Allineato con credito.css */
-    border-radius: var(--radius-pill);
-    transition: all 0.3s ease;
+    border-radius: var(--radius-pill); 
+    transition: all 0.3s ease; 
     position: relative;
     line-height: 1;
     display: flex;
@@ -234,7 +245,6 @@ body {
 .nav a.active { background: var(--primary-blue); color: var(--bg-white) !important; box-shadow: var(--shadow-medium); }
 .nav a.active::before { display: none; }
 
-/* ===== THEME SWITCHER & INFO BUTTON ===== */
 .header-actions { 
     display: flex; 
     align-items: center; 
@@ -242,21 +252,31 @@ body {
     gap: 10px; 
 }
 
-#theme-switcher,
-#info-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background: var(--bg-display);
-    transition: all 0.3s ease;
-    cursor: pointer;
-    text-decoration: none;
+/* Hamburger Menu Button - Hidden by default for desktop */
+.hamburger-menu-btn {
+    display: none; /* Hide on desktop */
 }
+
+/* Stili per pulsanti icona header (FONT AWESOME) */
+#theme-switcher,
+#info-btn { 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    width: 40px; 
+    height: 40px; 
+    border-radius: 50%; 
+    background: var(--bg-display); 
+    transition: all 0.3s ease; 
+    text-decoration: none;
+    cursor: pointer;
+}
+
 #theme-switcher:hover,
-#info-btn:hover { background: var(--primary-blue-light); transform: scale(1.1) rotate(180deg); }
+#info-btn:hover { 
+    background: var(--primary-blue-light); 
+    transform: scale(1.1) rotate(180deg); 
+}
 
 /* Colore delle icone Font Awesome nell'header */
 #info-btn i,
@@ -266,7 +286,32 @@ body {
     transition: color 0.3s ease;
 }
 
-.theme-icon-hidden { display: none !important; }
+.theme-icon-hidden { 
+    display: none !important; 
+}
+
+/* Mobile Menu Overlay */
+.mobile-menu-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(3px);
+    z-index: 99; /* Below modals, above content */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+.mobile-menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
+body.no-scroll {
+    overflow: hidden; /* Prevent scrolling background when menu is open */
+}
 
 /* ===== BARRA AZIONI E RICERCA ===== */
 .action-bar { 
@@ -302,6 +347,13 @@ body {
     box-shadow: none;
 }
 
+/* Icone nei pulsanti dell'action-bar */
+.action-btn i {
+    font-size: 16px; /* Dimensione icona standard per i pulsanti */
+    color: var(--text-secondary); /* Colore icona di default */
+    transition: color 0.3s ease;
+}
+
 /* Sottolineatura animata per TUTTI i pulsanti testuali */
 .action-btn::before,
 .modal-actions .action-btn::before {
@@ -324,6 +376,11 @@ body {
     background-color: var(--primary-blue-light);
     box-shadow: none;
     transform: none;
+}
+
+/* Icone in hover */
+.action-btn:hover i {
+    color: var(--primary-blue); /* L'icona diventa blu come il testo in hover */
 }
 
 /* Larghezza della sottolineatura in hover per TUTTI i pulsanti testuali */
@@ -350,6 +407,39 @@ body.dark-theme .action-btn::before,
 body.dark-theme .modal-actions .action-btn::before {
     background: var(--text-primary);
 }
+
+/* Tema scuro per le icone dei pulsanti */
+body.dark-theme .action-btn i {
+    color: var(--text-secondary); /* Icona scura nel tema scuro */
+}
+body.dark-theme .action-btn:hover i {
+    color: var(--text-primary); /* Icona più chiara in hover nel tema scuro */
+}
+
+/* ===== ICONE NELL'ACTION-BAR (RIMOSSE - GESTITE IN HTML) ===== */
+/* Le icone sono ora gestite direttamente nell'HTML con <i> tags,
+   quindi rimuoviamo i ::before che potrebbero causare conflitti */
+
+/* Pulsanti disabilitati */
+.action-btn:disabled {
+    background: #adb5bd;
+    color: white; /* I pulsanti disabilitati mantengono il testo bianco */
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+.action-btn:disabled:hover {
+    background: #adb5bd;
+    color: white;
+}
+.action-btn:disabled::before {
+    display: none;
+}
+.action-btn:disabled i { /* Le icone dei pulsanti disabilitati sono bianche */
+    color: white;
+}
+
 
 .search-wrapper { position: relative; width: 100%; max-width: 400px; }
 #searchInput { width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--primary-blue-light); border-radius: var(--radius-large); font-size: 14px; font-family: 'Montserrat', sans-serif; transition: all 0.2s ease;}
@@ -393,24 +483,42 @@ body.dark-theme #searchInput { background-color: var(--bg-display); border-color
 #clientsGrid .client-name { font-size: 14px; font-weight: 700; color: var(--primary-blue); text-align: center; }
 body.dark-theme #clientsGrid .client-name { color: var(--text-primary); }
 
-/* ===== MODALE DETTAGLIO CLIENTE ===== */
+/* ===== MODALE DETTAGLIO CLIENTE (ALLARGATO CON OVERRIDE SPECIFICO) ===== */
 #client-detail-modal.modal-overlay { z-index: 1000; }
 .modal-content-wrapper { 
     position: relative; 
     margin: auto; 
-    width: 90%; 
-    max-width: 600px; 
+    width: 95%; 
+    max-width: 800px; /* Aumentato da 650px a 800px */
     max-height: 90vh; 
 }
+
+/* Override specifico per il modale cliente */
+#client-detail-modal .modal-content-wrapper {
+    max-width: 700px !important;  /* Increased from 600px as requested */
+}
+
+/* Su schermi più grandi, consenti una larghezza ancora maggiore */
+@media (min-width: 1200px) {
+    .modal-content-wrapper {
+        max-width: 900px; /* Ancora più largo su desktop grandi */
+        width: 80%;
+    }
+    
+    #client-detail-modal .modal-content-wrapper {
+        max-width: 800px !important;  /* Larger on big screens */
+    }
+}
+
 /* Contenitore interno per il padding uniforme di tutto il contenuto del modale */
 #modal-body-content.modal-inner-content {
     padding: 20px; /* Questo applica il padding uniforme desiderato */
     background: var(--bg-white); 
     border-radius: var(--radius-large); 
-    box-shadow: var(--shadow-light); /* Ho copiato lo shadowlight da .box per consistenza */
-    border: 1px solid var(--primary-blue-light); /* Copiato il bordo da .box per consistenza */
-    display: flex; /* Necessario per il layout interno */
-    flex-direction: column; /* Necessario per il layout interno */
+    box-shadow: var(--shadow-light); 
+    border: 1px solid var(--primary-blue-light); 
+    display: flex; 
+    flex-direction: column; 
 }
 
 
@@ -463,13 +571,21 @@ body.dark-theme #clientsGrid .client-name { color: var(--text-primary); }
 .client-salda-btn { background-color: var(--warning); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='m12 1 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 1z'/%3E%3C/svg%3E");}
 .client-salda-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 .client-print-btn { background-color: #7f8caa; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z'/%3E%3C/svg%3E");}
-.client-delete-btn { background-color: var(--danger); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z'/%3E%3C/svg%3E");}
+.client-delete-btn { 
+    background-color: var(--danger) !important; 
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z'/%3E%3C/svg%3E");
+}
+
+/* Tema scuro per il pulsante eliminazione cliente */
+body.dark-theme .client-delete-btn {
+    background-color: var(--danger) !important;
+}
 
 /* ===== FORM TRANSAZIONE - Nessun padding orizzontale, si affida al contenitore principale ===== */
 .transaction-form-grid { 
     display: grid; 
-    grid-template-columns: 110px 1fr 130px; 
-    gap: 12px; 
+    grid-template-columns: 120px 1fr 140px; /* Leggermente più largo per i campi */
+    gap: 15px; /* Aumentato il gap */
     margin-top: 20px; 
     margin-bottom: 20px; 
     align-items: center;
@@ -599,11 +715,11 @@ body.dark-theme .history-toggle:hover {
 }
 
 /* ===== MESSAGGIO NESSUNA TRANSAZIONE (specifico) ===== */
-p.no-transactions-message { /* Ho aggiunto una classe per renderlo più specifico */
+p.no-transactions-message { 
     text-align: center; 
     font-size: 12px; 
     color: var(--text-secondary); 
-    padding: 10px 0; /* Solo padding verticale */
+    padding: 10px 0; 
 }
 
 
@@ -626,7 +742,7 @@ p.no-transactions-message { /* Ho aggiunto una classe per renderlo più specific
     color: var(--primary-blue);
 }
 
-/* PULSANTE DI ELIMINAZIONE TRANSAZIONE */
+/* ===== PULSANTE DI ELIMINAZIONE TRANSAZIONE (VERSIONE CORRETTA) ===== */
 .transaction-delete-btn {
     width: 22px;
     height: 22px;
@@ -643,36 +759,31 @@ p.no-transactions-message { /* Ho aggiunto una classe per renderlo più specific
     overflow: hidden;
     box-shadow: none;
     flex-shrink: 0;
-}
-
-.transaction-delete-btn i {
     font-weight: bold;
     font-size: 14px;
-    color: var(--text-secondary);
-    transition: color 0.3s ease;
-    display: block;
+    color: var(--text-secondary); /* Gray in normal state */
 }
 
 .transaction-delete-btn:hover {
-    background-color: var(--danger);
-    transform: none;
+    background-color: var(--danger) !important; /* Red background on hover */
+    color: white !important; /* White text on hover */
 }
 
-.transaction-delete-btn:hover i {
-    color: white;
+/* Ensure the X is always visible */
+.transaction-delete-btn i {
+    color: inherit; /* Inherit parent color */
 }
 
 /* Tema scuro specifico per il pulsante di eliminazione transazione */
 body.dark-theme .transaction-delete-btn {
-}
-body.dark-theme .transaction-delete-btn:hover {
-    background-color: var(--danger);
-}
-body.dark-theme .transaction-delete-btn i {
     color: var(--text-secondary);
 }
-body.dark-theme .transaction-delete-btn:hover i {
-    color: white;
+body.dark-theme .transaction-delete-btn:hover {
+    background-color: var(--danger) !important;
+    color: white !important;
+}
+body.dark-theme .transaction-delete-btn i {
+    color: inherit;
 }
 
 /* Nascondi la pseudo-classe ::before (sottolineatura) per il pulsante di eliminazione */
@@ -722,18 +833,19 @@ body.dark-theme .transaction-delete-btn:hover i {
     display: none;
 }
 
-/* PULSANTE CHIUSURA MODAL */
+/* PULSANTE CHIUSURA MODAL (VERSIONE SEMPLIFICATA) */
 .modal-close-btn {
     width: 32px;
     height: 32px;
-    font-size: 24px;
+    font-size: 20px;
     font-weight: bold;
     color: var(--text-secondary);
     background-color: transparent;
 }
+
 .modal-close-btn:hover {
     background-color: var(--danger);
-    color: white;
+    color: white !important;
     transform: none;
 }
 
@@ -743,7 +855,7 @@ body.dark-theme .modal-close-btn {
 }
 body.dark-theme .modal-close-btn:hover {
     background-color: var(--danger);
-    color: white;
+    color: white !important;
 }
 
 .modal-info-icon {
@@ -772,7 +884,7 @@ body.dark-theme .modal-info-icon:hover {
 .info-modal-content p { margin-bottom: 15px; color: var(--text-secondary); }
 .info-modal-content .programmer-info { font-size: 14px; border-top: 1px solid var(--primary-blue-light); padding-top: 15px; line-height: 1.8; }
 .info-link { color: var(--text-primary); text-decoration: none; font-weight: 600; }
-.info-link:hover { text-decoration: underline; color: var(--primary-blue); }
+.info-link:hover { text_decoration: underline; color: var(--primary-blue); }
 
 /* ===== FIX TEMA SCURO INPUTS ===== */
 body.dark-theme .grid-input,
@@ -784,20 +896,133 @@ body.dark-theme #acconto-amount-input {
 }
 body.dark-theme .client-name-input { color: var(--text-primary); background: transparent; }
 
+/* ===== MIGLIORAMENTI AGGIUNTIVI PER COERENZA ===== */
+
+/* Assicura che tutti i pulsanti rossi abbiano testo bianco */
+.action-btn.danger,
+button[style*="background-color: var(--danger)"],
+button[style*="background-color: #FF3547"] {
+    color: white !important;
+}
+
 /* RESPONSIVE */
 @media (max-width: 992px) { 
-    #clientsGrid { grid-template-columns: repeat(2, 1fr); } 
-    .header { flex-direction: column; gap: 15px; } 
+    .header { 
+        flex-direction: row; 
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 20px; 
+    }
+    .header-brand {
+        font-size: 28px; 
+        flex-grow: 0; 
+        text-align: left; 
+    }
+    .header-actions {
+        order: 3; 
+        margin-left: auto; 
+    }
+
+    /* Show hamburger menu and hide desktop nav */
+    .hamburger-menu-btn {
+        display: block; /* Show hamburger button */
+        margin-left: 10px; 
+        order: 1; /* Position hamburger button before the brand on mobile */
+    }
+    .nav {
+        /* Mobile menu specific styles - OFF-CANVAS */
+        display: flex; 
+        position: fixed;
+        top: 0;
+        left: -250px; /* Hidden off-screen */
+        width: 250px; 
+        height: 100%;
+        background: var(--bg-white);
+        box-shadow: var(--shadow-heavy);
+        flex-direction: column;
+        justify-content: flex-start;
+        padding-top: 70px; 
+        transition: left 0.3s ease-in-out;
+        z-index: 100; 
+    }
+    .nav.active {
+        left: 0; /* Slide in when active */
+    }
+    body.dark-theme .nav {
+        background: var(--bg-primary); 
+    }
+    
+    .nav ul {
+        flex-direction: column;
+        width: 100%;
+        gap: 0; 
+    }
+    .nav li {
+        width: 100%;
+        border-bottom: 1px solid var(--primary-blue-light); 
+    }
+    .nav li:last-child {
+        border-bottom: none;
+    }
+    .nav a {
+        padding: 15px 20px; 
+        justify-content: flex-start; 
+        border-radius: 0; 
+        width: 100%;
+    }
+    .nav a::before {
+        display: none; /* Hide underline animation for mobile menu items */
+    }
+    .nav a:hover {
+        background-color: var(--primary-blue-light); 
+    }
+    body.dark-theme .nav a:hover {
+        background-color: var(--bg-display); 
+    }
+
+    /* Adjust desktop grid layouts for smaller screens */
+    #clientsGrid { grid-template-columns: repeat(2, 1fr); }
+    
+    /* Responsive: riduci le icone su mobile se necessario */
+    .action-btn::before {
+        margin-right: 6px; /* Riduci lo spazio tra icona e testo su mobile */
+    }
 }
+
 @media (max-width: 768px) { 
-    /* Il padding orizzontale di 20px del .modal-inner-content funzionerà anche qui */
-    .transaction-form-grid { grid-template-columns: 1fr; } 
-    .nav ul { gap: 5px; flex-wrap: wrap; justify-content: center;}
-    .nav a { font-size: 12px; padding: 10px 15px; }
+    .container { padding: 15px 20px; }
+    /* Header flex-direction might change to column on very small screens,
+     but here it remains row and items adjust */
+    .header { 
+        flex-direction: row; 
+        align-items: center;
+        justify-content: space-between;
+    }
+    /* Re-adjust nav positioning relative to the header staying as a row */
+    .hamburger-menu-btn {
+        order: 1; /* Always first on mobile */
+    }
+    .header-brand {
+        order: 2; 
+        text-align: center; 
+    }
+    .header-actions {
+        order: 3; 
+    }
+
+    .page-title { font-size: 20px; }
     .action-bar { flex-direction: column; align-items: center; }
     .action-bar .action-btn { width: 100%; max-width: 300px; }
+    .transaction-form-grid { grid-template-columns: 1fr; }
     .modal-actions { flex-direction: column; gap: 8px; }
     .modal-actions .action-btn { width: 100%; }
+    
+    /* Su mobile molto piccolo, nascondi le icone se serve più spazio */
+    @media (max-width: 480px) {
+        .action-btn::before {
+            display: none; /* Nascondi le icone su schermi molto piccoli */
+        }
+    }
 }
 @media (max-width: 576px) { 
     .container { padding: 15px; } 

@@ -159,7 +159,10 @@ class CreditManager {
             this.searchTerm = e.target.value.toLowerCase().trim();
             this.render();
         });
+        // StampaDati e altre funzioni globali chiameranno i metodi della classe
         document.getElementById('stampaDatiBtn')?.addEventListener('click', () => this.stampaDati());
+        document.getElementById('importaDatiCompletiBtn')?.addEventListener('click', () => this.importData()); // Assicurati che l'HTML abbia l'ID corretto
+        document.getElementById('esportaDatiCompletiBtn')?.addEventListener('click', () => this.exportData()); // Assicurati che l'HTML abbia l'ID corretto
     }
 
     getFilteredAndSortedClients() {
@@ -222,11 +225,15 @@ class CreditManager {
         
         // Ho rimosso padding-left e padding-right da transaction-item e client-total nell'HTML generato
         // Per lasciare che il padding del .modal-inner-content gestisca lo spazio orizzontale
-        const transactionsHTML = (client.transactions || []).length > 0 ? [...client.transactions].sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `<div class="transaction-item"><div class="transaction-details">${t.description}<div class="transaction-date">${formatter.dateTime(t.date)}</div></div><div class="transaction-right-side"><div class="transaction-amount" style="color: ${t.amount > 0 ? 'var(--success)' : 'var(--danger)'}">${t.amount > 0 ? '+' : '-'}${formatter.currency.format(Math.abs(t.amount))}</div><button class="transaction-delete-btn" onclick="window.creditManager.deleteTransaction('${clientId}', '${t.id}')">×</button></div></div>`).join('') : '<p class="no-transactions-message">Nessuna transazione.</p>';
+        const transactionsHTML = (client.transactions || []).length > 0 ? [...client.transactions].sort((a, b) => new Date(b.date) - new Date(a.date)).map(t => `<div class="transaction-item"><div class="transaction-details">${t.description}<div class="transaction-date">${formatter.dateTime(t.date)}</div></div><div class="transaction-right-side"><div class="transaction-amount" style="color: ${t.amount > 0 ? 'var(--success)' : 'var(--danger)'}">${t.amount > 0 ? '+' : '-'}${formatter.currency.format(Math.abs(t.amount))}</div><button class="transaction-delete-btn" onclick="window.creditManager.deleteTransaction('${clientId}', '${t.id}')"><i class="fa-solid fa-xmark"></i></button></div></div>`).join('') : '<p class="no-transactions-message">Nessuna transazione.</p>';
         
         const clientNameHTML = `<input type="text" class="client-name-input" value="${client.name}">`;
         const moreOptionsIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M6 10c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m12 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2m-6 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2"/></svg>`;
         
+        // Allargato il modale in credito.css
+        // Testo bianco sui pulsanti rossi di eliminazione in credito.css
+        // Icone sui pulsanti dell'action-bar in credito.css (tramite ::before)
+
         modalBody.innerHTML = `
             <div class="client-header">${clientNameHTML}<div class="client-actions-wrapper"><div class="client-actions"><button class="client-acconto-btn" title="Acconto"></button><button class="client-salda-btn" title="Salda" ${finalBalance >= 0 ? 'disabled' : ''}></button><button class="client-print-btn" title="Stampa"></button><button class="client-delete-btn" title="Elimina"></button></div><button class="client-more-options-btn" title="Altro">${moreOptionsIcon}</button></div></div>
             <div class="transaction-form-grid"><input type="text" class="grid-input date-input" value="${today}"><input type="text" class="grid-input desc-input" placeholder="Descrizione"><input type="text" class="grid-input amount-input" placeholder="Importo"></div>
@@ -248,7 +255,7 @@ class CreditManager {
 
         modal.onclick = (e) => { if (e.target === modal) hideModal(); };
         
-        const content = modal.querySelector('.modal-inner-content'); // Seleziona il div con la nuova classe
+        const content = modal.querySelector('.modal-inner-content');
         
         content.querySelector('.client-more-options-btn').addEventListener('click', e => content.querySelector('.client-actions').classList.toggle('is-open'));
 
@@ -648,6 +655,36 @@ function stampaDati() { if (window.creditManager) window.creditManager.stampaDat
 document.addEventListener('DOMContentLoaded', () => {
     try {
         if (!window.Storage) throw new Error('Storage non disponibile');
+        
+        // MOBILE MENU LOGIC (START)
+        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
+        const mainNav = document.getElementById('main-nav');
+        const mobileOverlay = document.getElementById('mobile-menu-overlay');
+
+        if (hamburgerBtn && mainNav && mobileOverlay) {
+            hamburgerBtn.addEventListener('click', () => {
+                mainNav.classList.toggle('active');
+                mobileOverlay.classList.toggle('active');
+                document.body.classList.toggle('no-scroll'); // Optional: prevent scrolling background
+            });
+
+            mobileOverlay.addEventListener('click', () => {
+                mainNav.classList.remove('active');
+                mobileOverlay.classList.remove('active');
+                document.body.classList.remove('no-scroll'); // Optional
+            });
+
+            // Close menu if a nav link is clicked
+            mainNav.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    mainNav.classList.remove('active');
+                    mobileOverlay.classList.remove('active');
+                    document.body.classList.remove('no-scroll'); // Optional
+                });
+            });
+        }
+        // MOBILE MENU LOGIC (END)
+
         initializeThemeSwitcher();
         initializeInfoButton();
         initializeSearchBar();

@@ -14,7 +14,10 @@
 <body>
     <header class="header">
         <div class="header-brand">CERBERO</div>
-        <nav class="nav">
+        <button class="hamburger-menu-btn" id="hamburger-menu-btn" aria-label="Apri menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <nav class="nav" id="main-nav">
             <ul>
                 <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
                 <li><a href="registro.html"><i class="fa-solid fa-book"></i>REGISTRO</a></li>
@@ -35,6 +38,8 @@
             </a>
         </div>
     </header>
+
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
 
     <div class="container">
         <h1 class="page-title">DASHBOARD VENDITE</h1>

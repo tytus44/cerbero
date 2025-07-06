@@ -268,12 +268,12 @@ class CargoManager {
             rimanenze: this.cargoData.rimanenze
         };
         const dataStr = JSON.stringify(dataToExport, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const dataBlob = new Blob([jsonString], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `cerbero_carico_${this.currentYear}.json`;
-        link.click();
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cerbero_carico_${this.currentYear}.json`;
+        a.click();
         URL.revokeObjectURL(url);
         showMessage('Dati carico esportati!', 'info');
     }
