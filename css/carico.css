@@ -829,25 +829,3 @@ body.dark-theme .modal-info-icon:hover {
 
 /* ===== RESPONSIVE ===== */
 .hide-mobile { display: block; }
-@media (max-width: 1024px) {
-    .main-container { grid-template-columns: 1fr; }
-    .hide-mobile { display: none; }
-    .carico-grid { grid-template-columns: 120px 1fr; }
-    .product-inputs { grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 768px) {
-    .header { flex-direction: column; gap: 15px; }
-    .nav ul { gap: 5px; flex-wrap: wrap; justify-content: center; }
-    .nav a { font-size: 12px; padding: 10px 15px; }
-    .carico-grid { grid-template-columns: 80px 1fr; }
-    .action-bar { flex-direction: column; align-items: center; }
-    .action-bar .action-btn { width: 100%; max-width: 300px; }
-    .modal-actions { flex-direction: column; gap: 8px; }
-    .modal-actions .action-btn { width: 100%; }
-    .table-container { overflow-x: scroll; -webkit-overflow-scrolling: touch; }
-    .history-table { min-width: 800px; }
-    .product-inputs { grid-template-columns: repeat(2, 1fr); gap: 10px; }
-}
-@media (max-width: 480px) {
-    .product-inputs { grid-template-columns: 1fr; gap: 15px; }
-}
