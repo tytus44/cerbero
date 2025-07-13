@@ -6,12 +6,24 @@
     <title>CeRBERO - Registro giornata</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css"> 
     <link rel="stylesheet" href="../css/registro.css">
+    <style>
+        /* Aggiornamento colori secondary text */
+        :root {
+            --text-secondary: #6b7280;
+        }
+        
+        body.dark-theme {
+            --text-secondary: #94a3b8;
+        }
+    </style>
 </head>
 <body>
-    <header class="header">
-        </button>
-        <nav class="nav" id="main-nav">
+
+    <aside class="sidebar" id="main-sidebar">
+        <div class="sidebar-header">CeRBERO</div>
+        <nav class="nav">
             <ul>
                 <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
                 <li><a href="registro.html" class="active"><i class="fa-solid fa-book"></i>REGISTRO</a></li>
@@ -22,28 +34,26 @@
                 <li><a href="carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
             </ul>
         </nav>
-        <div class="header-actions">
-            <a href="#" id="info-btn" title="Informazioni">
-                <i class="fa-solid fa-circle-info"></i>
-            </a>
+        
+        <!-- Footer della sidebar -->
+        <div class="sidebar-footer">
             <a href="#" id="theme-switcher" title="Cambia Tema">
                 <i id="theme-icon-light" class="fa-solid fa-sun"></i>
-                <i id="theme-icon-dark" class="fa-solid fa-moon theme-icon-hidden"></i>
+                <i id="theme-icon-dark" class="fa-solid fa-moon theme-icon-hidden"></i>TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
             </a>
         </div>
-    </header>
+    </aside>
 
-    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    <div class="action-bar-floating">
+        <button class="action-btn" onclick="importaDatiCompleti()"><i class="fa-solid fa-download"></i>IMPORTA</button>
+        <button class="action-btn" onclick="esportaDatiCompleti()"><i class="fa-solid fa-upload"></i>ESPORTA</button>
+        <button class="action-btn" onclick="stampaDati()"><i class="fa-solid fa-print"></i>STAMPA</button>
+    </div>
 
     <div class="container">
-        <h1 class="page-title">REGISTRO DI CASSA</h1>
-        
-        <div class="action-bar">
-            <button class="action-btn" onclick="importaDatiCompleti()"><i class="fa-solid fa-download"></i>IMPORTA</button>
-            <button class="action-btn" onclick="esportaDatiCompleti()"><i class="fa-solid fa-upload"></i>ESPORTA</button>
-            <button class="action-btn print" onclick="stampaDati()"><i class="fa-solid fa-print"></i>STAMPA</button>
-        </div>
-
         <main class="main-content">
             <div class="top-row-grid">
                 <div class="box summary-box">
@@ -66,13 +76,13 @@
                     <h2 class="box-header">RIEPILOGO</h2>
                     <div class="box-content">
                         <div class="summary-grid">
-                            <div class="summary-label">Totale Entrate:</div>
+                            <div class="summary-label">ENTRATE</div>
                             <div class="display-field" id="totale-entrate">€ 0,00</div>
                             <div class="summary-label">CARBURANTI</div>
                             <div class="display-field" id="totale-carburanti">€ 0,00</div>
-                            <div class="summary-label">Totale Uscite:</div>
+                            <div class="summary-label">USCITE</div>
                             <div class="display-field" id="totale-uscite">€ 0,00</div>
-                            <div class="summary-label">Differenza:</div>
+                            <div class="summary-label">DIFFERENZA</div>
                             <div class="display-field" id="differenza">€ 0,00</div>
                         </div>
                     </div>
@@ -108,32 +118,34 @@
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title" id="confirm-modal-title">Conferma Azione</h3>
+                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-content">
                 <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
             </div>
             <div class="modal-actions">
-                <button class="action-btn secondary" id="confirm-modal-cancel"><i class="fa-solid fa-xmark"></i>Annulla</button>
+                <button class="action-btn" id="confirm-modal-cancel"><i class="fa-solid fa-xmark"></i>Annulla</button>
                 <button class="action-btn" id="confirm-modal-ok"><i class="fa-solid fa-check"></i>Conferma</button>
             </div>
         </div>
     </div>
 
+    <!-- Modal Info Standardizzato -->
     <div class="modal-overlay" id="info-modal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title">Informazioni Progetto</h3>
+                <div class="modal-title">Informazioni Progetto</div>
                 <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-content info-modal-content">
                 <i class="fa-solid fa-circle-info modal-info-icon"></i>
-                <h1 class="info-modal-brand">CeRBERO</h1>
+                <div class="info-modal-brand">CeRBERO</div>
                 <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
-                <p class="programmer-info">
-                    Sviluppato da: <strong>NeRO</strong><br>
+                <div class="programmer-info">
+                    <strong>Sviluppato da:</strong> NeRO<br>
                     <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
                     <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
-                </p>
+                </div>
             </div>
         </div>
     </div>

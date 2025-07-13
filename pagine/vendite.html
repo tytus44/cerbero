@@ -9,12 +9,13 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/vendite.css">
 </head>
 <body>
-    <header class="header">
-        </button>
-        <nav class="nav" id="main-nav">
+    <div class="sidebar">
+        <div class="sidebar-header">CeRBERO</div>
+        <nav class="nav">
             <ul>
                 <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
                 <li><a href="registro.html"><i class="fa-solid fa-book"></i>REGISTRO</a></li>
@@ -25,35 +26,38 @@
                 <li><a href="carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
             </ul>
         </nav>
-        <div class="header-actions">
-            <a href="#" id="info-btn" title="Informazioni">
-                <i class="fa-solid fa-circle-info"></i>
-            </a>
+        <div class="sidebar-footer">
             <a href="#" id="theme-switcher" title="Cambia Tema">
                 <i id="theme-icon-light" class="fa-solid fa-sun"></i>
                 <i id="theme-icon-dark" class="fa-solid fa-moon theme-icon-hidden"></i>
+                TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
             </a>
         </div>
-    </header>
+    </div>
 
-    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    <div class="action-bar-floating">
+        <button id="refreshBtn" class="action-btn">
+            <i class="fa-solid fa-arrows-rotate"></i>AGGIORNA DATI
+        </button>
+        <button id="printBtn" class="action-btn" onclick="stampaDati()">
+            <i class="fa-solid fa-print"></i>STAMPA
+        </button>
+    </div>
 
-    <div class="container">
-        <h1 class="page-title">DASHBOARD VENDITE</h1>
-
-        <div class="action-bar date-selector">
-            <div class="form-group">
-                <label class="form-label">Data Inizio</label>
-                <input type="text" id="startDate" placeholder="DD/MM/YYYY" class="grid-input">
-            </div>
-            <div class="form-group">
-                <label class="form-label">Data Fine</label>
-                <input type="text" id="endDate" placeholder="DD/MM/YYYY" class="grid-input">
-            </div>
-            <div class="date-actions">
-                <button id="refreshBtn" class="action-btn"><i class="fa-solid fa-arrows-rotate"></i>AGGIORNA</button>
-                <button id="printBtn" class="action-btn print" onclick="stampaDati()"><i class="fa-solid fa-print"></i>STAMPA</button>
-            </div>
+    <div class="container main-content">
+        <div class="filter-container">
+            <label class="filter-label">Filtra Dati Per:</label>
+            <select id="filter-type" class="action-btn filter-select">
+                <option value="mese">Mese</option>
+                <option value="trimestre">Trimestre</option>
+                <option value="semestre">Semestre</option>
+            </select>
+            <select id="filter-value" class="action-btn filter-select"></select>
+            <button class="action-btn" id="btn-apply-filter"><i class="fa-solid fa-check"></i>Applica</button>
+            <button class="action-btn secondary" id="btn-reset-filter" title="Reset Filtro"><i class="fa-solid fa-rotate-left"></i></button>
         </div>
 
         <div class="stats-row">
@@ -66,34 +70,30 @@
                 <div class="stat-label">Litri Erogati</div>
             </div>
             <div class="box summary-box">
-                <div class="stat-value" id="avgPrice">N/D</div>
-                <div class="stat-label">Prodotto Top</div>
-            </div>
-            <div class="box summary-box">
                 <div class="stat-value" id="servitoPerc">0%</div>
                 <div class="stat-label">Servito vs Self</div>
             </div>
         </div>
 
         <div class="charts-grid">
-            <div class="box summary-box">
+            <div class="box">
                 <h2 class="box-header">Vendite per Prodotto</h2>
                 <div class="box-content">
                     <canvas id="productChart"></canvas>
                 </div>
             </div>
 
-            <div class="box summary-box">
-                <h2 class="box-header">Composizione Fatturato</h2>
-                <div class="box-content">
-                    <canvas id="islandChart"></canvas>
-                </div>
-            </div>
-
-            <div class="box summary-box">
+            <div class="box">
                 <h2 class="box-header">Modalità di Servizio</h2>
                 <div class="box-content">
                     <canvas id="modalityChart"></canvas>
+                </div>
+            </div>
+
+            <div class="box">
+                <h2 class="box-header">Composizione Fatturato</h2>
+                <div class="box-content">
+                    <canvas id="islandChart"></canvas>
                 </div>
             </div>
         </div>

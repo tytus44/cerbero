@@ -285,33 +285,19 @@ function getSalesSummaryData() {
 function updateSalesSummaryWidget() {
     const { productTotals, modalityTotals } = getSalesSummaryData();
     
-    const productListEl = document.getElementById('product-liters-summary');
-    if (productListEl) {
-        productListEl.innerHTML = ''; 
-        Object.entries(productTotals).forEach(([product, liters]) => {
-            if (liters > 0) { 
-                const li = document.createElement('li');
-                li.classList.add(`product-${product}`);
-                li.innerHTML = `
-                    <span>${formatProductName(product)}</span>
-                    <span class="value">${formatLiters(liters)} L</span>
-                `;
-                productListEl.appendChild(li);
-            }
-        });
-    }
+    // Aggiorna i singoli valori dei prodotti nel riepilogo vendite della dashboard
+    Object.entries(productTotals).forEach(([product, liters]) => {
+        const element = document.getElementById(`${product}-liters`);
+        if (element) {
+            element.textContent = `${formatLiters(liters)} L`;
+        }
+    });
 
-    const totalModalityLiters = modalityTotals.servito + modalityTotals.iperself + modalityTotals.selfservice;
-    const servitoPerc = totalModalityLiters > 0 ? (modalityTotals.servito / totalModalityLiters) * 100 : 0;
-
-    const percentageValueEl = document.getElementById('servito-percentage-value');
-    const progressBarEl = document.getElementById('servito-progress-bar');
-
-    if (percentageValueEl) {
-        percentageValueEl.textContent = `${servitoPerc.toFixed(1)}%`;
-    }
-    if (progressBarEl) {
-        progressBarEl.style.width = `${servitoPerc}%`;
+    // Calcola e aggiorna il totale litri
+    const totalLiters = Object.values(productTotals).reduce((sum, liters) => sum + liters, 0);
+    const totalElement = document.getElementById('total-liters');
+    if (totalElement) {
+        totalElement.textContent = `${formatLiters(totalLiters)} L`;
     }
 }
 
@@ -405,6 +391,16 @@ function initializeIncassoBox() {
     });
 }
 
+// Funzione per il reset del fatturato manuale
+function resetManualFatturato() {
+    showConfirmModal('Azzera Fatturato Manuale?', 'Verrà usato il valore calcolato da Virtualstation. Confermi?', () => {
+        Storage.remove(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE);
+        initializeIncassoBox();
+        updateSalesSummaryWidget();
+        updateMarginBox();
+        showMessage('Fatturato manuale azzerato.', 'success');
+    });
+}
 
 /* ===== SISTEMA IMPORT/EXPORT UNIFICATO ===== */
 const COMPLETE_EXPORT_MAPPING = {
@@ -519,6 +515,11 @@ function resetVirtualstationData() {
      Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, clearedData);
 }
 
+// FUNZIONE MODIFICATA: Azzera anche il fatturato totale manuale
+function resetFatturatoManuale() {
+    Storage.remove(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE);
+}
+
 function esportaTuttiIDatiConfirmBypass() {
     try {
         const dataToExport = {
@@ -549,10 +550,11 @@ function esportaTuttiIDatiConfirmBypass() {
     }
 }
 
+// FUNZIONE MODIFICATA: Ora azzera anche il fatturato totale
 function confirmNewDay() {
     showConfirmModal(
         'Avvia Nuova Giornata?',
-        'Salverà un backup completo, azzererà il Registro e resetterà i turni di Virtualstation. Procedere?',
+        'Salverà un backup completo, azzererà il Registro, resetterà i turni di Virtualstation e azzererà il fatturato totale. Procedere?',
         async () => {
             try {
                 esportaTuttiIDatiConfirmBypass();
@@ -563,6 +565,9 @@ function confirmNewDay() {
 
                 resetVirtualstationData();
                 showMessage('Virtualstation resettata!', 'info');
+                
+                resetFatturatoManuale();
+                showMessage('Fatturato totale azzerato!', 'info');
                 
                 showMessage('Operazione completata. Ricarico la pagina...', 'info');
                 setTimeout(() => window.location.reload(), 1500);
@@ -590,34 +595,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (typeof Storage === 'undefined' || !Storage.KEYS) {
             console.error("Storage o Storage.KEYS non definiti.");
             return;
-        }
-
-        // MOBILE MENU LOGIC
-        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
-        const mainNav = document.getElementById('main-nav');
-        const mobileOverlay = document.getElementById('mobile-menu-overlay');
-
-        if (hamburgerBtn && mainNav && mobileOverlay) {
-            hamburgerBtn.addEventListener('click', () => {
-                mainNav.classList.toggle('active');
-                mobileOverlay.classList.toggle('active');
-                document.body.classList.toggle('no-scroll'); // Optional: prevent scrolling background
-            });
-
-            mobileOverlay.addEventListener('click', () => {
-                mainNav.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-                document.body.classList.remove('no-scroll'); // Optional
-            });
-
-            // Close menu if a nav link is clicked
-            mainNav.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mainNav.classList.remove('active');
-                    mobileOverlay.classList.remove('active');
-                    document.body.classList.remove('no-scroll'); // Optional
-                });
-            });
         }
 
         initializeThemeSwitcher();
@@ -659,17 +636,6 @@ document.addEventListener('DOMContentLoaded', function() {
         if (notesArea) {
             notesArea.value = Storage.load(Storage.KEYS.NOTES, '');
             notesArea.addEventListener('input', debounce(() => Storage.save(Storage.KEYS.NOTES, notesArea.value), 500));
-        }
-        
-        const resetManualFatturatoBtn = document.getElementById('reset-manual-fatturato-btn');
-        if (resetManualFatturatoBtn) {
-            resetManualFatturatoBtn.addEventListener('click', () => {
-                showConfirmModal('Azzera Fatturato Manuale?', 'Verrà usato il valore calcolato da Virtualstation. Confermi?', () => {
-                    Storage.remove(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE);
-                    initializeIncassoBox();
-                    showMessage('Fatturato manuale azzerato.', 'success');
-                });
-            });
         }
         
         function updateDateTime() {

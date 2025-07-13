@@ -1,906 +1,676 @@
-/* ===== DESIGN SYSTEM & STILI BASE ===== */
-:root {
-    --primary-blue: #093fb4;
-    --primary-blue-hover: #0730a3;
-    --primary-blue-light: rgba(9, 63, 180, 0.1);
-    --text-primary: #334155;
-    --text-secondary: #64748b;
-    --bg-primary: #f4f4f9;
-    --bg-white: #ffffff;
-    --bg-display: #e5eef7;
-    --success: #00C851;
-    --success-hover: #00A142;
-    --danger: #FF3547;
-    --info: #0ABAB5;
-    --warning: #FFD700;
-    --purple: #6f42c1;
-    --orange: #ff9f00;
-    --radius-large: 20px;
-    --radius-medium: 12px;
-    --radius-pill: 50px;
-    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
-    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.1);
-    --shadow-heavy: 0 8px 25px rgba(0, 0, 0, 0.15);
+/* ===== CREDITO.CSS - STILI SPECIFICI PAGINA CREDITO ===== */
+/* Questo file contiene solo gli stili univoci per la gestione credito */
+
+/* ===== Z-INDEX MODALI ===== */
+#client-detail-modal {
+    z-index: 1000;
 }
 
-/* ===== TEMA SCURO AGGIORNATO ===== */
-body.dark-theme {
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --bg-primary: #0f172a;
-    --bg-white: #1e293b;
-    --bg-display: #334155;
-    --primary-blue-light: rgba(59, 130, 246, 0.2);
+#confirm-modal {
+    z-index: 1100; /* Più alto del modal cliente */
 }
 
-/* Sfondo e testo dei link di navigazione nel tema scuro */
-body.dark-theme .nav a { color: var(--text-secondary) !important; }
-body.dark-theme .nav a:hover {
-    color: var(--text-primary) !important; /* Testo più chiaro in hover */
-    background-color: var(--primary-blue-light);
-}
-body.dark-theme .nav a.active {
-    background: var(--primary-blue);
-    color: #ffffff !important;
+#add-client-modal,
+#acconto-modal,
+#info-modal {
+    z-index: 1050;
 }
 
-/* Sottolineatura dei link di navigazione nel tema scuro */
-body.dark-theme .nav a::before {
-    background: var(--text-primary); /* Colore chiaro per la sottolineatura */
+/* ===== SUMMARY GRID CREDITO ===== */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
 }
 
-/* Tema scuro per le icone del menu */
-body.dark-theme .nav a i {
-    color: var(--text-secondary) !important;
-}
-
-body.dark-theme .nav a:hover i {
-    color: var(--text-primary) !important;
-}
-
-body.dark-theme .nav a.active i {
-    color: #ffffff !important;
-}
-
-/* Colore delle icone dell'header nel tema scuro */
-body.dark-theme #info-btn i,
-body.dark-theme #theme-switcher i {
-    color: var(--text-primary);
-}
-
-/* Scrollbar nel tema scuro */
-body.dark-theme ::-webkit-scrollbar-track {
-    background: transparent; /* Traccia completamente trasparente */
-}
-body.dark-theme ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2); /* Grigio chiaro per il pollice */
-    border: none; /* Rimuovi bordo */
-}
-body.dark-theme ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-blue); /* Blu in hover */
-}
-
-
-* { margin: 0; padding: 0; box-sizing: border-box; }
-*:focus, *:focus-visible { outline: none; }
-
-body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    overflow-x: hidden; /* Prevent horizontal scroll for mobile menu */
-}
-
-/* Stili di base per le scrollbar (per tema chiaro) */
-::-webkit-scrollbar {
-    width: 8px; /* Larghezza della scrollbar verticale */
-    height: 8px; /* Altezza della scrollbar orizzontale */
-}
-
-::-webkit-scrollbar-track {
-    background: transparent; /* Traccia completamente trasparente */
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* Grigio chiaro per il pollice */
-    border-radius: 10px;
-    border: none; /* Rimuovi bordo */
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-blue); /* Blu in hover */
-}
-
-
-.container { max-width: 1400px; margin: 0 auto; padding: 20px 25px; }
-.page-title { text-align: center; color: var(--primary-blue); font-size: 24px; font-weight: 800; margin-bottom: 25px; }
-
-/* ===== BOX / CARD DEFINIZIONE BASE ===== */
-.box {
-    background: var(--bg-white);
-    border-radius: var(--radius-large);
-    border: 1px solid var(--primary-blue-light);
-    box-shadow: var(--shadow-light);
-    display: flex;
-    flex-direction: column;
-    padding: 20px;
-    transition: all 0.3s ease;
-}
-.summary-box { 
-    position: relative; 
-    overflow: hidden; 
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 20px;
-}
-.summary-box::before {
-    content: ''; position: absolute; top: 0; left: 0;
-    width: 100%; height: 4px;
-    background: linear-gradient(90deg, var(--primary-blue), var(--info), var(--success));
-    transform: scaleX(0); transform-origin: left;
-    transition: transform 0.4s ease-out;
-}
-.summary-box:hover::before { transform: scaleX(1); }
-/* Rimosso .summary-box.box:hover per eliminare l'effetto di sollevamento e ombra */
-
-/* ===== HEADER E NAVIGAZIONE (STILE NUOVO) ===== */
-.header {
-    background: var(--bg-white);
-    padding: 15px 25px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: var(--shadow-light);
-    border-bottom: 1px solid var(--primary-blue-light);
-    min-height: 70px;
-}
-.header-brand {
-    font-size: 32px;
-    font-weight: 800;
-    color: var(--primary-blue);
-    background: linear-gradient(45deg, var(--primary-blue), #42D7F4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    flex-shrink: 0;
-}
-
-/* ===== MENU NAVIGAZIONE (Desktop) ===== */
-.nav { 
-    display: flex; /* Always flex for desktop */
-    align-items: center; 
-    flex: 1; 
-    justify-content: center; 
-    position: static; /* Reset from fixed for desktop */
-    left: auto; /* Reset from -250px for desktop */
-    width: auto; /* Reset from fixed width for desktop */
-    height: auto; /* Reset from 100% height for desktop */
-    background: transparent; /* Reset from white/primary for desktop */
-    box-shadow: none; /* Reset from heavy shadow for desktop */
-    flex-direction: row; /* Reset from column for desktop */
-    padding-top: 0; /* Reset from 70px for desktop */
-    z-index: auto; /* Reset from 100 for desktop */
-}
-
-.nav ul { 
-    list-style: none; 
-    display: flex; 
-    gap: 8px; /* Allineato con credito.css */
-    margin: 0; 
-    padding: 0; 
-    align-items: center;
-    flex-direction: row; /* Ensure row direction for desktop */
-}
-
-.nav a { 
-    text-decoration: none; 
-    color: var(--text-secondary); 
-    font-weight: 600; 
-    padding: 12px 20px; /* Allineato con credito.css */
-    border-radius: var(--radius-pill); 
-    transition: all 0.3s ease; 
+.summary-grid .summary-box {
     position: relative;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    font-size: 14px; /* Allineato con credito.css */
-    height: 44px; /* Allineato con credito.css */
-    box-sizing: border-box;
-    gap: 8px; /* Spazio tra icona e testo */
+    overflow: hidden;
+    text-align: center;
+    padding: 15px !important; /* Ridotto da 20px a 15px */
+    min-height: auto !important; /* Sovrascrive il min-height globale */
 }
 
-/* Stili per le icone del menu */
-.nav a i {
-    font-size: 16px; /* Dimensione icona */
-    color: var(--text-secondary); /* Colore base icona */
-    transition: color 0.3s ease;
-}
-
-.nav a:hover i {
-    color: var(--primary-blue); /* Colore icona in hover */
-}
-
-.nav a.active i {
-    color: var(--bg-white) !important; /* Colore icona quando attivo */
-}
-
-/* Sottolineatura animata */
-.nav a::before { 
-    content: ''; 
-    position: absolute; 
-    bottom: 8px; 
-    left: 50%; 
-    width: 0; 
-    height: 2px; 
-    background: var(--primary-blue); 
-    transform: translateX(-50%); 
-    transition: width 0.3s ease; 
-}
-.nav a:hover::before { width: 60%; }
-.nav a:hover { color: var(--primary-blue); background-color: var(--primary-blue-light); }
-.nav a.active { background: var(--primary-blue); color: var(--bg-white) !important; box-shadow: var(--shadow-medium); }
-.nav a.active::before { display: none; }
-
-.header-actions { 
-    display: flex; 
-    align-items: center; 
-    justify-content: flex-end;
-    gap: 10px; 
-}
-
-/* Hamburger Menu Button - Hidden by default for desktop */
-.hamburger-menu-btn {
-    display: none; /* Hide on desktop */
-}
-
-/* Stili per pulsanti icona header (FONT AWESOME) */
-#theme-switcher,
-#info-btn { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 50%; 
-    background: var(--bg-display); 
-    transition: all 0.3s ease; 
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#theme-switcher:hover,
-#info-btn:hover { 
-    background: var(--primary-blue-light); 
-    transform: scale(1.1) rotate(180deg); 
-}
-
-/* Colore delle icone Font Awesome nell'header */
-#info-btn i,
-#theme-switcher i {
-    font-size: 20px;
-    color: var(--text-primary);
-    transition: color 0.3s ease;
-}
-
-.theme-icon-hidden { 
-    display: none !important; 
-}
-
-/* Mobile Menu Overlay */
-.mobile-menu-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
+.summary-box::before {
+    content: '';
+    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px);
-    z-index: 99; /* Below modals, above content */
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.mobile-menu-overlay.active {
-    display: block;
-    opacity: 1;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--info), var(--success));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease-out;
 }
 
-body.no-scroll {
-    overflow: hidden; /* Prevent scrolling background when menu is open */
+.summary-box:hover::before {
+    transform: scaleX(1);
 }
 
-/* ===== BARRA AZIONI E RICERCA ===== */
-.action-bar { 
-    display: flex; 
-    justify-content: center; 
-    align-items: center; 
-    gap: 15px; 
-    margin-bottom: 25px; 
-    flex-wrap: wrap; 
+.summary-title {
+    font-weight: 600 !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 8px !important; /* Ridotto da 10px a 8px */
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
 }
 
-/* ===== PULSANTI TESTUALI UNIFICATI ===== */
-.action-btn,
-.modal-actions .action-btn {
-    font-size: 14px;
-    padding: 12px 25px;
-    height: 44px;
-    text-decoration: none;
-    color: var(--text-secondary); /* Colore uniforme per tutti */
-    background: none; /* Sfondo trasparente per tutti */
-    font-weight: 600;
-    border: none;
-    border-radius: var(--radius-pill);
+.summary-value {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    color: var(--primary-blue) !important;
+    text-align: center !important;
+    margin-bottom: 3px !important; /* Ridotto da 5px a 3px */
+}
+
+/* ===== FONT PIÙ GRANDI PER I BOX RIEPILOGO CREDITO - COME VENDITE ===== */
+/* Sovrascriviamo la regola globale con selettori più specifici */
+.summary-grid .summary-box .stat-value,
+.summary-grid .summary-box .summary-value {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: var(--primary-blue) !important;
+    margin-bottom: 5px !important; /* Ridotto da 8px a 5px */
+    line-height: 1.1 !important; /* Ridotto da 1.2 a 1.1 */
+    text-align: center !important;
+}
+
+.summary-grid .summary-box .summary-title {
+    font-size: 1rem !important;
+    color: var(--text-secondary) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 8px !important; /* Ridotto da 10px a 8px */
+    text-align: center !important;
+}
+
+.summary-grid .summary-box .summary-details {
+    font-size: 14px !important; /* Aumentato da 12px a 14px */
+    color: var(--text-secondary) !important;
+    text-align: center !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0 !important;
+}
+
+/* ===== CLIENTS GRID CREDITO ===== */
+.clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.clients-grid .box {
     cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    position: relative;
-    overflow: hidden;
     transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
+    min-height: 80px;
+    text-align: center;
     justify-content: center;
-    gap: 10px; /* Spazio tra icona e testo */
-    box-shadow: none;
+    align-items: center;
+    user-select: none;
+    position: relative;
+    padding: 20px;
+    border-left: 5px solid var(--primary-blue);
 }
 
-/* Icone nei pulsanti dell'action-bar */
-.action-btn i {
-    font-size: 16px; /* Dimensione icona standard per i pulsanti */
-    color: var(--text-secondary); /* Colore icona di default */
-    transition: color 0.3s ease;
+.clients-grid .box:hover {
+    box-shadow: var(--shadow-heavy);
+    transform: translateY(-2px);
 }
 
-/* Sottolineatura animata per TUTTI i pulsanti testuali */
-.action-btn::before,
-.modal-actions .action-btn::before {
-    content: '';
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-blue);
-    transform: translateX(-50%);
-    transition: width 0.3s ease;
-    z-index: 1;
-}
-
-/* Effetto hover UNIFORME per tutti i pulsanti testuali */
-.action-btn:hover,
-.modal-actions .action-btn:hover {
+.clients-grid .client-name {
+    font-size: 16px;
+    font-weight: 700;
     color: var(--primary-blue);
-    background-color: var(--primary-blue-light);
-    box-shadow: none;
-    transform: none;
+    text-align: center;
 }
 
-/* Icone in hover */
-.action-btn:hover i {
-    color: var(--primary-blue); /* L'icona diventa blu come il testo in hover */
-}
-
-/* Larghezza della sottolineatura in hover per TUTTI i pulsanti testuali */
-.action-btn:hover::before,
-.modal-actions .action-btn:hover::before {
-    width: 60%;
-}
-
-/* Tema scuro UNIFORME per tutti i pulsanti testuali */
-body.dark-theme .action-btn,
-body.dark-theme .modal-actions .action-btn {
-    color: var(--text-secondary);
-    background: none;
-}
-
-body.dark-theme .action-btn:hover,
-body.dark-theme .modal-actions .action-btn:hover {
+body.dark-theme .clients-grid .client-name {
     color: var(--text-primary);
-    background-color: var(--primary-blue-light);
-    box-shadow: none;
 }
 
-body.dark-theme .action-btn::before,
-body.dark-theme .modal-actions .action-btn::before {
-    background: var(--text-primary);
+/* ===== SEARCH WRAPPER CREDITO ===== */
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
 }
 
-/* Tema scuro per le icone dei pulsanti */
-body.dark-theme .action-btn i {
-    color: var(--text-secondary); /* Icona scura nel tema scuro */
-}
-body.dark-theme .action-btn:hover i {
-    color: var(--text-primary); /* Icona più chiara in hover nel tema scuro */
+.search-wrapper #searchInput {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    background: var(--bg-white);
+    color: var(--text-primary);
 }
 
-/* ===== ICONE NELL'ACTION-BAR (RIMOSSE - GESTITE IN HTML) ===== */
-/* Le icone sono ora gestite direttamente nell'HTML con <i> tags,
-   quindi rimuoviamo i ::before che potrebbero causare conflitti */
+.search-wrapper #searchInput:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
+}
 
-/* Pulsanti disabilitati */
-.action-btn:disabled {
-    background: #adb5bd;
-    color: white; /* I pulsanti disabilitati mantengono il testo bianco */
-    cursor: not-allowed;
-    opacity: 0.6;
-    transform: none;
-    box-shadow: none;
+.search-wrapper .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 14px;
+    pointer-events: none;
 }
-.action-btn:disabled:hover {
-    background: #adb5bd;
-    color: white;
-}
-.action-btn:disabled::before {
+
+.search-wrapper #clearSearchBtn {
     display: none;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-secondary);
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
 }
-.action-btn:disabled i { /* Le icone dei pulsanti disabilitati sono bianche */
+
+.search-wrapper #clearSearchBtn:hover {
+    background: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+body.dark-theme .search-wrapper #searchInput {
+    background: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+
+/* ===== PULSANTI SPECIFICI CREDITO ===== */
+.action-btn.secondary {
+    background-color: var(--bg-display);
+    color: var(--text-secondary);
+}
+
+.action-btn.secondary:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+.action-btn.success {
+    background-color: var(--success);
     color: white;
 }
 
+.action-btn.success:hover {
+    background-color: var(--success-hover);
+    color: white;
+}
 
-.search-wrapper { position: relative; width: 100%; max-width: 400px; }
-#searchInput { width: 100%; padding: 12px 20px 12px 45px; border: 2px solid var(--primary-blue-light); border-radius: var(--radius-large); font-size: 14px; font-family: 'Montserrat', sans-serif; transition: all 0.2s ease;}
-.search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); fill: var(--text-secondary); width: 20px; height: 20px; pointer-events: none; }
-#clearSearchBtn { display: none; position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: 24px; color: var(--text-secondary); padding: 0;}
-#searchInput:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 4px var(--primary-blue-light); outline: none;}
-body.dark-theme #searchInput { background-color: var(--bg-display); border-color: var(--bg-display); color: var(--text-primary); }
+/* ===== MODAL DETTAGLI CLIENTE ===== */
+.modal-content-wrapper {
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
+    box-shadow: var(--shadow-heavy);
+    border: 1px solid var(--primary-blue-light);
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9) translateY(-20px);
+    transition: transform 0.3s ease;
+}
 
-/* ===== BOX DI RIEPILOGO SUPERIORE ===== */
-.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 30px; }
-.summary-box { 
-    position: relative; 
-    overflow: hidden; 
+.modal-overlay.active .modal-content-wrapper {
+    transform: scale(1) translateY(0);
+}
+
+.modal-inner-content {
+    padding: 20px;
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
     display: flex;
     flex-direction: column;
+}
+
+/* ===== CLIENT HEADER NEL MODAL ===== */
+.client-header {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 20px;
-}
-.summary-box .title { font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; font-size: 14px; text-transform: uppercase; text-align: center; }
-.summary-box .value { font-size: 28px; font-weight: 800; color: var(--primary-blue); text-align: center; }
-#totalCredito { color: var(--danger); }
-.summary-box .details { font-size: 14px; color: var(--text-secondary); margin-top: 5px; min-height: 1.2em; font-weight: 500; text-align: center; }
-
-/* ===== GRIGLIA CLIENTI ===== */
-#clientsGrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-#clientsGrid .box { 
-    cursor: pointer; 
-    transition: border-color 0.3s ease, box-shadow 0.2s; /* Rimosso transform per eliminare il sollevamento */ 
-    min-height: 0; 
-    padding: 15px 20px; 
-    text-align: center; 
-    justify-content: center; 
-    align-items: center; 
-    user-select: none; 
-    position: relative; /* Aggiunto per il click */
-    z-index: 1; /* Aggiunto per assicurare che il click funzioni */
-}
-#clientsGrid .box:hover { box-shadow: 0 8px 25px rgba(0,0,0,0.08); /* Mantenuta solo l'ombra */ }
-#clientsGrid .client-name { font-size: 14px; font-weight: 700; color: var(--primary-blue); text-align: center; }
-body.dark-theme #clientsGrid .client-name { color: var(--text-primary); }
-
-/* ===== MODALE DETTAGLIO CLIENTE (ALLARGATO CON OVERRIDE SPECIFICO) ===== */
-#client-detail-modal.modal-overlay { z-index: 1000; }
-.modal-content-wrapper { 
-    position: relative; 
-    margin: auto; 
-    width: 95%; 
-    max-width: 800px; /* Aumentato da 650px a 800px */
-    max-height: 90vh; 
-}
-
-/* Override specifico per il modale cliente */
-#client-detail-modal .modal-content-wrapper {
-    max-width: 700px !important;  /* Increased from 600px as requested */
-}
-
-/* Su schermi più grandi, consenti una larghezza ancora maggiore */
-@media (min-width: 1200px) {
-    .modal-content-wrapper {
-        max-width: 900px; /* Ancora più largo su desktop grandi */
-        width: 80%;
-    }
-    
-    #client-detail-modal .modal-content-wrapper {
-        max-width: 800px !important;  /* Larger on big screens */
-    }
-}
-
-/* Contenitore interno per il padding uniforme di tutto il contenuto del modale */
-#modal-body-content.modal-inner-content {
-    padding: 20px; /* Questo applica il padding uniforme desiderato */
-    background: var(--bg-white); 
-    border-radius: var(--radius-large); 
-    box-shadow: var(--shadow-light); 
-    border: 1px solid var(--primary-blue-light); 
-    display: flex; 
-    flex-direction: column; 
-}
-
-
-/* ===== HEADER CLIENTE - Nessun padding orizzontale, solo margini e bordo inferiore ===== */
-#modal-body-content .client-header { 
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
-    margin-bottom: 20px; 
-    padding-bottom: 10px; 
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
     border-bottom: 1px solid var(--primary-blue-light);
 }
 
-/* ===== INPUT NOME CLIENTE ===== */
-.client-name-input { 
-    font-size: 18px; 
-    font-weight: 700; 
-    color: var(--primary-blue); 
-    border: 2px solid transparent; 
-    background: transparent; 
-    padding: 8px 12px; 
+.client-name-input {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-blue);
+    border: 2px solid transparent;
+    background: transparent;
+    padding: 8px 12px;
     flex-grow: 1;
     margin-right: 15px;
-    font-family: 'Montserrat', sans-serif; 
-    border-radius: var(--radius-large);
+    font-family: 'Montserrat', sans-serif;
+    border-radius: var(--radius-squadrato);
     transition: all 0.2s ease;
     text-align: left;
 }
-.client-name-input:focus { 
-    border-color: var(--primary-blue); 
-    box-shadow: 0 0 0 3px var(--primary-blue-light); 
+
+.client-name-input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
     outline: none;
 }
 
-/* Azioni Modale */
-.client-actions-wrapper { 
-    position: relative; 
-    display: flex; 
-    align-items: center; 
-    flex-shrink: 0; 
-}
-.client-more-options-btn { background:none; border:none; cursor:pointer; padding:8px; }
-.client-more-options-btn svg { fill: var(--text-secondary); width: 24px; height: 24px; transition: all 0.2s ease;}
-.client-more-options-btn:hover svg { fill: var(--primary-blue); transform: scale(1.1); }
-.client-actions { display: flex; position: absolute; top: 50%; right: 100%; transform: translateY(-50%); background: transparent; padding: 0; gap: 8px; opacity: 0; transition: all 0.3s ease; pointer-events: none;}
-.client-actions.is-open { opacity: 1; pointer-events: all; right: calc(100% + 10px);}
-.client-actions button { width: 36px; height: 36px; border-radius: 50%; border: none; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; background-size: 20px; background-repeat: no-repeat; background-position: center; }
-.client-actions button:hover { transform: scale(1.1); box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-.client-acconto-btn { background-color: var(--success); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z'/%3E%3C/svg%3E");}
-.client-salda-btn { background-color: var(--warning); background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='m12 1 3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 1z'/%3E%3C/svg%3E");}
-.client-salda-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-.client-print-btn { background-color: #7f8caa; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M19 8H5c-1.66 0-3 1.34-3 3v6h4v4h12v-4h4v-6c0-1.66-1.34-3-3-3zm-3 11H8v-5h8v5zm3-7c-.55 0-1-.45-1-1s.45-1 1-1 1 .45 1 1-.45 1-1 1zm-1-9H6v4h12V3z'/%3E%3C/svg%3E");}
-.client-delete-btn { 
-    background-color: var(--danger) !important; 
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z'/%3E%3C/svg%3E");
+body.dark-theme .client-name-input {
+    color: var(--text-primary);
 }
 
-/* Tema scuro per il pulsante eliminazione cliente */
-body.dark-theme .client-delete-btn {
-    background-color: var(--danger) !important;
+/* ===== ACTIONS WRAPPER ===== */
+.client-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
-/* ===== FORM TRANSAZIONE - Nessun padding orizzontale, si affida al contenitore principale ===== */
-.transaction-form-grid { 
-    display: grid; 
-    grid-template-columns: 120px 1fr 140px; /* Leggermente più largo per i campi */
-    gap: 15px; /* Aumentato il gap */
-    margin-top: 20px; 
-    margin-bottom: 20px; 
+.client-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+}
+
+.client-actions.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.client-more-options-btn {
+    background: var(--bg-display);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.client-more-options-btn:hover {
+    background: var(--primary-blue);
+    transform: rotate(90deg);
+}
+
+.client-more-options-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-secondary);
+    transition: fill 0.3s ease;
+}
+
+.client-more-options-btn:hover svg {
+    fill: white;
+}
+
+/* ===== PULSANTI AZIONI CLIENTE ===== */
+.client-acconto-btn,
+.client-salda-btn,
+.client-print-btn,
+.client-delete-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background: var(--bg-display);
+}
+
+.client-salda-btn:disabled {
+    background: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.client-acconto-btn:hover,
+.client-salda-btn:hover:not(:disabled),
+.client-print-btn:hover,
+.client-delete-btn:hover {
+    background: var(--primary-blue);
+    transform: scale(1.1);
+}
+
+.client-acconto-btn i,
+.client-salda-btn i,
+.client-print-btn i,
+.client-delete-btn i {
+    font-size: var(--font-size-standard);
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.client-acconto-btn:hover i,
+.client-salda-btn:hover:not(:disabled) i,
+.client-print-btn:hover i,
+.client-delete-btn:hover i {
+    color: white;
+}
+
+.client-salda-btn:disabled i {
+    color: white;
+}
+
+/* ===== ACTION BAR FLOATING CREDITO ===== */
+.action-bar-floating {
+    display: flex;
+    gap: 8px; /* Gap ridotto */
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px; /* Padding ridotto */
+    flex-wrap: nowrap; /* Impedisce il wrap su più righe */
+    max-width: calc(100vw - var(--sidebar-width) - 80px); /* Larghezza massima ridotta */
+    overflow-x: auto; /* Scroll orizzontale se necessario */
+}
+
+.action-bar-floating .action-btn {
+    padding: 8px 12px; /* Padding molto più ridotto */
+    font-size: 13px; 
+    min-width: 80px; /* Larghezza minima ridotta */
+    white-space: nowrap;
+    flex-shrink: 0; /* Non si riducono */
+    gap: 6px; /* Gap icona-testo ridotto */
+}
+
+.action-bar-floating .search-wrapper {
+    flex-shrink: 0; /* La barra di ricerca non si riduce */
+    min-width: 200px; /* Larghezza minima ridotta per la ricerca */
+    max-width: 220px; /* Larghezza massima */
+}
+
+/* ===== TRANSACTION FORM GRID ===== */
+.transaction-form-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr 140px;
+    gap: 12px;
+    margin: 15px 0;
     align-items: center;
 }
 
-.grid-input { 
-    width: 100%; 
-    padding: 12px 15px; 
-    border: 2px solid var(--primary-blue-light); 
-    border-radius: var(--radius-large);
-    font-family: 'Montserrat', sans-serif; 
-    font-size: 14px;
-    min-height: 44px;
-    box-sizing: border-box;
+.transaction-form-grid .grid-input {
+    text-align: left; /* Tutti i campi del form allineati a sinistra */
 }
 
-.grid-input:focus { 
-    border-color: var(--primary-blue); 
-    box-shadow: 0 0 0 3px var(--primary-blue-light); 
-    outline: none;
+.transaction-form-grid .amount-input {
+    text-align: right; /* Solo il campo importo allineato a destra */
 }
 
-.transaction-form-grid .date-input { text-align: center; }
-.transaction-form-grid .desc-input { text-align: left; }
-.transaction-form-grid .amount-input { text-align: right; }
-
-/* ===== HISTORY TOGGLE - STILIZZAZIONE E ALLINEAMENTO CORRETTI ===== */
-.history-toggle { 
-    text-align: center; 
-    cursor: pointer; 
-    font-size: 14px; 
-    font-weight: 600; 
-    padding: 12px 20px; 
-    border-radius: var(--radius-pill); 
-    background-color: var(--bg-display); 
-    margin: 20px auto; 
+/* ===== HISTORY TOGGLE ===== */
+.history-toggle {
+    text-align: center;
+    cursor: pointer;
+    font-size: var(--font-size-standard);
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-display);
+    margin: 10px auto;
     transition: all 0.2s ease;
-    display: block; 
-    width: fit-content; 
-    /* Colore testo e hover gestiti per tema scuro/chiaro */
-    color: var(--text-secondary); /* Default per tema chiaro */
+    display: block;
+    width: fit-content;
+    color: var(--text-secondary);
 }
 
 .history-toggle:hover {
     background-color: var(--primary-blue-light);
     color: var(--primary-blue);
 }
-/* Tema scuro per il history-toggle */
+
 body.dark-theme .history-toggle {
-    color: var(--text-primary); /* Testo chiaro nel tema scuro */
+    color: var(--text-primary);
     background-color: var(--bg-display);
 }
+
 body.dark-theme .history-toggle:hover {
     background-color: var(--primary-blue-light);
-    color: var(--text-primary); /* Testo chiaro in hover */
-}
-
-
-/* ===== CONTAINER TRANSAZIONI - Nessun padding orizzontale, le transaction-item gestiscono il loro aspetto ===== */
-.transactions-container { 
-    max-height: 0; 
-    overflow-y: hidden; 
-    opacity: 0; 
-    padding-right: 15px; 
-    margin-bottom: 20px; 
-    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out; 
-}
-
-.transactions-container.is-expanded { 
-    max-height: 250px; 
-    overflow-y: auto; 
-    opacity: 1; 
-}
-
-.transaction-item { 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    padding: 12px 0; /* Solo padding verticale */
-    border-bottom: 1px solid var(--primary-blue-light); 
-    font-size: 14px;
-    border-radius: var(--radius-medium);
-}
-/* Nessun padding orizzontale qui, i contenuti si allineano con il padding del .modal-inner-content */
-
-
-.transaction-item:last-child { border-bottom: none; }
-
-.transaction-item:hover { 
-    background-color: var(--primary-blue-light); 
-    transform: none;
-}
-
-.transaction-details { 
-    flex-grow: 1; 
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    min-width: 0;
-}
-
-.transaction-date { 
-    font-size: 11px; 
-    color: var(--text-secondary); 
-    font-weight: 500;
-}
-
-.transaction-description {
-    font-weight: 600;
     color: var(--text-primary);
+}
+
+/* ===== TRANSACTIONS CONTAINER ===== */
+.transactions-container {
+    max-height: 0;
+    overflow-y: hidden;
+    opacity: 0;
+    padding-right: 15px;
+    margin-bottom: 10px;
+    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+.transactions-container.is-expanded {
+    max-height: 200px;
+    overflow-y: auto;
+    opacity: 1;
+}
+
+/* ===== TRANSACTION ITEMS ===== */
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Allineamento in alto per contenuto multilinea */
+    padding: 12px 0;
+    border-bottom: 1px solid var(--primary-blue-light);
+    gap: 15px; /* Spazio tra descrizione e importo */
+}
+
+.transaction-details {
+    flex: 1;
+    text-align: left; /* Descrizione allineata a sinistra */
+    min-width: 0; /* Permette il wrap del testo */
+}
+
+.transaction-details span {
+    display: block;
     word-wrap: break-word;
+    line-height: 1.4;
 }
 
-.transaction-right-side { 
-    display: flex; 
-    align-items: center; 
-    gap: 15px;
-    flex-shrink: 0;
+.transaction-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-style: italic;
 }
 
-.transaction-amount { 
-    font-weight: 700; 
-    font-size: 14px;
-    color: var(--primary-blue);
-    min-width: 90px;
-    text-align: right;
-}
-
-/* ===== MESSAGGIO NESSUNA TRANSAZIONE (specifico) ===== */
-p.no-transactions-message { 
-    text-align: center; 
-    font-size: 12px; 
-    color: var(--text-secondary); 
-    padding: 10px 0; 
-}
-
-
-/* ===== TOTALE CLIENTE - Nessun padding orizzontale, solo margini e bordo superiore ===== */
-.client-total { 
-    display: flex; 
-    justify-content: space-between; 
+.transaction-right-side {
+    display: flex;
     align-items: center;
-    font-size: 16px; 
-    font-weight: 700; 
-    margin-top: 20px; 
-    padding-top: 20px; 
-    padding-bottom: 0; 
-    border-top: 2px solid var(--primary-blue); 
+    gap: 10px;
+    flex-shrink: 0; /* Non si riduce */
 }
 
-.total-value { 
-    font-weight: 800; 
-    font-size: 18px;
-    color: var(--primary-blue);
+.transaction-amount {
+    font-weight: 700;
+    font-size: var(--font-size-standard);
+    text-align: right; /* Importo allineato a destra */
+    min-width: 80px; /* Larghezza minima per allineamento */
 }
 
-/* ===== PULSANTE DI ELIMINAZIONE TRANSAZIONE (VERSIONE CORRETTA) ===== */
 .transaction-delete-btn {
-    width: 22px;
-    height: 22px;
-    background-color: transparent;
+    background: var(--danger);
     border: none;
-    cursor: pointer;
-    line-height: 22px;
     border-radius: 50%;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
     transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: none;
-    flex-shrink: 0;
-    font-weight: bold;
-    font-size: 14px;
-    color: var(--text-secondary); /* Gray in normal state */
 }
 
 .transaction-delete-btn:hover {
-    background-color: var(--danger) !important; /* Red background on hover */
-    color: white !important; /* White text on hover */
-}
-
-/* Ensure the X is always visible */
-.transaction-delete-btn i {
-    color: inherit; /* Inherit parent color */
-}
-
-/* Tema scuro specifico per il pulsante di eliminazione transazione */
-body.dark-theme .transaction-delete-btn {
-    color: var(--text-secondary);
-}
-body.dark-theme .transaction-delete-btn:hover {
-    background-color: var(--danger) !important;
-    color: white !important;
-}
-body.dark-theme .transaction-delete-btn i {
-    color: inherit;
-}
-
-/* Nascondi la pseudo-classe ::before (sottolineatura) per il pulsante di eliminazione */
-.transaction-delete-btn::before {
-    display: none;
-}
-
-/* MODALI: AGGIUNTA, CONFERMA, ACCONTO, INFO */
-@keyframes bounceIn {
-  0% { opacity: 0; transform: scale(0.3); }
-  50% { opacity: 1; transform: scale(1.05); }
-  70% { transform: scale(0.9); }
-  100% { opacity: 1; transform: scale(1); }
-}
-.modal-overlay { display: none; position: fixed; z-index: 1001; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(5px); align-items: center; justify-content: center; }
-.modal-overlay.active { display: flex; }
-.modal { background: var(--bg-white); border-radius: var(--radius-large); box-shadow: 0 4px 20px rgba(0,0,0,0.2); width: 100%; max-width: 500px; margin: 20px; opacity: 0; transform: scale(0.3); }
-.modal-overlay.active .modal { animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--primary-blue-light); }
-.modal-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: var(--primary-blue); }
-.modal-content { padding: 20px; text-align: center; }
-.modal-content p { font-size: 16px; line-height: 1.6; }
-.modal-actions { display: flex; gap: 12px; justify-content: flex-end; padding: 20px; border-top: 1px solid var(--primary-blue-light); }
-#new-client-name, #acconto-amount-input { width: 100%; padding: 12px; font-size: 16px; border: 2px solid var(--primary-blue-light); border-radius: var(--radius-medium); }
-#new-client-name:focus, #acconto-amount-input:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 4px var(--primary-blue-light); outline: none;}
-.acconto-form { margin-top: 15px; }
-
-/* PULSANTI ICONA TONDI (Modal Close) */
-.modal-close-btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-    background: none;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: none;
-    line-height: 1;
-    flex-shrink: 0;
-}
-
-/* Nascondi la pseudo-classe ::before (sottolineatura) per i pulsanti icona */
-.modal-close-btn::before {
-    display: none;
-}
-
-/* PULSANTE CHIUSURA MODAL (VERSIONE SEMPLIFICATA) */
-.modal-close-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 20px;
-    font-weight: bold;
-    color: var(--text-secondary);
-    background-color: transparent;
-}
-
-.modal-close-btn:hover {
-    background-color: var(--danger);
-    color: white !important;
-    transform: none;
-}
-
-/* Tema scuro per il pulsante di chiusura modale */
-body.dark-theme .modal-close-btn {
-    color: var(--text-secondary);
-}
-body.dark-theme .modal-close-btn:hover {
-    background-color: var(--danger);
-    color: white !important;
-}
-
-.modal-info-icon {
-    font-size: 60px;
-    color: var(--primary-blue);
-    margin: 0 auto 20px;
-    display: block;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.modal-info-icon:hover {
-    color: var(--info);
+    background: #e62e3e;
     transform: scale(1.1);
 }
 
-body.dark-theme .modal-info-icon {
-    color: var(--text-primary);
-}
-body.dark-theme .modal-info-icon:hover {
-    color: var(--info);
+.transaction-delete-btn i {
+    color: white;
+    font-size: 12px;
 }
 
-.info-modal-content { text-align: center; }
-.info-modal-content .info-modal-brand { font-size: 38px; font-weight: 800; margin-bottom: 15px; background: linear-gradient(45deg, var(--primary-blue), #42D7F4); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-.info-modal-content p { margin-bottom: 15px; color: var(--text-secondary); }
-.info-modal-content .programmer-info { font-size: 14px; border-top: 1px solid var(--primary-blue-light); padding-top: 15px; line-height: 1.8; }
-.info-link { color: var(--text-primary); text-decoration: none; font-weight: 600; }
-.info-link:hover { text_decoration: underline; color: var(--primary-blue); }
+.no-transactions-message {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 20px 0;
+    font-size: var(--font-size-standard);
+}
 
-/* ===== FIX TEMA SCURO INPUTS ===== */
-body.dark-theme .grid-input,
-body.dark-theme #new-client-name,
-body.dark-theme #acconto-amount-input {
-    background-color: var(--bg-primary);
+/* ===== CLIENT TOTAL ===== */
+.client-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px 0;
+    border-top: 2px solid var(--primary-blue);
+    margin-top: 10px;
+}
+
+.total-value {
+    font-size: 18px;
+}
+
+/* ===== FORM INPUTS NEI MODAL ===== */
+.add-client-form input,
+.acconto-form input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.add-client-form input:focus,
+.acconto-form input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
+}
+
+body.dark-theme .add-client-form input,
+body.dark-theme .acconto-form input {
+    background: var(--bg-display);
     border-color: var(--bg-display);
     color: var(--text-primary);
 }
-body.dark-theme .client-name-input { color: var(--text-primary); background: transparent; }
 
-/* ===== MIGLIORAMENTI AGGIUNTIVI PER COERENZA ===== */
+/* ===== RESPONSIVE CREDITO ===== */
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
 
-/* Assicura che tutti i pulsanti rossi abbiano testo bianco */
-.action-btn.danger,
-button[style*="background-color: var(--danger)"],
-button[style*="background-color: #FF3547"] {
-    color: white !important;
+    .clients-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .transaction-form-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .client-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .client-actions-wrapper {
+        justify-content: center;
+    }
+
+    .search-wrapper {
+        max-width: 100%;
+    }
+
+    /* Action bar responsive */
+    .action-bar-floating {
+        flex-wrap: wrap; /* Solo su mobile può andare su più righe */
+        gap: 8px;
+        padding: 10px 15px;
+        min-width: auto;
+        overflow-x: visible;
+    }
+
+    .action-bar-floating .action-btn {
+        font-size: 14px;
+        padding: 12px 16px;
+        min-width: 110px;
+    }
+
+    .action-bar-floating .search-wrapper {
+        min-width: 200px;
+    }
+
+    /* Transaction items responsive */
+    .transaction-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .transaction-right-side {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .transaction-amount {
+        text-align: left;
+        min-width: auto;
+    }
+
+    /* Font responsivi per mobile */
+    .summary-grid .summary-box .stat-value,
+    .summary-grid .summary-box .summary-value {
+        font-size: 2rem !important;
+    }
+
+    .summary-grid .summary-box .summary-title {
+        font-size: 0.9rem !important;
+    }
+
+    .summary-grid .summary-box .summary-details {
+        font-size: 13px !important; /* Leggermente ridotto per mobile */
+    }
+
+    .summary-grid .summary-box {
+        padding: 12px !important; /* Padding ulteriormente ridotto su mobile */
+    }
 }

@@ -40,7 +40,6 @@ function initializeInfoModal() {
         const infoModal = document.getElementById('info-modal');
 
         if (infoBtn && infoModal) {
-            // Seleziona il bottone di chiusura del modale per Monetario, che ora ha un'icona FA
             const closeBtn = infoModal.querySelector('.modal-close-btn');
             
             infoBtn.addEventListener('click', (e) => {
@@ -101,7 +100,6 @@ function showConfirmModal(title, text, onConfirm) {
         modal.querySelector('#confirm-modal-title').textContent = title;
         modal.querySelector('#confirm-modal-text').textContent = text;
         const btnOk = modal.querySelector('#confirm-modal-ok');
-        // Clona i bottoni per rimuovere listeners precedenti (soluzione robusta)
         const newBtnOk = btnOk.cloneNode(true);
         btnOk.parentNode.replaceChild(newBtnOk, btnOk);
         
@@ -127,6 +125,7 @@ const formatter = {
 function parseNumberInput(value) {
     try {
         if (typeof value !== 'string') value = String(value);
+        // Rimuove '€', punti come separatori delle migliaia e sostituisce la virgola decimale con il punto.
         const cleaned = value.replace(/€/g, '').replace(/\./g, '').replace(/,/, '.').trim();
         const parsed = parseFloat(cleaned);
         return isNaN(parsed) ? 0 : parsed;
@@ -134,179 +133,6 @@ function parseNumberInput(value) {
         console.error('Errore parsing numero:', error);
         return 0;
     }
-}
-
-/* ===== CALCOLATRICE ===== */
-let calculatorDisplay = '0';
-let calculatorOperator = null;
-let calculatorOperand = null;
-let calculatorWaitingForOperand = false;
-
-function updateCalculatorDisplay() {
-    document.getElementById('calc-display').textContent = calculatorDisplay.replace('.', ',');
-}
-
-function inputCalculator(value) {
-    if (['+', '-', '*', '/'].includes(value)) { handleOperator(value); } 
-    else if (value === '.') { inputDecimal(); } 
-    else { inputDigit(value); }
-    updateCalculatorDisplay();
-}
-
-function inputDigit(digit) {
-    if (calculatorWaitingForOperand) {
-        calculatorDisplay = digit;
-        calculatorWaitingForOperand = false;
-    } else {
-        calculatorDisplay = calculatorDisplay === '0' ? digit : calculatorDisplay + digit;
-    }
-}
-
-function inputDecimal() {
-    if (calculatorWaitingForOperand) {
-        calculatorDisplay = '0.';
-        calculatorWaitingForOperand = false;
-        return;
-    }
-    if (!calculatorDisplay.includes('.')) {
-        calculatorDisplay += '.';
-    }
-}
-
-function handleOperator(nextOperator) {
-    const inputValue = parseFloat(calculatorDisplay);
-    if (calculatorOperator && calculatorWaitingForOperand) {
-        calculatorOperator = nextOperator;
-        return;
-    }
-    if (calculatorOperand === null) {
-        calculatorOperand = inputValue;
-    } else if (calculatorOperator) {
-        const result = calculate();
-        calculatorDisplay = String(result);
-        calculatorOperand = result;
-    }
-    calculatorWaitingForOperand = true;
-    calculatorOperator = nextOperator;
-}
-
-function calculate() {
-    const prev = calculatorOperand;
-    const current = parseFloat(calculatorDisplay);
-    if (isNaN(prev) || isNaN(current)) return 0;
-    switch (calculatorOperator) {
-        case '+': return prev + current;
-        case '-': return prev - current;
-        case '*': return prev * current;
-        case '/': return current !== 0 ? prev / current : 0;
-        default: return current;
-    }
-}
-
-function calculateResult() {
-    if (calculatorOperator && !calculatorWaitingForOperand) {
-        const result = calculate();
-        calculatorDisplay = String(result);
-        calculatorOperand = null;
-        calculatorOperator = null;
-        calculatorWaitingForOperand = true;
-        updateCalculatorDisplay();
-    }
-}
-
-function clearCalculator() {
-    calculatorDisplay = '0';
-    calculatorOperator = null;
-    calculatorOperand = null;
-    calculatorWaitingForOperand = false;
-    updateCalculatorDisplay();
-}
-
-/* ===== CALCOLO IVA ===== */
-function calculateVAT(operation) {
-    const amountInput = document.getElementById('vat-amount');
-    const selectedRate = document.querySelector('input[name="aliquota"]:checked');
-    if (!amountInput || !selectedRate) return;
-    const amount = parseNumberInput(amountInput.value);
-    if (amount <= 0) { showMessage('Inserire un importo valido', 'warning'); return; }
-    const rate = parseFloat(selectedRate.value) / 100;
-    let imponibile, iva, totale;
-    if (operation === 'add') {
-        imponibile = amount;
-        iva = amount * rate;
-        totale = amount + iva;
-    } else {
-        totale = amount;
-        imponibile = amount / (1 + rate);
-        iva = amount - imponibile;
-    }
-    document.getElementById('vat-imponibile').textContent = formatter.currency.format(imponibile);
-    document.getElementById('vat-iva').textContent = formatter.currency.format(iva);
-    document.getElementById('vat-totale').textContent = formatter.currency.format(totale);
-}
-
-/* ===== GESTIONE ORDINI ===== */
-function saveOrder() {
-    const totalAmount = parseNumberInput(document.getElementById('total-amount').textContent);
-    if (totalAmount <= 0) { showMessage("Impossibile salvare un ordine vuoto.", 'warning'); return; }
-
-    const products = [];
-    document.querySelectorAll('.spinner-input-group[data-fuel][data-field="quantity"] .spinner-value').forEach(input => {
-        const quantity = parseNumberInput(input.value);
-        if (quantity > 0) {
-            const productName = input.dataset.fuel.charAt(0).toUpperCase() + input.dataset.fuel.slice(1);
-            products.push(`${productName}: ${formatter.liters.format(quantity)} L`);
-        }
-    });
-
-    if(products.length === 0) { showMessage("Nessun prodotto con quantità valida.", 'warning'); return; }
-
-    const newOrder = {
-        id: Date.now().toString(),
-        date: new Date().toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' }),
-        amount: formatter.currency.format(totalAmount),
-        products: products.join(', '),
-        timestamp: Date.now()
-    };
-    const history = Storage.load(Storage.KEYS.ORDER_HISTORY, []);
-    history.unshift(newOrder); 
-    if (history.length > 20) history.splice(20);
-    Storage.save(Storage.KEYS.ORDER_HISTORY, history);
-    document.querySelectorAll('.spinner-input-group[data-fuel][data-field="quantity"] .spinner-value').forEach(input => { input.value = ''; });
-    if (window.pricingManager) window.pricingManager.updateCalculatedFields();
-    displayOrderHistory();
-    showMessage("Ordine salvato!", 'success');
-}
-
-function displayOrderHistory() {
-    const history = Storage.load(Storage.KEYS.ORDER_HISTORY, []);
-    const container = document.getElementById('order-history-content');
-    if (!container) return;
-    if (history.length === 0) { container.innerHTML = '<p style="text-align:center;">Nessun ordine salvato.</p>'; return; }
-    container.innerHTML = history.slice(0, 4).map((order, index) => `
-        <div class="order-history-item">
-            <div class="order-details">
-                <div class="order-history-header">
-                    <span class="order-date">${order.date}</span>
-                    <span class="order-amount">${order.amount}</span>
-                </div>
-                <div class="order-products">${order.products}</div>
-            </div>
-            <button class="order-delete-btn" data-order-index="${index}" title="Elimina ordine"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-    `).join('');
-}
-
-function deleteOrder(index) {
-    showConfirmModal('Eliminare Ordine?', 'Sei sicuro di voler eliminare questo ordine?', () => {
-        const history = Storage.load(Storage.KEYS.ORDER_HISTORY, []);
-        if (index >= 0 && index < history.length) {
-            history.splice(index, 1);
-            Storage.save(Storage.KEYS.ORDER_HISTORY, history);
-            displayOrderHistory();
-            showMessage("Ordine eliminato.", 'info');
-        }
-    });
 }
 
 /* ===== VERSAMENTO MANAGER ===== */
@@ -340,7 +166,8 @@ class VersamentoManager {
         this.updateUI();
         Storage.save(Storage.KEYS.VERSAMENTO_DATA, this.data);
         input.focus();
-        input.value = newValue > 0 ? newValue.toString() : '';
+        // Modificato per mostrare '0' se il valore è 0, altrimenti il valore convertito in stringa
+        input.value = newValue === 0 ? '0' : newValue.toString(); 
     }
 
     moveToNextField(currentDenom) {
@@ -359,22 +186,35 @@ class VersamentoManager {
     handleBlur(denomination) {
         const input = document.querySelector(`.spinner-input-group[data-denom="${denomination}"] .spinner-value`);
         const quantity = this.data[`banconote${denomination}`] || 0;
-        input.value = quantity > 0 ? quantity.toString() : '';
+        // Modificato per mostrare '0' se il valore è 0, altrimenti il valore convertito in stringa
+        input.value = quantity === 0 ? '0' : quantity.toString(); 
     }
     
     updateUI() {
         let totalValue = 0;
-        let totalCount = 0; // Nuovo totale per il numero di banconote
+        let totalCount = 0;
         this.denominations.forEach(denom => {
             const quantity = this.data[`banconote${denom}`] || 0;
             totalValue += denom * quantity;
-            totalCount += quantity; // Aggiorna il totale del numero di banconote
+            totalCount += quantity;
+            
             const qtyInput = document.querySelector(`.spinner-input-group[data-denom="${denom}"] .spinner-value`);
-            if (qtyInput && document.activeElement !== qtyInput) qtyInput.value = quantity > 0 ? quantity.toString() : '';
-            document.getElementById(`valore-${denom}`).value = formatter.currency.format(denom * quantity);
+            if (qtyInput && document.activeElement !== qtyInput) {
+                // Modificato per mostrare '0' se il valore è 0, altrimenti il valore convertito in stringa
+                qtyInput.value = quantity === 0 ? '0' : quantity.toString(); 
+            }
+            
+            const valoreInput = document.getElementById(`valore-${denom}`);
+            if (valoreInput) {
+                valoreInput.value = formatter.currency.format(denom * quantity);
+            }
         });
-        document.getElementById('versamento-total-banconote').textContent = totalCount.toString(); // Aggiorna il display del totale banconote
-        document.getElementById('versamento-total-importo').textContent = formatter.currency.format(totalValue); // Aggiorna il display del totale importo
+        
+        const totalBanconoteEl = document.getElementById('versamento-total-banconote');
+        if (totalBanconoteEl) totalBanconoteEl.textContent = totalCount.toString();
+        
+        const totalImportoEl = document.getElementById('versamento-total-importo');
+        if (totalImportoEl) totalImportoEl.textContent = formatter.currency.format(totalValue);
     }
 }
 
@@ -395,7 +235,8 @@ class PricingManager {
             input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.moveToNextInput(e.target); } });
         });
         this.fuelProducts.forEach(fuel => {
-            const inputGroup = document.querySelector(`.spinner-input-group[data-fuel="${fuel}"][data-field="quantity"]`);
+            // Seleziona correttamente il gruppo spinner con data-fuel
+            const inputGroup = document.querySelector(`.spinner-input-group[data-fuel="${fuel}"]`);
             if(inputGroup) {
                 const input = inputGroup.querySelector('.spinner-value');
                 inputGroup.querySelector('.spinner-btn.decrement').addEventListener('click', () => this.adjustFuelQuantity(fuel, -1));
@@ -416,7 +257,7 @@ class PricingManager {
         this.updateCalculatedFields();
         Storage.save(Storage.KEYS.MONETARIO_DATA, this.data);
         input.focus();
-        input.value = newValue > 0 ? formatter.liters.format(newValue) : '';
+        input.value = newValue > 0 ? formatter.liters.format(newValue) : '0'; // Mostra 0 se il valore è 0
     }
 
     moveToNextInput(currentInput) {
@@ -428,31 +269,65 @@ class PricingManager {
     handleInput(input) {
         const { product, type, competitor, fuel, field } = input.dataset;
         const value = parseNumberInput(input.value);
-        if (type === 'consigliati') { this.data.pricing[product] = {...this.data.pricing[product], consigliati: value }; } 
-        else if (type === 'servito' && product === 'adblue') { this.data.pricing.adblue = {...this.data.pricing.adblue, price: value }; } 
-        else if (competitor) { this.data.competitors[product] = {...this.data.competitors[product], [competitor]: value }; } 
-        else if (fuel && field === 'quantity-value') { this.data.fuelOrders[fuel] = {...this.data.fuelOrders[fuel], quantity: Math.max(0, value) }; }
+        if (type === 'consigliati') { 
+            this.data.pricing[product] = {...this.data.pricing[product], consigliati: value }; 
+        } else if (type === 'servito' && product === 'adblue') { 
+            this.data.pricing.adblue = {...this.data.pricing.adblue, price: value }; 
+        } else if (competitor) { 
+            this.data.competitors[product] = {...this.data.competitors[product], [competitor]: value }; 
+        } else if (fuel && field === 'quantity-value') { 
+            this.data.fuelOrders[fuel] = {...this.data.fuelOrders[fuel], quantity: Math.max(0, value) }; 
+        }
         this.updateCalculatedFields();
         Storage.save(Storage.KEYS.MONETARIO_DATA, this.data);
     }
     
     handleBlur(input) {
         const { product, type, competitor, fuel, field } = input.dataset;
-        let value, formatFunc = formatter.fuelPrices;
-        if (type === 'consigliati') value = this.data.pricing[product]?.consigliati || 0;
-        else if (type === 'servito' && product === 'adblue') value = this.data.pricing.adblue?.price || 0;
-        else if (competitor) value = this.data.competitors[product]?.[competitor] || 0;
-        else if (fuel && field === 'quantity-value') { value = this.data.fuelOrders[fuel]?.quantity || 0; formatFunc = formatter.liters; }
-        input.value = value > 0 ? formatFunc.format(value) : '';
+        let value;
+        let formatFunction = formatter.fuelPrices; // Default formatter for prices
+    
+        if (type === 'consigliati') { 
+            value = this.data.pricing[product]?.consigliati;
+        } else if (type === 'servito' && product === 'adblue') { 
+            value = this.data.pricing.adblue?.price;
+        } else if (competitor) { 
+            value = this.data.competitors[product]?.[competitor];
+        } else if (fuel && field === 'quantity-value') { 
+            value = this.data.fuelOrders[fuel]?.quantity; 
+            formatFunction = formatter.liters; // Specific formatter for liters
+        }
+    
+        // If value is undefined, null, or 0, format it to "€ 0,000" or "0" depending on context
+        if (value === undefined || value === null || value === 0) {
+            if (input.dataset.fuel && input.dataset.field === 'quantity-value') {
+                input.value = '0'; // Liters can be '0'
+            } else if (input.dataset.type === 'consigliati' || input.dataset.competitor) {
+                input.value = formatter.fuelPrices.format(0); // Prices should be '€ 0,000'
+            } else {
+                input.value = ''; // Default to empty if not specific formatting applies
+            }
+        } else {
+            input.value = formatFunction.format(value);
+        }
     }
+    
 
     updateCalculatedFields() {
         let totalOrderQuantity = 0, totalOrderAmount = 0;
         this.fuelProducts.forEach(p => {
             const pricingData = this.data.pricing[p];
-            if (pricingData && pricingData.consigliati > 0) {
-                pricingData.iperself = pricingData.consigliati + 0.005;
-                pricingData.servito = pricingData.consigliati + 0.225;
+            if (pricingData && pricingData.consigliati !== undefined && pricingData.consigliati !== null) { // Check for explicit value
+                // Ensure iperself and servito are calculated only if consigliati has a value
+                if (pricingData.consigliati > 0) {
+                    pricingData.iperself = pricingData.consigliati + 0.005;
+                    pricingData.servito = pricingData.consigliati + 0.225;
+                } else {
+                    // If consigliati is 0, set iperself and servito to 0 as well
+                    pricingData.iperself = 0;
+                    pricingData.servito = 0;
+                }
+                
                 document.querySelector(`input[data-product="${p}"][data-type="iperself"]`).value = formatter.fuelPrices.format(pricingData.iperself);
                 document.querySelector(`input[data-product="${p}"][data-type="servito"]`).value = formatter.fuelPrices.format(pricingData.servito);
             }
@@ -471,34 +346,54 @@ class PricingManager {
             const amount = quantity * advancePrice;
             totalOrderQuantity += quantity;
             totalOrderAmount += amount;
-            document.querySelector(`input[data-fuel="${p}"][data-field="advance"]`).value = (quantity > 0 && advancePrice > 0) ? formatter.fuelPrices.format(advancePrice) : "";
-            document.querySelector(`input[data-fuel="${p}"][data-field="amount"]`).value = (amount > 0) ? formatter.currency.format(amount) : "";
+            
+            const advanceInput = document.querySelector(`input[data-fuel="${p}"][data-field="advance"]`);
+            if (advanceInput) advanceInput.value = (advancePrice !== 0) ? formatter.fuelPrices.format(advancePrice) : "0,000"; 
+            
+            const amountInput = document.querySelector(`input[data-fuel="${p}"][data-field="amount"]`);
+            if (amountInput) amountInput.value = (amount !== 0) ? formatter.currency.format(amount) : "€ 0,00"; 
         });
-        document.getElementById('total-quantity').textContent = `${formatter.liters.format(totalOrderQuantity)} L`;
-        document.getElementById('total-amount').textContent = formatter.currency.format(totalOrderAmount);
+        
+        const totalQtyEl = document.getElementById('total-quantity');
+        if (totalQtyEl) totalQtyEl.textContent = `${formatter.liters.format(totalOrderQuantity)} L`;
+        
+        const totalAmountEl = document.getElementById('total-amount');
+        if (totalAmountEl) totalAmountEl.textContent = formatter.currency.format(totalOrderAmount);
     }
     
     populateInputs() {
-        Object.keys(this.data.pricing).forEach(p => {
-            if (p === 'adblue') {
-                const input = document.querySelector('input[data-product="adblue"][data-type="servito"]');
-                if (input) input.value = this.data.pricing[p].price > 0 ? formatter.fuelPrices.format(this.data.pricing[p].price) : '';
-            } else {
-                const input = document.querySelector(`input[data-product="${p}"][data-type="consigliati"]`);
-                if(input) input.value = this.data.pricing[p].consigliati > 0 ? formatter.fuelPrices.format(this.data.pricing[p].consigliati) : '';
+        // Populate Pricing Grid (Prezzi Applicati Enilive)
+        // Ensure values are properly retrieved and formatted from stored data
+        ['benzina', 'diesel', 'gasolio', 'hvolution'].forEach(p => {
+            const pricingData = this.data.pricing[p] || {};
+            const consigliatiInput = document.querySelector(`input[data-product="${p}"][data-type="consigliati"]`);
+            if (consigliatiInput) {
+                // If value is 0, display '€ 0,000', otherwise format the value or empty string
+                consigliatiInput.value = (pricingData.consigliati !== undefined && pricingData.consigliati !== null) ? formatter.fuelPrices.format(pricingData.consigliati) : '';
             }
         });
-        Object.keys(this.data.competitors).forEach(p => {
-            Object.keys(this.data.competitors[p] || {}).forEach(c => {
-                const input = document.querySelector(`input[data-product="${p}"][data-competitor="${c}"]`);
-                if(input) input.value = this.data.competitors[p][c] > 0 ? formatter.fuelPrices.format(this.data.competitors[p][c]) : '';
+
+        // Populate Competitor Monitoring
+        // Ensure values are properly retrieved and formatted from stored data
+        ['benzina', 'gasolio'].forEach(p => {
+            const competitorData = this.data.competitors[p] || {};
+            ['myoil', 'esso', 'q8'].forEach(c => {
+                const competitorInput = document.querySelector(`input[data-product="${p}"][data-competitor="${c}"]`);
+                if (competitorInput) {
+                    // If value is 0, display '€ 0,000', otherwise format the value or empty string
+                    competitorInput.value = (competitorData[c] !== undefined && competitorData[c] !== null) ? formatter.fuelPrices.format(competitorData[c]) : '';
+                }
             });
         });
-        this.fuelProducts.forEach(f => {
-            const input = document.querySelector(`.spinner-value[data-fuel="${f}"]`);
-            if(input) input.value = (this.data.fuelOrders[f]?.quantity || 0) > 0 ? formatter.liters.format(this.data.fuelOrders[f].quantity) : '';
+
+        // Populate Fuel Order Quantities
+        this.fuelProducts.forEach(fuel => {
+            const orderData = this.data.fuelOrders[fuel] || {};
+            const quantityInput = document.querySelector(`input[data-fuel="${fuel}"][data-field="quantity-value"]`);
+            if (quantityInput) {
+                quantityInput.value = (orderData.quantity !== undefined && orderData.quantity !== null && orderData.quantity > 0) ? formatter.liters.format(orderData.quantity) : '0'; // Mostra '0' invece di stringa vuota
+            }
         });
-        this.updateCalculatedFields();
     }
 }
 
@@ -514,7 +409,6 @@ function importaDatiCompleti() {
             reader.onload = (e) => {
                 try {
                     const data = JSON.parse(e.target.result);
-                    // Controllo più robusto delle chiavi per l'importazione
                     if (data.monetario) Storage.save(Storage.KEYS.MONETARIO_DATA, data.monetario);
                     if (data.versamento) Storage.save(Storage.KEYS.VERSAMENTO_DATA, data.versamento);
                     if (data.ordini) Storage.save(Storage.KEYS.ORDER_HISTORY, data.ordini);
@@ -543,26 +437,6 @@ function esportaDatiCompleti() {
     URL.revokeObjectURL(url);
 }
 
-/* ===== SUPPORTO TASTIERA PER CALCOLATRICE ===== */
-function initializeCalculatorKeyboard() {
-    document.addEventListener('keydown', (e) => {
-        // Ignora gli eventi se l'utente sta digitando in un campo input o textarea
-        if (document.activeElement.tagName === 'INPUT' || document.activeElement.tagName === 'TEXTAREA') return;
-
-        const key = e.key;
-        if (/[0-9]/.test(key)) { e.preventDefault(); inputCalculator(key); }
-        else if (['+', '-', '*', '/'].includes(key)) { e.preventDefault(); inputCalculator(key); }
-        else if (key === '.' || key === ',') { e.preventDefault(); inputCalculator('.'); }
-        else if (key === 'Enter' || key === '=') { e.preventDefault(); calculateResult(); }
-        else if (key === 'Escape' || key.toLowerCase() === 'c') { e.preventDefault(); clearCalculator(); }
-        else if (key === 'Backspace') {
-            e.preventDefault();
-            calculatorDisplay = calculatorDisplay.length > 1 ? calculatorDisplay.slice(0, -1) : '0';
-            updateCalculatorDisplay();
-        }
-    });
-}
-
 /* ===== GESTIONE ERRORI GLOBALI ===== */
 window.addEventListener('error', function(event) {
     console.error('Errore JavaScript globale:', event.error);
@@ -577,57 +451,15 @@ window.addEventListener('unhandledrejection', function(event) {
 /* ===== INIZIALIZZAZIONE OTTIMIZZATA ===== */
 document.addEventListener('DOMContentLoaded', () => {
     try {
-        // MOBILE MENU LOGIC
-        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
-        const mainNav = document.getElementById('main-nav');
-        const mobileOverlay = document.getElementById('mobile-menu-overlay');
-
-        if (hamburgerBtn && mainNav && mobileOverlay) {
-            hamburgerBtn.addEventListener('click', () => {
-                mainNav.classList.toggle('active');
-                mobileOverlay.classList.toggle('active');
-                document.body.classList.toggle('no-scroll'); // Optional: prevent scrolling background
-            });
-
-            mobileOverlay.addEventListener('click', () => {
-                mainNav.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-                document.body.classList.remove('no-scroll'); // Optional
-            });
-
-            // Close menu if a nav link is clicked
-            mainNav.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mainNav.classList.remove('active');
-                    mobileOverlay.classList.remove('active');
-                    document.body.classList.remove('no-scroll'); // Optional
-                });
-            });
-        }
-
         initializeThemeSwitcher();
         initializeInfoModal();
-        new VersamentoManager(); // Inizializza il VersamentoManager
+        new VersamentoManager();
         window.pricingManager = new PricingManager();
-        updateCalculatorDisplay();
-        initializeCalculatorKeyboard();
-
-        document.getElementById('save-order-btn')?.addEventListener('click', saveOrder);
-        document.getElementById('order-history-content')?.addEventListener('click', (e) => {
-            if (e.target.closest('.order-delete-btn')) { // Usa closest per l'icona interna
-                deleteOrder(parseInt(e.target.closest('.order-delete-btn').dataset.orderIndex));
-            }
-        });
-        document.querySelectorAll('button.action-btn[onclick^="calculateVAT"]').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                calculateVAT(e.target.textContent.toLowerCase().includes('scorpora') ? 'remove' : 'add');
-            });
-        });
-        displayOrderHistory();
-        // showMessage('Sistema Monetario caricato', 'success'); // Rimosso come da richiesta
+        
+        // RIMOSSI event listener per salvare e cancellare ordini
         
     } catch (error) {
-        console.error('Errore durante l\'inizializzazione:', error);
-        showMessage('Errore critico nell\'avvio dell\'applicazione.', 'error');
+        console.error("Errore durante l'inizializzazione:", error);
+        showMessage("Errore critico nell'avvio dell'applicazione.", 'error');
     }
 });

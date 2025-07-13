@@ -6,15 +6,15 @@
     <title>CeRBERO - Gestione Credito Clienti</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
     <link rel="stylesheet" href="../css/credito.css">
 </head>
 <body>
-
-    <header class="header">
-        </button>
-        <nav class="nav" id="main-nav">
+    <!-- SIDEBAR NAVIGAZIONE -->
+    <div class="sidebar">
+        <div class="sidebar-header">CeRBERO</div>
+        <nav class="nav">
             <ul>
                 <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
                 <li><a href="registro.html"><i class="fa-solid fa-book"></i>REGISTRO</a></li>
@@ -25,62 +25,65 @@
                 <li><a href="carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
             </ul>
         </nav>
-        <div class="header-actions">
-            <a href="#" id="info-btn" title="Informazioni">
-                <i class="fa-solid fa-circle-info"></i>
-            </a>
+        <div class="sidebar-footer">
+            <!-- INVERTITI TEMA E INFO -->
             <a href="#" id="theme-switcher" title="Cambia Tema">
                 <i id="theme-icon-light" class="fa-solid fa-sun"></i>
                 <i id="theme-icon-dark" class="fa-solid fa-moon theme-icon-hidden"></i>
+                TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
             </a>
         </div>
-    </header>
+    </div>
 
-    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    <!-- ACTION BAR FLOATING -->
+    <div class="action-bar-floating">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Cerca cliente...">
+            <i class="fas fa-search search-icon"></i>
+            <button id="clearSearchBtn" title="Pulisci ricerca">&times;</button>
+        </div>
+        <button class="action-btn" id="addNewClientBtn">
+            <i class="fa-solid fa-user-plus"></i>AGGIUNGI
+        </button>
+        <button class="action-btn" onclick="importaDatiCompleti()">
+            <i class="fa-solid fa-download"></i>IMPORTA
+        </button>
+        <button class="action-btn" onclick="esportaDatiCompleti()">
+            <i class="fa-solid fa-upload"></i>ESPORTA
+        </button>
+        <button class="action-btn" id="stampaDatiBtn" onclick="stampaDati()">
+            <i class="fa-solid fa-print"></i>STAMPA
+        </button>
+    </div>
 
-    <div class="container">
-        <h1 class="page-title">GESTIONE CREDITO</h1>
-
+    <!-- CONTENUTO PRINCIPALE -->
+    <div class="container main-content">
+        <!-- SUMMARY GRID -->
         <div class="summary-grid">
-            <div class="summary-box box">
-                <div class="title">Clienti a Debito</div>
-                <div class="value" id="clientiAttivi">0</div>
+            <div class="box summary-box">
+                <div class="summary-title">Clienti a Debito</div>
+                <div class="summary-value stat-value" id="clientiAttivi">0</div>
             </div>
-            <div class="summary-box box">
-                <div class="title">Credito Totale</div>
-                <div class="value" id="totalCredito">€ 0,00</div>
+            <div class="box summary-box">
+                <div class="summary-title">Credito Totale</div>
+                <div class="summary-value stat-value" id="totalCredito">€ 0,00</div>
             </div>
-            <div class="summary-box box">
-                <div class="title">Ultima Operazione</div>
-                <div class="value" id="last-op-client" style="font-size: 18px;">--</div>
-                <div class="details" id="last-op-details"></div>
+            <div class="box summary-box">
+                <div class="summary-title">Ultima Operazione</div>
+                <div class="summary-value stat-value" id="last-op-client" style="font-size: 18px;">--</div>
+                <div class="summary-details" id="last-op-details"></div>
             </div>
         </div>
 
-        <div class="action-bar">
-            <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Cerca cliente...">
-                <i class="fas fa-search search-icon"></i>
-                <button id="clearSearchBtn" title="Pulisci ricerca">&times;</button>
-            </div>
-            <button class="action-btn success" id="addNewClientBtn">
-                <i class="fa-solid fa-user-plus"></i> AGGIUNGI CLIENTE
-            </button>
-            <button class="action-btn" onclick="importaDatiCompleti()">
-                <i class="fa-solid fa-download"></i> IMPORTA
-            </button>
-            <button class="action-btn" onclick="esportaDatiCompleti()">
-                <i class="fa-solid fa-upload"></i> ESPORTA
-            </button>
-            <button class="action-btn" id="stampaDatiBtn" onclick="stampaDati()">
-                <i class="fa-solid fa-print"></i> STAMPA
-            </button>
-        </div>
-
-        <main id="clientsGrid">
+        <!-- CLIENTS GRID -->
+        <main id="clientsGrid" class="clients-grid">
         </main>
     </div>
 
+    <!-- MODALI -->
     <div class="modal-overlay" id="add-client-modal">
         <div class="modal">
             <div class="modal-header">
@@ -145,7 +148,7 @@
                 <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-content info-modal-content">
-                <i class="modal-info-icon fa-solid fa-circle-info"></i>
+                <i class="fa-solid fa-circle-info modal-info-icon"></i>
                 <h1 class="info-modal-brand">CeRBERO</h1>
                 <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
                 <p class="programmer-info">

@@ -6,17 +6,15 @@
     <title>CeRBERO - Pagina iniziale</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-
+    <link rel="stylesheet" href="css/style.css"> 
     <link rel="stylesheet" href="css/index.css">
-    
 </head>
 <body>
 
-    <header class="header">
-        </button>
-        <nav class="nav" id="main-nav">
+    <aside class="sidebar" id="main-sidebar">
+        <div class="sidebar-header">CeRBERO</div>
+        <nav class="nav">
             <ul>
                 <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i>HOME</a></li>
                 <li><a href="pagine/registro.html"><i class="fa-solid fa-book"></i>REGISTRO</a></li>
@@ -27,32 +25,30 @@
                 <li><a href="pagine/carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
             </ul>
         </nav>
-        <div class="header-actions">
-            <a href="#" id="info-btn" title="Informazioni">
-                <i class="fa-solid fa-circle-info"></i>
-            </a>
+        
+        <!-- Footer della sidebar -->
+        <div class="sidebar-footer">
             <a href="#" id="theme-switcher" title="Cambia Tema">
                 <i id="theme-icon-light" class="fa-solid fa-sun"></i>
-                <i id="theme-icon-dark" class="fa-solid fa-moon theme-icon-hidden"></i>
+                <i id="theme-icon-dark" class="fa-solid fa-moon theme-icon-hidden"></i>TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
             </a>
         </div>
-    </header>
+    </aside>
 
-    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+    <div class="action-bar-floating">
+        <button class="action-btn" onclick="importaDatiCompleti()"><i class="fa-solid fa-download"></i>IMPORTA</button>
+        <button class="action-btn" onclick="esportaTuttiIDati()"><i class="fa-solid fa-upload"></i>ESPORTA</button>
+        <button class="action-btn" onclick="confirmNewDay()"><i class="fa-solid fa-power-off"></i>NUOVA GIORNATA</button>
+    </div>
 
     <div class="container">
         <main class="main-content">
-            <h1 class="page-title">CENTRO DI CONTROLLO</h1>
-
-            <div class="action-bar">
-                <button class="action-btn" onclick="importaDatiCompleti()"><i class="fa-solid fa-download"></i>IMPORTA TUTTO</button>
-                <button class="action-btn" onclick="esportaTuttiIDati()"><i class="fa-solid fa-upload"></i>ESPORTA TUTTO</button>
-                <button class="action-btn" onclick="confirmNewDay()"><i class="fa-solid fa-calendar-plus"></i>NUOVA GIORNATA</button>
-            </div>
-
             <div class="dashboard-grid">
                 <section class="box summary-box giornata-box">
-                    <div class="box-header"><i class="fa-solid fa-clock"></i><span>GIORNATA</span></div>
+                    <div class="box-header">GIORNATA</div>
                     <div class="box-content">
                         <div class="giornata-content">
                             <div class="time-date">
@@ -74,12 +70,7 @@
                 </section>
 
                 <section class="box summary-box box-libero-1">
-                    <div class="box-header">
-                        <i class="fa-solid fa-sack-dollar"></i><span>INCASSO</span>
-                        <button class="reset-fatturato-btn" id="reset-manual-fatturato-btn" title="Azzera il fatturato manuale e usa quello automatico da Virtualstation">
-                            <i class="fa-solid fa-rotate"></i>
-                        </button>
-                    </div>
+                    <div class="box-header">INCASSO</div>
                     <div class="box-content corrispettivi-content">
                         <div class="corrispettivi-group">
                             <span class="corrispettivi-label">FATTURATO TOTALE</span>
@@ -101,28 +92,41 @@
                 </section>
 
                 <section class="box summary-box vendite-summary-box">
-                    <div class="box-header"><i class="fa-solid fa-list-check"></i><span>RIEPILOGO VENDITE</span></div>
+                    <div class="box-header">RIEPILOGO VENDITE</div>
                     <div class="box-content">
-                        <ul id="product-liters-summary"></ul>
-                        <div class="servito-percentage-summary">
-                            <div class="label">Percentuale Servito</div>
-                            <div class="value" id="servito-percentage-value">0%</div>
-                            <div class="progress-bar-container">
-                                <div class="progress-bar" id="servito-progress-bar"></div>
-                            </div>
+                        <div class="vendite-summary-grid">
+                            <div class="product-field product-benzina">BENZINA</div>
+                            <div class="display-field" id="benzina-liters">0,00 L</div>
+                            
+                            <div class="product-field product-gasolio">GASOLIO</div>
+                            <div class="display-field" id="gasolio-liters">0,00 L</div>
+                            
+                            <div class="product-field product-diesel">DIESEL+</div>
+                            <div class="display-field" id="diesel-liters">0,00 L</div>
+                            
+                            <div class="product-field product-hvolution">HVOLUTION</div>
+                            <div class="display-field" id="hvolution-liters">0,00 L</div>
+                            
+                            <div class="product-field product-adblue">ADBLUE</div>
+                            <div class="display-field" id="adblue-liters">0,00 L</div>
+                        </div>
+                        
+                        <div class="vendite-totals">
+                            <div class="product-field">TOTALE LITRI</div>
+                            <div class="display-field" id="total-liters">0,00 L</div>
                         </div>
                     </div>
                 </section>
                 
                 <section class="box summary-box note-box" id="notes-card">
-                    <div class="box-header"><i class="fa-solid fa-pen-to-square"></i><span>NOTE</span></div>
+                    <div class="box-header">NOTE</div>
                     <div class="box-content">
                         <textarea id="notesArea" placeholder="Scrivi le tue note qui..."></textarea>
                     </div>
                 </section>
 
                 <section class="box summary-box calendario-box" id="calendar-card">
-                    <div class="box-header"><i class="fa-solid fa-calendar-days"></i><span>CALENDARIO</span></div>
+                    <div class="box-header">CALENDARIO</div>
                     <div class="box-content">
                         <div class="calendar-header">
                             <button id="calendarPrev"><i class="fa-solid fa-chevron-left"></i></button>
@@ -137,7 +141,7 @@
                 </section>
                 
                 <section class="box summary-box todo-box" id="todo-card">
-                    <div class="box-header"><i class="fa-solid fa-list-ul"></i><span>TO-DO LIST</span></div>
+                    <div class="box-header">TO-DO LIST</div>
                     <div class="box-content">
                         <div class="todo-input-group">
                             <input type="text" id="newTodoInput" placeholder="Aggiungi task del turno...">
@@ -150,42 +154,44 @@
         </main>
     </div>
 
+    <!-- Modal Info Standardizzato -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Informazioni Progetto</div>
+                <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content info-modal-content">
+                <i class="fa-solid fa-circle-info modal-info-icon"></i>
+                <div class="info-modal-brand">CeRBERO</div>
+                <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
+                <div class="programmer-info">
+                    <strong>Sviluppato da:</strong> NeRO<br>
+                    <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
+                    <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Conferma -->
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal">
             <div class="modal-header">
-                <h3 class="modal-title" id="confirm-modal-title">Conferma Azione</h3>
+                <div class="modal-title" id="confirm-modal-title">Conferma</div>
+                <button class="modal-close-btn">&times;</button>
             </div>
             <div class="modal-content">
                 <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
             </div>
             <div class="modal-actions">
-                <button class="action-btn secondary" id="confirm-modal-cancel"><i class="fa-solid fa-xmark"></i>Annulla</button>
-                <button class="action-btn" id="confirm-modal-ok"><i class="fa-solid fa-check"></i>Conferma</button>
-            </div>
-        </div>
-    </div>
-    
-    <div class="modal-overlay" id="info-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Informazioni Progetto</h3>
-                <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-content info-modal-content">
-                <i class="fa-solid fa-circle-info modal-info-icon"></i>
-                <h1 class="info-modal-brand">CeRBERO</h1>
-                <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
-                <p class="programmer-info">
-                    Sviluppato da: <strong>NeRO</strong><br>
-                    <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
-                    <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
-                </p>
+                <button class="action-btn" id="confirm-modal-ok">Conferma</button>
+                <button class="action-btn" id="confirm-modal-cancel">Annulla</button>
             </div>
         </div>
     </div>
 
     <script src="js/storage.js"></script>
     <script src="js/index.js"></script>
-
 </body>
 </html>

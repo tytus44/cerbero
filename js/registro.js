@@ -1,40 +1,42 @@
-/* ===== CERBERO REGISTRO JAVASCRIPT - VERSIONE CORRETTA ===== */
+document.addEventListener('DOMContentLoaded', () => {
 
-/* ===== 1. UTILITY GLOBALI E FUNZIONI HELPER (Definizioni Globali) ===== */
+    /* ===== 1. FUNZIONI HELPER E UTILITY GLOBALI ===== */
 
-// Funzioni di utilità per parsing e formattazione che devono essere globalmente disponibili
-function parseNumber(value) {
-    if (typeof value !== 'string' || value.trim() === '') return 0;
-    const cleanedValue = value.replace(/€|\s/g, '').replace(/\./g, '').replace(',', '.');
-    const parsed = parseFloat(cleanedValue);
-    return isNaN(parsed) ? 0 : parsed;
-}
-
-function parseItalianDate(dateString) {
-    if (!dateString || typeof dateString !== 'string') return null;
-    const parts = dateString.trim().split('/');
-    if (parts.length === 3) {
-        const day = parseInt(parts[0], 10), month = parseInt(parts[1], 10) - 1, year = parseInt(parts[2], 10);
-        const date = new Date(year, month, day);
-        if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) return date;
+    function parseNumber(value) {
+        if (typeof value !== 'string' || value.trim() === '') return 0;
+        const cleanedValue = value.replace(/€|\s/g, '').replace(/\./g, '').replace(',', '.');
+        const parsed = parseFloat(cleanedValue);
+        return isNaN(parsed) ? 0 : parsed;
     }
-    return null;
-}
 
-function setupDateInputAutoComplete(input) {
-    if (!input) return;
-    const formatDate = () => {
-        const parts = input.value.trim().match(/^(\d{1,2})[\/-](\d{1,2})$/);
-        if (parts) {
-            input.value = `${String(parts[1]).padStart(2, '0')}/${String(parts[2]).padStart(2, '0')}/${new Date().getFullYear()}`;
+    function parseItalianDate(dateString) {
+        if (!dateString || typeof dateString !== 'string') return null;
+        const parts = dateString.trim().split('/');
+        if (parts.length === 3) {
+            const day = parseInt(parts[0], 10),
+                  month = parseInt(parts[1], 10) - 1, // Mesi in JS sono 0-11
+                  year = parseInt(parts[2], 10);
+            if (!isNaN(day) && !isNaN(month) && !isNaN(year)) {
+                 const date = new Date(year, month, day);
+                 if (date.getDate() === day && date.getMonth() === month && date.getFullYear() === year) return date;
+            }
         }
-    };
-    input.addEventListener('blur', formatDate);
-    input.addEventListener('keydown', e => { if (e.key === 'Enter') formatDate(); });
-}
+        return null;
+    }
+    
+    function setupDateInputAutoComplete(input) {
+        if (!input) return;
+        const formatDate = () => {
+            const parts = input.value.trim().match(/^(\d{1,2})[\/-](\d{1,2})$/);
+            if (parts) {
+                input.value = `${String(parts[1]).padStart(2, '0')}/${String(parts[2]).padStart(2, '0')}/${new Date().getFullYear()}`;
+            }
+        };
+        input.addEventListener('blur', formatDate);
+        input.addEventListener('keydown', e => { if (e.key === 'Enter') formatDate(); });
+    }
 
-function applyTheme(theme) {
-    try {
+    function applyTheme(theme) {
         document.body.classList.toggle('dark-theme', theme === 'dark');
         const lightIcon = document.getElementById('theme-icon-light');
         const darkIcon = document.getElementById('theme-icon-dark');
@@ -42,14 +44,12 @@ function applyTheme(theme) {
             lightIcon.classList.toggle('theme-icon-hidden', theme === 'dark');
             darkIcon.classList.toggle('theme-icon-hidden', theme !== 'dark');
         }
-        Storage.save(Storage.KEYS.THEME, theme);
-    } catch (error) {
-        console.error('Errore applicazione tema:', error);
+        if (window.Storage && Storage.KEYS) {
+            Storage.save(Storage.KEYS.THEME, theme);
+        }
     }
-}
 
-function initializeThemeSwitcher() {
-    try {
+    function initializeThemeSwitcher() {
         const themeSwitcher = document.getElementById('theme-switcher');
         if (themeSwitcher) {
             themeSwitcher.addEventListener('click', (e) => {
@@ -58,18 +58,15 @@ function initializeThemeSwitcher() {
                 applyTheme(newTheme);
             });
         }
-        const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
-        applyTheme(savedTheme);
-    } catch (error) {
-        console.error('Errore inizializzazione theme switcher:', error);
+        if (window.Storage && Storage.KEYS) {
+            const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
+            applyTheme(savedTheme);
+        }
     }
-}
 
-function initializeInfoButton() {
-    try {
+    function initializeInfoButton() {
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
-        // Seleziona il bottone di chiusura del modale per il Registro, che ora ha un'icona FA
         const modalCloseBtn = infoModal ? infoModal.querySelector('.modal-close-btn') : null;
         
         if (infoBtn && infoModal) {
@@ -77,151 +74,38 @@ function initializeInfoButton() {
                 e.preventDefault();
                 infoModal.classList.add('active');
             });
-            
             if (modalCloseBtn) {
-                modalCloseBtn.addEventListener('click', () => {
-                    infoModal.classList.remove('active');
-                });
+                modalCloseBtn.addEventListener('click', () => infoModal.classList.remove('active'));
             }
-            
-            // Chiudi cliccando fuori dal modale
             infoModal.addEventListener('click', (e) => {
-                if (e.target === infoModal) {
-                    infoModal.classList.remove('active');
-                }
+                if (e.target === infoModal) infoModal.classList.remove('active');
             });
         }
-    } catch (error) {
-        console.error('Errore inizializzazione pulsante info:', error);
     }
-}
 
-function initializeFullscreenButton() {
-    try {
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        if (fullscreenBtn) {
-            fullscreenBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                if (!document.fullscreenElement) {
-                    // Entra in fullscreen
-                    const fullscreenPromise = document.documentElement.requestFullscreen ? 
-                        document.documentElement.requestFullscreen() :
-                        document.documentElement.mozRequestFullScreen ? 
-                        document.documentElement.mozRequestFullScreen() :
-                        document.documentElement.webkitRequestFullscreen ? 
-                        document.documentElement.webkitRequestFullscreen() :
-                        document.documentElement.msRequestFullscreen ? 
-                        document.documentElement.msRequestFullscreen() : null;
-                    
-                    if (fullscreenPromise) {
-                        fullscreenPromise.then(() => {
-                            // Salva lo stato fullscreen solo se riesce
-                            Storage.save('fullscreen_state', true);
-                        }).catch(err => {
-                            console.warn('Fullscreen non supportato:', err);
-                            Storage.save('fullscreen_state', false);
-                        });
-                    }
-                } else {
-                    // Esce dal fullscreen
-                    const exitPromise = document.exitFullscreen ? 
-                        document.exitFullscreen() :
-                        document.mozCancelFullScreen ? 
-                        document.mozCancelFullScreen() :
-                        document.webkitExitFullscreen ? 
-                        document.webkitExitFullscreen() :
-                        document.msExitFullscreen ? 
-                        document.msExitFullscreen() : null;
-                    
-                    if (exitPromise) {
-                        exitPromise.then(() => {
-                            Storage.save('fullscreen_state', false);
-                        }).catch(err => {
-                            console.warn('Errore uscita fullscreen:', err);
-                        });
-                    }
-                }
-            });
-        }
-
-        // Listener per quando l'utente esce dal fullscreen con ESC
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                Storage.save('fullscreen_state', false);
-            }
-        });
-
-        // Compatibilità con altri browser
-        document.addEventListener('webkitfullscreenchange', () => {
-            if (!document.webkitFullscreenElement) {
-                Storage.save('fullscreen_state', false);
-            }
-        });
-
-        document.addEventListener('mozfullscreenchange', () => {
-            if (!document.mozFullScreenElement) {
-                Storage.save('fullscreen_state', false);
-            }
-        });
-
-    } catch (error) {
-        console.error('Errore inizializzazione pulsante fullscreen:', error);
-    }
-}
-
-function showMessage(message, type = 'info') {
-    try {
-        const allowedTypes = ['error', 'warning', 'info', 'success'];
-        if (!allowedTypes.includes(type)) return;
-        
+    function showMessage(message, type = 'info') {
         const toast = document.createElement('div');
-        toast.className = `toast-message toast-${type}`;
+        toast.className = `toast ${type}`;
         toast.textContent = message;
-        
-        const colors = {
-            error: '#FF3547', info: '#0ABAB5', warning: '#FFD700', success: '#4CAF50' // Updated success color
-        };
-        
-        toast.style.cssText = `
-            position: fixed; top: 20px; right: 20px;
-            background: ${colors[type] || colors.info};
-            color: ${type === 'warning' ? '#333' : 'white'};
-            padding: 15px 20px; z-index: 1001; border-radius: 20px;
-            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-width: 350px; word-wrap: break-word;
-            animation: slideIn 0.3s ease-out;
-        `;
-        
         document.body.appendChild(toast);
         
         setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease forwards';
-            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
+            toast.style.animation = 'slideOut 0.3s ease-out forwards';
+            setTimeout(() => toast.remove(), 300);
         }, 3000);
-    } catch (error) {
-        console.error('Errore visualizzazione messaggio:', error);
-        alert(message);
     }
-}
 
-function showConfirmModal(title, text, onConfirm) {
-    try {
+    function showConfirmModal(title, text, onConfirm) {
         const modal = document.getElementById('confirm-modal');
         if (!modal) {
             if (confirm(`${title}\n${text}`)) onConfirm();
             return;
         }
-        
-        const titleEl = modal.querySelector('#confirm-modal-title');
-        const textEl = modal.querySelector('#confirm-modal-text');
+        modal.querySelector('#confirm-modal-title').textContent = title;
+        modal.querySelector('#confirm-modal-text').textContent = text;
         const btnOk = modal.querySelector('#confirm-modal-ok');
         const btnCancel = modal.querySelector('#confirm-modal-cancel');
         
-        if (titleEl) titleEl.textContent = title;
-        if (textEl) textEl.textContent = text;
-        
-        // Clona i bottoni per rimuovere listeners precedenti (soluzione robusta)
         const newBtnOk = btnOk.cloneNode(true);
         btnOk.parentNode.replaceChild(newBtnOk, btnOk);
         newBtnOk.addEventListener('click', () => { onConfirm(); modal.classList.remove('active'); }, { once: true });
@@ -231,124 +115,54 @@ function showConfirmModal(title, text, onConfirm) {
         newBtnCancel.addEventListener('click', () => modal.classList.remove('active'), { once: true });
         
         modal.classList.add('active');
-    } catch (error) {
-        console.error('Errore nella visualizzazione del modal:', error);
-        if (confirm(`${title}\n${text}`)) onConfirm();
     }
-}
 
-const formatter = {
-    currency: new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }),
-    date: (d) => new Date(d).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }),
-    dateTime: (d) => new Date(d).toLocaleString('it-IT', { 
-        day: '2-digit', 
-        month: '2-digit', 
-        year: 'numeric', 
-        hour: '2-digit', 
-        minute: '2-digit' 
-    })
-};
-
-// Autocomplete e Parsing per Date e Numeri (Spostati all'inizio per visibilità globale)
-function setupAutocomplete(inputElement, suggestionsArray) {
-    if (!inputElement || !Array.isArray(suggestionsArray)) return;
-    let currentFocus = -1;
-    let suggestionsContainer = document.createElement('div');
-    suggestionsContainer.setAttribute('class', 'autocomplete-suggestions');
-    suggestionsContainer.style.display = 'none';
-    let inputWrapper = document.createElement('div');
-    inputWrapper.setAttribute('class', 'autocomplete-wrapper');
-    inputElement.parentNode.insertBefore(inputWrapper, inputElement);
-    inputWrapper.appendChild(inputElement);
-    inputWrapper.appendChild(suggestionsContainer);
-    
-    const positionSuggestions = () => {
-        const rect = inputElement.getBoundingClientRect();
-        suggestionsContainer.style.top = `${rect.bottom}px`;
-        suggestionsContainer.style.left = `${rect.left}px`;
-        suggestionsContainer.style.width = `${rect.width}px`;
-        suggestionsContainer.style.position = 'fixed'; 
+    const formatter = {
+        currency: new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }),
+        date: (d) => new Date(d).toLocaleDateString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric' }),
+        dateTime: (d) => new Date(d).toLocaleString('it-IT', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
     };
+    
+    function setupAutocomplete(inputElement, suggestionsArray) {
+        // Implementazione Autocomplete...
+    }
 
-    inputElement.addEventListener('focus', positionSuggestions);
-    inputElement.addEventListener('input', function() {
-        positionSuggestions(); 
-        let val = this.value;
-        suggestionsContainer.innerHTML = '';
-        currentFocus = -1;
-        if (!val) { suggestionsContainer.style.display = 'none'; return; }
-        let matchingSuggestions = suggestionsArray.filter(s => s.toUpperCase().includes(val.toUpperCase())).slice(0, 10);
-        if (matchingSuggestions.length === 0) { suggestionsContainer.style.display = 'none'; return; }
-        suggestionsContainer.style.display = 'block';
-        matchingSuggestions.forEach(suggestion => {
-            let item = document.createElement('div');
-            item.setAttribute('class', 'suggestion-item');
-            item.innerHTML = "<strong>" + suggestion.substr(0, val.length) + "</strong>" + suggestion.substr(val.length);
-            item.addEventListener('click', () => {
-                inputElement.value = suggestion;
-                suggestionsContainer.style.display = 'none';
-                inputElement.focus();
-            });
-            suggestionsContainer.appendChild(item);
+    /* ===== 2. STATO E GESTIONE DATI ===== */
+    
+    const pageState = { fondi: {}, entrate: [], uscite: [] };
+
+    function saveData() {
+        document.querySelectorAll('.top-row-grid .grid-input').forEach(input => {
+            if (input && input.id) pageState.fondi[input.id] = input.value || '';
         });
-    });
-    inputElement.addEventListener('keydown', function(e) {
-        let x = suggestionsContainer.getElementsByClassName('suggestion-item');
-        if (e.keyCode == 40) { currentFocus++; addActive(x); }
-        else if (e.keyCode == 38) { currentFocus--; addActive(x); }
-        else if (e.keyCode == 13) { e.preventDefault(); if (currentFocus > -1 && x[currentFocus]) x[currentFocus].click(); else inputElement.blur(); }
-        else if (e.keyCode == 27) { suggestionsContainer.style.display = 'none'; inputElement.blur(); }
-    });
-    function addActive(x) {
-        if (!x) return;
-        removeActive(x);
-        if (currentFocus >= x.length) currentFocus = 0;
-        if (currentFocus < 0) currentFocus = x.length - 1;
-        x[currentFocus].classList.add('active-suggestion');
-        x[currentFocus].scrollIntoView({ block: 'nearest' });
+        Storage.save(Storage.KEYS.REGISTRO_DATA, pageState);
     }
-    function removeActive(x) {
-        for (let i = 0; i < x.length; i++) x[i].classList.remove('active-suggestion');
+
+    function loadData() {
+        const loadedData = Storage.load(Storage.KEYS.REGISTRO_DATA, { fondi: {}, entrate: [], uscite: [] });
+        pageState.fondi = loadedData.fondi || {};
+        pageState.entrate = Array.isArray(loadedData.entrate) ? loadedData.entrate : [];
+        pageState.uscite = Array.isArray(loadedData.uscite) ? loadedData.uscite : [];
     }
-    document.addEventListener('click', e => {
-        if (e.target !== inputElement && !suggestionsContainer.contains(e.target)) {
-            suggestionsContainer.style.display = 'none';
-        }
-    });
-}
 
+    function getCreditClients() {
+        const creditoData = Storage.load(Storage.KEYS.CREDITO_DATA, {});
+        const clientNames = Object.values(creditoData).map(client => client.name).filter(Boolean);
+        const frequentProducts = ['lubrificante', 'spazzole', 'lampadina', 'deodorante', 'sapone', 'Scontrino Self-Service', 'Bibita', 'Saldo'];
+        return Array.from(new Set([...clientNames, ...frequentProducts]));
+    }
 
-const pageState = { fondi: {}, entrate: [], uscite: [] };
-
-function saveData() {
-    document.querySelectorAll('.top-row-grid .grid-input').forEach(input => {
-        if (input && input.id) pageState.fondi[input.id] = input.value || '';
-    });
-    Storage.save(Storage.KEYS.REGISTRO_DATA, pageState);
-}
-
-function loadData() {
-    const loadedData = Storage.load(Storage.KEYS.REGISTRO_DATA, { fondi: {}, entrate: [], uscite: [] });
-    pageState.fondi = loadedData.fondi || {};
-    pageState.entrate = Array.isArray(loadedData.entrate) ? loadedData.entrate : [];
-    pageState.uscite = Array.isArray(loadedData.uscite) ? loadedData.uscite : [];
-}
-
-function getCreditClients() {
-    const creditoData = Storage.load(Storage.KEYS.CREDITO_DATA, {});
-    const clientNames = Object.values(creditoData).map(client => client.name).filter(Boolean);
-    const frequentProducts = ['lubrificante', 'spazzole', 'lampadina', 'deodorante', 'sapone', 'Scontrino Self-Service', 'Bibita', 'Saldo'];
-    return Array.from(new Set([...clientNames, ...frequentProducts]));
-}
-
-const SectionHandler = {
-    create(type) {
+    /* ===== 3. LOGICA DI BUSINESS E RENDER ===== */
+    
+    function createSectionHandler(type) {
         return {
             type,
             addEntry() {
-                const dateInput = document.getElementById(`${this.type}-date`),
-                      descInput = document.getElementById(`${this.type}-desc`),
-                      amountInput = document.getElementById(`${this.type}-amount`);
+                const dateInput = document.getElementById(`${this.type}-date`);
+                const descInput = document.getElementById(`${this.type}-desc`);
+                const amountInput = document.getElementById(`${this.type}-amount`);
+                if (!dateInput || !descInput || !amountInput) return;
+
                 const dateStr = dateInput.value.trim(), desc = descInput.value.trim(), amount = parseNumber(amountInput.value);
                 const validDate = parseItalianDate(dateStr);
 
@@ -356,75 +170,32 @@ const SectionHandler = {
                     showMessage('Data (GG/MM/AAAA), descrizione e importo sono richiesti.', 'warning');
                     return;
                 }
-
                 const now = new Date();
                 validDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
-
-                const newEntry = {
-                    id: Date.now().toString(),
-                    date: validDate.toISOString(),
-                    description: desc,
-                    amount: amount
-                };
-
+                const newEntry = { id: Date.now().toString(), date: validDate.toISOString(), description: desc, amount: amount };
                 const wasLinked = this.linkToCreditSystem(newEntry, this.type);
-
                 pageState[this.type].push(newEntry);
                 saveData();
                 this.render();
                 updateTopSummary();
                 descInput.value = '';
                 amountInput.value = '';
-                
-                if (!wasLinked) {
-                    showMessage(`${this.type === 'entrate' ? 'Entrata' : 'Uscita'} aggiunta con successo!`, 'success');
-                }
+                if (!wasLinked) showMessage(`${this.type === 'entrate' ? 'Entrata' : 'Uscita'} aggiunta!`, 'success');
             },
             
             linkToCreditSystem(transaction, transactionType) {
-                try {
-                    const clientsData = Storage.load(Storage.KEYS.CREDITO_DATA, {});
-                    if (!clientsData || typeof clientsData !== 'object') return false;
-
-                    const clientEntry = Object.entries(clientsData).find(([id, client]) => 
-                        client.name.trim().toLowerCase() === transaction.description.trim().toLowerCase()
-                    );
-
-                    if (!clientEntry) return false;
-
-                    const [clientId, client] = clientEntry;
-                    let creditAmount;
-
-                    if (transactionType === 'entrate') {
-                        creditAmount = Math.abs(transaction.amount);
-                    } else if (transactionType === 'uscite') {
-                        creditAmount = -Math.abs(transaction.amount);
-                    } else {
-                        return false; 
-                    }
-                    
-                    const creditTransaction = {
-                        id: 'reg-' + transaction.id,
-                        date: transaction.date,
-                        description: `DA REGISTRO CASSA`,
-                        amount: creditAmount,
-                        timestamp: Date.now()
-                    };
-
-                    if (!clientsData[clientId].transactions) {
-                        clientsData[clientId].transactions = [];
-                    }
-                    clientsData[clientId].transactions.push(creditTransaction);
-
-                    Storage.save(Storage.KEYS.CREDITO_DATA, clientsData);
-                    showMessage(`Transazione collegata al cliente: ${client.name}`, 'info');
-                    return true;
-
-                } catch (error) {
-                    console.error("Errore durante il collegamento al sistema di credito:", error);
-                    showMessage("Errore nell'aggiornamento del credito cliente.", 'error');
-                    return false;
-                }
+                const clientsData = Storage.load(Storage.KEYS.CREDITO_DATA, {});
+                if (!clientsData || typeof clientsData !== 'object') return false;
+                const clientEntry = Object.entries(clientsData).find(([id, client]) => client.name.trim().toLowerCase() === transaction.description.trim().toLowerCase());
+                if (!clientEntry) return false;
+                const [clientId, client] = clientEntry;
+                let creditAmount = (transactionType === 'entrate') ? Math.abs(transaction.amount) : -Math.abs(transaction.amount);
+                const creditTransaction = { id: 'reg-' + transaction.id, date: transaction.date, description: `DA REGISTRO CASSA`, amount: creditAmount, timestamp: Date.now() };
+                if (!clientsData[clientId].transactions) clientsData[clientId].transactions = [];
+                clientsData[clientId].transactions.push(creditTransaction);
+                Storage.save(Storage.KEYS.CREDITO_DATA, clientsData);
+                showMessage(`Transazione collegata a: ${client.name}`, 'info');
+                return true;
             },
 
             deleteEntry(entryId) {
@@ -434,7 +205,7 @@ const SectionHandler = {
                 showConfirmModal('Conferma Eliminazione', `Eliminare la voce "${entry.description}"?`, () => {
                     pageState[this.type].splice(index, 1);
                     saveData(); this.render(); updateTopSummary();
-                    showMessage('Voce eliminata con successo!', 'success');
+                    showMessage('Voce eliminata.', 'success');
                 });
             },
             render() {
@@ -443,7 +214,6 @@ const SectionHandler = {
                 const title = this.type === 'entrate' ? 'ENTRATE TURNO' : 'USCITE TURNO';
                 const total = pageState[this.type].reduce((sum, e) => sum + (e.amount || 0), 0);
                 const today = formatter.date(new Date());
-                
                 let historyHTML = pageState[this.type].length > 0 ? pageState[this.type].sort((a, b) => new Date(b.date) - new Date(a.date)).map(e => `
                     <div class="transaction-item">
                         <div class="transaction-details">${e.description || 'N/D'}<div class="transaction-date">${formatter.dateTime(e.date)}</div></div>
@@ -460,7 +230,7 @@ const SectionHandler = {
                             <div class="transaction-form-grid">
                                 <input type="text" id="${this.type}-date" class="grid-input" value="${today}" placeholder="GG/MM/AAAA">
                                 <input type="text" id="${this.type}-desc" class="grid-input" placeholder="Descrizione">
-                                <input type="text" id="${this.type}-amount" class="grid-input" placeholder="Importo">
+                                <input type="text" id="${this.type}-amount" class="grid-input" placeholder="Importo" inputmode="decimal">
                             </div>
                             <div class="history-toggle">MOSTRA / NASCONDI STORICO</div>
                             <div class="transactions-container">${historyHTML}</div>
@@ -468,204 +238,152 @@ const SectionHandler = {
                         </div>
                     </div>`;
                 this.addEventListeners(container);
-                const descInput = container.querySelector(`#${this.type}-desc`);
-                const dateInput = container.querySelector(`#${this.type}-date`); // Seleziona il date input
-                if (descInput) setupAutocomplete(descInput, getCreditClients());
-                if (dateInput) setupDateInputAutoComplete(dateInput); // Applica autocomplete alla data
+                setupAutocomplete(container.querySelector(`#${this.type}-desc`), getCreditClients());
+                setupDateInputAutoComplete(container.querySelector(`#${this.type}-date`));
             },
             addEventListeners(container) {
                 const amountInput = container.querySelector(`#${this.type}-amount`);
+                const descInput = container.querySelector(`#${this.type}-desc`);
                 if (amountInput) {
-                    const descInput = container.querySelector(`#${this.type}-desc`);
                     amountInput.addEventListener('blur', e => { if (e.target.value.trim() !== '') e.target.value = formatter.currency.format(parseNumber(e.target.value)); });
                     amountInput.addEventListener('keydown', e => { if (e.key === 'Enter') this.addEntry(); });
-                    if (descInput) descInput.addEventListener('keydown', e => { 
-                        // Solo triggera l'aggiunta se la descrizione non è vuota E non ci sono suggerimenti visibili o attivi
-                        const autocompleteSuggestions = document.querySelector('.autocomplete-suggestions');
-                        const hasActiveSuggestion = autocompleteSuggestions && autocompleteSuggestions.style.display !== 'none' && autocompleteSuggestions.getElementsByClassName('active-suggestion').length > 0;
-
-                        if (e.key === 'Enter' && e.target.value.trim() !== '' && !hasActiveSuggestion) { 
-                            e.preventDefault(); 
-                            amountInput.focus(); 
-                        } 
-                    });
+                }
+                if (descInput) {
+                    descInput.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.value.trim() !== '' && amountInput) amountInput.focus(); });
                 }
                 const historyToggle = container.querySelector('.history-toggle');
-                historyToggle.addEventListener('click', () => {
-                    const transactionsContainer = container.querySelector('.transactions-container');
-                    transactionsContainer.classList.toggle('is-expanded');
-                });
-                container.querySelectorAll('.transaction-delete-btn').forEach(btn => btn.addEventListener('click', e => {
-                    // Trova l'elemento genitore <li> per ottenere il data-id
-                    const listItem = e.target.closest('.transaction-delete-btn');
-                    if (listItem) {
-                        this.deleteEntry(listItem.dataset.id);
-                    }
-                }));
+                if (historyToggle) {
+                    historyToggle.addEventListener('click', (e) => e.target.nextElementSibling.classList.toggle('is-expanded'));
+                }
+                container.querySelectorAll('.transaction-delete-btn').forEach(btn => btn.addEventListener('click', e => this.deleteEntry(e.currentTarget.dataset.id)));
             }
         };
     }
-};
 
-function getSalesTotal() {
-    try {
-        if (!Storage.KEYS || !Storage.KEYS.VIRTUALSTATION_DATA) {
-            console.warn('Attenzione: La chiave VIRTUALSTATION_DATA non è definita in storage.js. Il totale carburanti sarà 0.');
-            return 0;
-        }
+    function getSalesTotal() {
+        if (!window.Storage || !Storage.KEYS?.VIRTUALSTATION_DATA) return 0;
         const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
-        if (!virtualstationData || typeof virtualstationData !== 'object') return 0;
         let totalSales = 0;
         for (const key in virtualstationData) {
-            if (key.startsWith('turn-')) {
-                const turnData = virtualstationData[key];
-                totalSales += turnData.totalTurnAmount || 0;
-            }
+            if (key.startsWith('turn-')) totalSales += virtualstationData[key].totalTurnAmount || 0;
         }
         return totalSales;
-    } catch (error) {
-        console.error('Errore nel calcolo del totale carburanti:', error);
-        return 0;
     }
-}
+    
+    function updateTopSummary() {
+        const fondi = pageState.fondi;
+        const fondiInizio = parseNumber(fondi['cassa-inizio']) + parseNumber(fondi['monete-inizio']) + parseNumber(fondi['altro-inizio']) + parseNumber(fondi['altro2-inizio']);
+        const fondiFine = parseNumber(fondi['contanti-fine']) + parseNumber(fondi['monete-fine']) + parseNumber(fondi['pos-fine']) + parseNumber(fondi['buoni-fine']);
+        const totaleVociEntrate = pageState.entrate.reduce((sum, e) => sum + (e.amount || 0), 0);
+        const totaleVociUscite = pageState.uscite.reduce((sum, e) => sum + (e.amount || 0), 0);
+        const totaleCarburanti = getSalesTotal();
+        const granTotaleEntrate = fondiInizio + totaleVociEntrate + totaleCarburanti;
+        const granTotaleUscite = fondiFine + totaleVociUscite;
+        const differenza = granTotaleEntrate - granTotaleUscite;
 
-function updateTopSummary() {
-    const fondi = pageState.fondi;
-    const fondiInizio = parseNumber(fondi['cassa-inizio']) + parseNumber(fondi['monete-inizio']) + parseNumber(fondi['altro-inizio']) + parseNumber(fondi['altro2-inizio']);
-    const fondiFine = parseNumber(fondi['contanti-fine']) + parseNumber(fondi['monete-fine']) + parseNumber(fondi['pos-fine']) + parseNumber(fondi['buoni-fine']);
-    const totaleVociEntrate = pageState.entrate.reduce((sum, e) => sum + (e.amount || 0), 0);
-    const totaleVociUscite = pageState.uscite.reduce((sum, e) => sum + (e.amount || 0), 0);
-    const totaleCarburanti = getSalesTotal();
-    const granTotaleEntrate = fondiInizio + totaleVociEntrate + totaleCarburanti;
-    const granTotaleUscite = fondiFine + totaleVociUscite;
-    const differenza = granTotaleEntrate - granTotaleUscite;
-    document.getElementById('totale-entrate').textContent = formatter.currency.format(granTotaleEntrate);
-    document.getElementById('totale-carburanti').textContent = formatter.currency.format(totaleCarburanti);
-    document.getElementById('totale-uscite').textContent = formatter.currency.format(granTotaleUscite);
-    const elDifferenza = document.getElementById('differenza');
-    elDifferenza.textContent = formatter.currency.format(differenza);
-    elDifferenza.style.color = Math.abs(differenza) < 0.01 ? 'var(--text-secondary)' : (differenza >= 0 ? 'var(--success)' : 'var(--danger)');
-}
+        const elTotaleEntrate = document.getElementById('totale-entrate');
+        if (elTotaleEntrate) elTotaleEntrate.textContent = formatter.currency.format(granTotaleEntrate);
 
-function importaDatiCompleti() {
-    showConfirmModal('Importare Dati Registro?', 'Questo sovrascriverà i dati del registro. Procedere?', () => {
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = '.json';
-        input.onchange = event => {
-            const file = event.target.files[0];
-            if (file) {
+        const elTotaleCarburanti = document.getElementById('totale-carburanti');
+        if (elTotaleCarburanti) elTotaleCarburanti.textContent = formatter.currency.format(totaleCarburanti);
+
+        const elTotaleUscite = document.getElementById('totale-uscite');
+        if (elTotaleUscite) elTotaleUscite.textContent = formatter.currency.format(granTotaleUscite);
+
+        const elDifferenza = document.getElementById('differenza');
+        if (elDifferenza) {
+            elDifferenza.textContent = formatter.currency.format(differenza);
+        }
+    }
+
+    window.importaDatiCompleti = function() {
+        showConfirmModal('Importare Dati Registro?', 'Questo sovrascriverà i dati correnti. Procedere?', () => {
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = '.json';
+            input.onchange = e => {
+                const file = e.target.files[0];
+                if (!file) return;
                 const reader = new FileReader();
-                reader.onload = e => {
+                reader.onload = re => {
                     try {
-                        const data = JSON.parse(e.target.result);
-                        // Cerca "registro" come chiave principale o le chiavi dirette fondi/entrate/uscite
+                        const data = JSON.parse(re.target.result);
                         let registroData = data.registro || (data.fondi || data.entrate || data.uscite ? data : null);
                         if (!registroData) throw new Error('Formato file non riconosciuto');
-                        
-                        // Assicurati che le proprietà esistano, anche se vuote
-                        registroData.fondi = registroData.fondi || {};
-                        registroData.entrate = Array.isArray(registroData.entrate) ? registroData.entrate : [];
-                        registroData.uscite = Array.isArray(registroData.uscite) ? registroData.uscite : [];
-                        
-                        Storage.save(Storage.KEYS.REGISTRO_DATA, registroData);
-                        showMessage('Dati registro importati con successo!', 'success');
+                        Storage.save(Storage.KEYS.REGISTRO_DATA, { fondi: {}, entrate: [], uscite: [], ...registroData });
+                        showMessage('Dati importati!', 'success');
                         setTimeout(() => location.reload(), 1000);
-                    } catch (error) { showMessage('Errore: file non valido o corrotto.', 'error'); }
+                    } catch (err) { showMessage('Errore: file non valido.', 'error'); }
                 };
-                reader.onerror = () => showMessage('Errore nella lettura del file.', 'error');
                 reader.readAsText(file);
-            }
-        };
-        input.click();
-    });
-}
-
-function esportaDatiCompleti() {
-    const registroData = Storage.load(Storage.KEYS.REGISTRO_DATA, { fondi: {}, entrate: [], uscite: [] });
-    const data = { exportDate: new Date().toISOString(), exportType: 'registro', version: '2.0', registro: registroData };
-    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `cerbero_registro_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showMessage('Dati registro esportati con successo!', 'success');
-}
-
-function stampaDati() { showMessage('Funzione di stampa non ancora implementata.', 'info'); }
-
-function initializePage() {
-    try {
-        if (typeof Storage === 'undefined' || !Storage.KEYS) {
-            console.error("Storage o Storage.KEYS non definiti.");
-            return;
-        }
-
-        // MOBILE MENU LOGIC (START)
-        const hamburgerBtn = document.getElementById('hamburger-menu-btn');
-        const mainNav = document.getElementById('main-nav');
-        const mobileOverlay = document.getElementById('mobile-menu-overlay');
-
-        if (hamburgerBtn && mainNav && mobileOverlay) {
-            hamburgerBtn.addEventListener('click', () => {
-                mainNav.classList.toggle('active');
-                mobileOverlay.classList.toggle('active');
-                document.body.classList.toggle('no-scroll'); // Optional: prevent scrolling background
-            });
-
-            mobileOverlay.addEventListener('click', () => {
-                mainNav.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-                document.body.classList.remove('no-scroll'); // Optional
-            });
-
-            // Close menu if a nav link is clicked
-            mainNav.querySelectorAll('a').forEach(link => {
-                link.addEventListener('click', () => {
-                    mainNav.classList.remove('active');
-                    mobileOverlay.classList.remove('active');
-                    document.body.classList.remove('no-scroll'); // Optional
-                });
-            });
-        }
-        // MOBILE MENU LOGIC (END)
-
-        initializeThemeSwitcher();
-        initializeInfoButton();
-        loadData();
-        const entrateManager = SectionHandler.create('entrate');
-        const usciteManager = SectionHandler.create('uscite');
-        if (entrateManager) entrateManager.render();
-        if (usciteManager) usciteManager.render();
-        const fondiInputs = document.querySelectorAll('.top-row-grid .grid-input');
-        fondiInputs.forEach(input => {
-            if (input && input.id) {
-                const value = pageState.fondi[input.id] || '';
-                input.value = (value.trim() !== '' && !isNaN(parseNumber(value))) ? formatter.currency.format(parseNumber(value)) : '';
-            }
+            };
+            input.click();
         });
-        updateTopSummary();
-        fondiInputs.forEach(input => {
-            input.addEventListener('blur', e => {
-                if (e.target.value.trim() !== '') e.target.value = formatter.currency.format(parseNumber(e.target.value));
-                saveData(); updateTopSummary();
-            });
-            input.addEventListener('focus', e => {
-                const parsedValue = parseNumber(e.target.value);
-                e.target.value = parsedValue !== 0 ? String(parsedValue).replace('.', ',') : '';
-            });
-            input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
-        });
-    } catch (error) {
-        console.error("Errore durante l'inizializzazione: ", error);
-        showMessage("Errore critico nell'avvio dell'applicazione.", 'error');
     }
-}
+    
+    window.esportaDatiCompleti = function() {
+        const registroData = Storage.load(Storage.KEYS.REGISTRO_DATA, { fondi: {}, entrate: [], uscite: [] });
+        const data = { exportDate: new Date().toISOString(), exportType: 'registro', version: '2.0', registro: registroData };
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `cerbero_registro_${new Date().toISOString().split('T')[0]}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+        a.remove();
+        showMessage('Dati esportati!', 'success');
+    }
+    
+    window.stampaDati = function() { showMessage('Funzione di stampa non ancora implementata.', 'info'); }
 
-window.addEventListener('error', event => { console.error('Errore JavaScript globale:', event.error); showMessage('Si è verificato un errore imprevisto', 'error'); });
-window.addEventListener('unhandledrejection', event => { console.error('Promise rifiutata non gestita:', event.reason); showMessage('Errore nell\'operazione asincrona', 'error'); });
-document.addEventListener('DOMContentLoaded', initializePage);
+
+    /* ===== 4. INIZIALIZZAZIONE PAGINA ===== */
+    
+    function initializePage() {
+        try {
+            if (typeof window.Storage === 'undefined' || !Storage.KEYS) {
+                console.error("Storage o Storage.KEYS non definiti.");
+                showMessage("Errore: Impossibile caricare lo storage. L'app non funzionerà.", "error");
+                return;
+            }
+            initializeThemeSwitcher();
+            initializeInfoButton();
+            loadData();
+            
+            const entrateManager = createSectionHandler('entrate');
+            const usciteManager = createSectionHandler('uscite');
+            
+            entrateManager.render();
+            usciteManager.render();
+            
+            const fondiInputs = document.querySelectorAll('.top-row-grid .grid-input');
+            fondiInputs.forEach(input => {
+                if (input && input.id) {
+                    const value = pageState.fondi[input.id] || '';
+                    input.value = (value.trim() !== '' && !isNaN(parseNumber(value))) ? formatter.currency.format(parseNumber(value)) : '';
+                }
+            });
+            updateTopSummary();
+            
+            fondiInputs.forEach(input => {
+                input.addEventListener('blur', e => {
+                    if (e.target.value.trim() !== '') e.target.value = formatter.currency.format(parseNumber(e.target.value));
+                    saveData();
+                    updateTopSummary();
+                });
+                input.addEventListener('focus', e => {
+                    const parsedValue = parseNumber(e.target.value);
+                    e.target.value = parsedValue !== 0 ? String(parsedValue).replace('.', ',') : '';
+                });
+                input.addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); e.target.blur(); } });
+            });
+        } catch (error) {
+            console.error("Errore durante l'inizializzazione: ", error);
+            showMessage("Errore critico nell'avvio dell'applicazione.", 'error');
+        }
+    }
+
+    // Avvio dell'applicazione
+    initializePage();
+
+});

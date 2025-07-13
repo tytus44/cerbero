@@ -1,1038 +1,334 @@
-/* ===== CERBERO MONETARIO - VERSIONE UNIFORMATA ===== */
+/* ===== MONETARIO.CSS - SOLO SPECIFICITÀ ===== */
+/* Questo file contiene SOLO gli stili specifici per la pagina monetario */
+/* Gli stili comuni sono in style.css */
 
-/* ===== DESIGN SYSTEM CERBERO ===== */
-:root {
-  /* Colori principali */
-  --primary-blue: #093fb4;
-  --primary-blue-hover: #0730a3;
-  --primary-blue-light: rgba(9, 63, 180, 0.1);
-  
-  /* Testi */
-  --text-primary: #334155;
-  --text-secondary: #64748b;
-  
-  /* Sfondi */
-  --bg-primary: #f4f4f9;
-  --bg-white: #ffffff;
-  --bg-display: #e5eef7;
-  
-  /* Stati e feedback */
-  --success: #00C851;
-  --success-hover: #00A142;
-  --danger: #FF3547;
-  --info: #0ABAB5;
-  --warning: #FFD700;
-  --purple: #6f42c1;
-  --orange: #ff9f00;
-
-  /* Prodotti - COLORI AGGIORNATI */
-  --product-benzina: #00C851;
-  --product-gasolio: #FFD700;
-  --product-diesel: #FF4444;
-  --product-hvolution: #2196F3;
-  --product-adblue: #0ABAB5;
-  
-  /* Bordi e angoli */
-  --radius-large: 20px;
-  --radius-medium: 12px;
-  --radius-pill: 50px;
-
-  /* Ombre */
-  --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
-  --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.1);
-  --shadow-heavy: 0 8px 25px rgba(0, 0, 0, 0.15);
+/* ===== LAYOUT SPECIFICO MONETARIO ===== */
+.main-content {
+    margin-top: 110px;
 }
 
-/* ===== TEMA SCURO AGGIORNATO ===== */
-body.dark-theme {
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --bg-primary: #0f172a;
-    --bg-white: #1e293b;
-    --bg-display: #334155;
-    --primary-blue-light: rgba(59, 130, 246, 0.2);
-}
-
-/* Sfondo e testo dei link di navigazione nel tema scuro */
-body.dark-theme .nav a { color: var(--text-secondary) !important; }
-body.dark-theme .nav a:hover {
-    color: var(--text-primary) !important; /* Testo più chiaro in hover */
-    background-color: var(--primary-blue-light);
-}
-body.dark-theme .nav a.active {
-    background: var(--primary-blue);
-    color: #ffffff !important;
-}
-
-/* Sottolineatura dei link di navigazione nel tema scuro */
-body.dark-theme .nav a::before {
-    background: var(--text-primary); /* Colore chiaro per la sottolineatura */
-}
-
-/* Tema scuro per le icone del menu */
-body.dark-theme .nav a i {
-    color: var(--text-secondary) !important;
-}
-
-body.dark-theme .nav a:hover i {
-    color: var(--text-primary) !important;
-}
-
-body.dark-theme .nav a.active i {
-    color: #ffffff !important;
-}
-
-/* Colore delle icone dell'header nel tema scuro */
-body.dark-theme #info-btn i,
-body.dark-theme #theme-switcher i {
-    color: var(--text-primary);
-}
-
-/* Campi input e display nel tema scuro */
-body.dark-theme .grid-input {
-    background: var(--bg-primary);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
-body.dark-theme .grid-input[readonly],
-body.dark-theme .display-field {
-    background: var(--bg-display);
-    color: var(--text-primary); /* Assicurati che il testo sia primario */
-}
-
-body.dark-theme .grid-input[data-diff] { /* Per i campi differenza concorrenza */
-    color: var(--text-primary) !important; /* Forza il testo chiaro */
-}
-
-/* Input e pulsanti spinner nel tema scuro */
-body.dark-theme .spinner-input-group { background: var(--bg-primary); border-color: var(--bg-display); }
-body.dark-theme .spinner-value { background: var(--bg-primary); color: var(--text-primary); }
-body.dark-theme .spinner-btn { background: var(--bg-display); color: var(--text-primary); }
-body.dark-theme .spinner-btn:hover { background: var(--text-secondary); color: white; }
-
-/* Label dei radio button IVA nel tema scuro */
-body.dark-theme .vat-rates label {
-    background-color: var(--bg-display);
-    color: var(--text-primary);
-}
-body.dark-theme .vat-rates label:hover {
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
-}
-
-/* Display calcolatrice nel tema scuro */
-body.dark-theme .calculator-display {
-    color: var(--text-primary);
-    background: var(--bg-display);
-}
-
-/* Tasti calcolatrice nel tema scuro */
-body.dark-theme .key:not(.key-operator):not(.key-equals):not(.key-clear) {
-    color: var(--text-primary);
-    background-color: var(--bg-white);
-    border-color: var(--bg-display);
-}
-body.dark-theme .key:not(.key-operator):not(.key-equals):not(.key-clear):hover {
-    background-color: var(--bg-display);
-}
-body.dark-theme .key-operator { background: var(--text-secondary); } /* Mantieni colore per operatori */
-body.dark-theme .key-equals { background: var(--success); }
-body.dark-theme .key-clear { background: var(--danger); }
-
-/* Storico ordini nel tema scuro */
-body.dark-theme .order-history-item {
-    border-bottom: 1px solid var(--primary-blue-light);
-}
-body.dark-theme .order-history-item:hover {
-    background-color: var(--primary-blue-light);
-}
-body.dark-theme .order-date,
-body.dark-theme .order-products {
-    color: var(--text-secondary);
-}
-body.dark-theme .order-amount {
-    color: var(--text-primary);
-}
-
-/* Box Calcolo IVA - Testo dei totali nel tema scuro */
-body.dark-theme .vat-results span {
-    color: var(--text-primary) !important; /* Forza tutto il testo ad essere primary */
-}
-
-/* Scrollbar nel tema scuro */
-body.dark-theme ::-webkit-scrollbar-track {
-    background: transparent; /* Traccia completamente trasparente */
-}
-body.dark-theme ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2); /* Grigio chiaro per il pollice */
-    border: none; /* Rimuovi bordo */
-}
-body.dark-theme ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-blue); /* Blu in hover */
-}
-
-
-/* ===== STILI BASE ===== */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 16px;
-    line-height: 1.5;
-    overflow-x: hidden; /* Prevent horizontal scroll for mobile menu */
-}
-
-/* Stili di base per le scrollbar (per tema chiaro) */
-::-webkit-scrollbar {
-    width: 8px; /* Larghezza della scrollbar verticale */
-    height: 8px; /* Altezza della scrollbar orizzontale */
-}
-
-::-webkit-scrollbar-track {
-    background: transparent; /* Traccia completamente trasparente */
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* Grigio chiaro per il pollice */
-    border-radius: 10px;
-    border: none; /* Rimuovi bordo */
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-blue); /* Blu in hover */
-}
-
-
-/* ===== LAYOUT ===== */
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px 25px;
-}
-
-.page-title {
-    text-align: center;
-    color: var(--primary-blue);
-    font-size: 24px;
-    font-weight: 800;
-    margin-bottom: 25px;
-}
-
-/* ===== HEADER (STILE NUOVO) ===== */
-.header { 
-    background: var(--bg-white); 
-    padding: 15px 25px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 1px solid var(--primary-blue-light); 
-    box-shadow: var(--shadow-light);
-    min-height: 70px;
-}
-
-.header-brand { 
-    font-size: 32px; 
-    font-weight: 800; 
-    color: var(--primary-blue); 
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    background: linear-gradient(45deg, var(--primary-blue), #42D7F4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    flex-shrink: 0;
-}
-
-/* ===== MENU NAVIGAZIONE (Desktop & Mobile) ===== */
-.nav { 
-    display: flex; 
-    align-items: center; 
-    flex: 1; 
-    justify-content: center; 
-}
-
-.nav ul { 
-    list-style: none; 
-    display: flex; 
-    gap: 8px; 
-    margin: 0;
-    padding: 0;
-    align-items: center;
-}
-
-.nav a { 
-    text-decoration: none; 
-    color: var(--text-secondary); 
-    font-weight: 600; 
-    padding: 12px 20px; 
-    border-radius: 50px; 
-    transition: all 0.3s ease; 
-    position: relative;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    font-size: 14px;
-    height: 44px;
-    box-sizing: border-box;
-    gap: 8px; /* Spazio tra icona e testo */
-}
-
-/* Stili per le icone del menu */
-.nav a i {
-    font-size: 16px; /* Dimensione icona */
-    color: var(--text-secondary); /* Colore base icona */
-    transition: color 0.3s ease;
-}
-
-.nav a:hover i {
-    color: var(--primary-blue); /* Colore icona in hover */
-}
-
-.nav a.active i {
-    color: var(--bg-white) !important; /* Colore icona quando attivo */
-}
-
-/* Sottolineatura animata */
-.nav a::before {
-    content: '';
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-blue);
-    transform: translateX(-50%);
-    transition: width 0.3s ease;
-}
-
-.nav a:hover::before {
-    width: 60%;
-}
-
-.nav a:hover {
-    color: var(--primary-blue);
-    background-color: var(--primary-blue-light);
-}
-
-.nav a.active {
-    background: var(--primary-blue);
-    color: var(--bg-white) !important;
-    box-shadow: var(--shadow-medium);
-}
-
-.nav a.active::before {
-    display: none;
-}
-
-.header-actions { 
-    display: flex; 
-    align-items: center; 
-    justify-content: flex-end;
-    gap: 10px; 
-}
-
-/* Stili per pulsanti icona header (FONT AWESOME) */
-#theme-switcher,
-#info-btn { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 50%; 
-    background: var(--bg-display); 
-    transition: all 0.3s ease; 
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#theme-switcher:hover,
-#info-btn:hover { 
-    background: var(--primary-blue-light); 
-    transform: scale(1.1) rotate(180deg); 
-}
-
-/* Colore delle icone Font Awesome nell'header */
-#info-btn i,
-#theme-switcher i {
-    font-size: 20px;
-    color: var(--text-primary);
-    transition: color 0.3s ease;
-}
-
-.theme-icon-hidden { 
-    display: none !important; 
-}
-
-/* ===== BOX / CARD ===== */
-.box {
-    background: var(--bg-white);
-    border-radius: var(--radius-large);
-    border: 1px solid var(--primary-blue-light);
-    box-shadow: var(--shadow-light);
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    transition: all 0.3s ease;
-}
-
-.box-header {
-    color: var(--primary-blue);
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 20px;
-    text-align: left;
-    border-bottom: 2px solid var(--primary-blue-light);
-}
-
-.box-content {
-    padding: 20px;
-    flex-grow: 1;
-}
-
-/* Stile per linea animata */
-.summary-box { 
-    position: relative;
-    overflow: hidden;
-}
-.summary-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-blue), var(--info), var(--success));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease-out;
-}
-.summary-box:hover::before {
-    transform: scaleX(1);
-}
-.summary-box.box:hover { 
-    /* RIMOSSO: transform: translateY(-3px); */
-    box-shadow: var(--shadow-heavy); 
-}
-
-/* ===== GRIDS LAYOUT ===== */
+/* Griglie specifiche per monetario */
 .content-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 20px;
+    gap: 25px;
     margin-bottom: 25px;
 }
 
 .second-row-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
+    grid-template-columns: 2.5fr 1fr; /* Modificata per dare più spazio al primo box */
+    gap: 25px;
     margin-bottom: 25px;
 }
 
-.third-row-grid {
+/* ===== GRIGLIE SPECIFICHE MONETARIO ===== */
+.pricing-grid, .fuel-order-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-    margin-bottom: 25px;
+    gap: 10px;
+    align-items: center;
 }
 
 .pricing-grid {
-    display: grid;
-    grid-template-columns: 120px 1fr 1fr 1fr;
-    gap: 8px;
-    align-items: center;
+    grid-template-columns: 140px repeat(3, 1fr); /* Aumentata da 120px a 140px */
 }
 
 .fuel-order-grid {
-    display: grid;
-    grid-template-columns: 120px 1.5fr 0.5fr 1fr;
-    gap: 8px;
-    align-items: center;
+    grid-template-columns: 140px 1.5fr 1fr 1fr; /* Aumentata da 120px a 140px */
 }
 
 .fuel-order-totals {
-    display: flex;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: 140px 1.5fr 1fr 1fr; /* Aumentata da 120px a 140px */
     gap: 10px;
-    margin-top: 15px;
-    padding-top: 15px;
-    border-top: 2px solid var(--primary-blue-light); /* Changed from rgba(9, 63, 180, 0.2) for consistency */
-    grid-column: 1 / -1;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    /* Rimossa la riga: border-top: 2px solid var(--primary-blue-light); */
 }
 
-/* ===== INPUTS E LABELS ===== */
-.grid-input {
-    width: 100%;
-    padding: 10px 15px;
-    border: 2px solid var(--primary-blue-light);
-    border-radius: var(--radius-large);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    background: var(--bg-white);
-    color: var(--text-primary);
-    text-align: center;
-    transition: all 0.3s ease;
-    font-size: 14px;
+.fuel-order-totals > .display-field:first-of-type {
+    grid-column: 2 / 3;
 }
 
-.grid-input:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px var(--primary-blue-light);
+.fuel-order-totals > .display-field:last-of-type {
+    grid-column: 4 / 5;
 }
 
-.grid-input[readonly] {
-    background: var(--bg-display);
-    cursor: not-allowed;
-    pointer-events: none;
-    opacity: 0.8;
-    font-weight: 600;
-}
-
-.grid-input[data-product="adblue"][data-type="consigliati"] {
-    visibility: hidden;
-}
-
-.grid-header {
+#total-quantity, #total-amount {
     font-weight: 700;
-    color: var(--text-secondary);
-    font-size: 12px;
-    text-transform: uppercase;
-    text-align: center;
 }
 
 .grid-divider {
-    grid-column: 1 / -1;
-    font-weight: 700;
-    color: var(--primary-blue);
-    text-align: center;
-    padding: 15px 0 5px;
-    border-top: 2px solid var(--primary-blue-light);
-    margin-top: 10px;
-    text-transform: uppercase;
+    display: none; /* Nasconde completamente i divisori */
 }
 
-/* ===== ETICHETTE PRODOTTI - COLORI AGGIORNATI ===== */
-.product-label {
-    font-weight: 600;
-    font-size: 14px;
-    color: white;
-    text-align: center;
-    padding: 10px 8px;
-    border-radius: var(--radius-large);
-    text-transform: uppercase;
-}
-
-.product-benzina { background: var(--product-benzina); }
-.product-gasolio { background: var(--product-gasolio); color: #333; }
-.product-diesel { background: var(--product-diesel); }
-.product-hvolution { background: var(--product-hvolution); }
-.product-adblue { background: var(--product-adblue); }
-
-/* ===== ACTION BAR ===== */
-.action-bar {
+/* ===== SPINNER INPUT - SPECIFICO MONETARIO ===== */
+.spinner-input-group {
     display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-}
-
-/* ===== PULSANTI TESTUALI UNIFICATI ===== */
-.action-btn,
-.modal-actions .action-btn,
-.vat-actions .action-btn,
-.button-wrapper .action-btn {
-    font-size: 14px;
-    padding: 12px 25px;
-    height: 44px;
-    text-decoration: none;
-    color: var(--text-secondary); /* Colore uniforme per tutti */
-    background: none; /* Sfondo trasparente per tutti */
-    font-weight: 600;
-    border: none;
-    border-radius: var(--radius-pill);
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 10px; /* Spazio tra icona e testo */
-    box-shadow: none;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    overflow: hidden;
 }
 
-/* Icona specifica per il pulsante ordina carburanti */
-.action-btn .fa-euro-sign {
-    font-size: 16px; /* Dimensione dell'icona € */
+.spinner-btn {
+    background: var(--bg-display);
+    border: none;
+    width: 40px;
+    height: 42px;
+    font-size: 20px !important;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
 }
 
-/* Sottolineatura animata per TUTTI i pulsanti testuali */
-.action-btn::before,
-.modal-actions .action-btn::before,
-.vat-actions .action-btn::before,
-.button-wrapper .action-btn::before {
-    content: '';
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-blue);
-    transform: translateX(-50%);
-    transition: width 0.3s ease;
-    z-index: 1;
-}
-
-/* Effetto hover UNIFORME per tutti i pulsanti testuali */
-.action-btn:hover,
-.modal-actions .action-btn:hover,
-.vat-actions .action-btn:hover,
-.button-wrapper .action-btn:hover {
-    color: var(--primary-blue);
+.spinner-btn:hover {
     background-color: var(--primary-blue-light);
-    box-shadow: none;
-    transform: none;
+    color: var(--primary-blue);
 }
 
-/* Larghezza della sottolineatura in hover per TUTTI i pulsanti testuali */
-.action-btn:hover::before,
-.modal-actions .action-btn:hover::before,
-.vat-actions .action-btn:hover::before,
-.button-wrapper .action-btn:hover::before {
-    width: 60%;
+.spinner-value {
+    flex-grow: 1;
+    border: none !important;
+    box-shadow: none !important;
+    background: var(--bg-white);
 }
 
-/* Tema scuro UNIFORME per tutti i pulsanti testuali */
-body.dark-theme .action-btn,
-body.dark-theme .modal-actions .action-btn,
-body.dark-theme .vat-actions .action-btn,
-body.dark-theme .button-wrapper .action-btn {
-    color: var(--text-secondary);
-    background: none;
+/* Tema scuro per spinner */
+body.dark-theme .spinner-btn {
+    color: var(--text-primary);
+    background: var(--bg-display);
 }
 
-body.dark-theme .action-btn:hover,
-body.dark-theme .modal-actions .action-btn:hover,
-body.dark-theme .vat-actions .action-btn:hover,
-body.dark-theme .button-wrapper .action-btn:hover {
+body.dark-theme .spinner-btn:hover {
     color: var(--text-primary);
     background-color: var(--primary-blue-light);
-    box-shadow: none;
 }
 
-body.dark-theme .action-btn::before,
-body.dark-theme .modal-actions .action-btn::before,
-body.dark-theme .vat-actions .action-btn::before,
-body.dark-theme .button-wrapper .action-btn::before {
-    background: var(--text-primary);
+body.dark-theme .spinner-value {
+    background: var(--bg-primary);
+    color: var(--text-primary);
 }
 
-.action-btn:disabled {
-    background: #adb5bd;
-    color: white;
-    cursor: not-allowed;
-    opacity: 0.6;
-    transform: none;
-    box-shadow: none;
-}
-.action-btn:disabled:hover {
-    background: #adb5bd;
-    color: white;
-}
-.action-btn:disabled::before {
-    display: none;
-}
-
-/* PULSANTI ICONA TONDI (Modal Close, Order Delete, Spinner Buttons) */
-.modal-close-btn,
-.order-delete-btn,
-.spinner-btn {
+/* ===== CALCOLO IVA - SPECIFICO MONETARIO ===== */
+.vat-calculator {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.vat-rates {
+    display: flex;
+    gap: 10px;
     justify-content: center;
-    border-radius: 50%;
-    background: none; /* Sfondo trasparente di base */
-    border: none;
+}
+
+.vat-rates label {
+    padding: 10px 15px;
+    border-radius: var(--radius-squadrato);
+    border: 2px solid var(--primary-blue-light);
     cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: none;
-    line-height: 1;
-    flex-shrink: 0;
+    font-weight: 500;
+    transition: all 0.2s ease;
 }
 
-/* Nascondi la pseudo-classe ::before (sottolineatura) per i pulsanti icona */
-.modal-close-btn::before,
-.order-delete-btn::before,
-.spinner-btn::before {
-    display: none;
+.vat-rates label:hover {
+    background-color: var(--primary-blue-light);
 }
 
-/* PULSANTE CHIUSURA MODAL (Corretto: sfondo trasparente, hover rosso) */
-.modal-close-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 24px; /* Dimensione dell'icona 'x' */
-    font-weight: bold;
-    color: var(--text-secondary); /* Colore base dell'icona */
-    background-color: transparent; /* Sfondo trasparente di base */
-}
-.modal-close-btn:hover {
-    background-color: var(--danger); /* Sfondo rosso in hover */
-    color: white; /* Testo/icona bianco in hover */
-    transform: none; /* Rimuovi lo scale se non lo vuoi */
-}
-/* Tema scuro per il pulsante di chiusura modale */
-body.dark-theme .modal-close-btn {
-    color: var(--text-secondary);
-}
-body.dark-theme .modal-close-btn:hover {
-    background-color: var(--danger);
-    color: white;
-}
-
-/* PULSANTE ELIMINAZIONE ORDINE (specifico di monetario.html) */
-.order-delete-btn {
-    width: 28px;
-    height: 28px;
-    background-color: transparent; /* Sfondo trasparente di base */
-    /* Nessun colore del testo/icona qui, lo gestiamo tramite l'elemento i */
-}
-/* Stile del contenuto (l'icona) del pulsante di eliminazione */
-.order-delete-btn i {
-    font-weight: bold; /* Per la 'x' */
-    font-size: 16px;
-    color: var(--text-secondary); /* Colore base dell'icona */
-    transition: color 0.3s ease; /* Transizione per il colore dell'icona */
-    display: block; /* Assicura che l'icona sia visibile */
-}
-/* Stile hover per il pulsante di eliminazione (sfondo rosso, icona bianca) */
-.order-delete-btn:hover {
-    background-color: var(--danger); /* Sfondo rosso in hover */
-    transform: none; /* Rimuovi lo scale di default se non lo vuoi */
-}
-/* Colore dell'icona in hover */
-.order-delete-btn:hover i {
-    color: white; /* Colore bianco per l'icona in hover */
-}
-
-/* Tema scuro specifico per il pulsante di eliminazione ordine */
-body.dark-theme .order-delete-btn {
-    /* Nessun colore base qui, lo gestiamo tramite i */
-}
-body.dark-theme .order-delete-btn:hover {
-    background-color: var(--danger);
-}
-body.dark-theme .order-delete-btn i {
-    color: var(--text-secondary);
-}
-body.dark-theme .order-delete-btn:hover i {
-    color: white;
-}
-
-/* SPINNER BUTTONS */
-.spinner-btn {
-    width: 44px;
-    height: 44px;
-    font-size: 24px;
-    font-weight: normal; /* Override font-weight da .action-btn */
-    color: var(--text-primary); /* Default più scuro, come i pulsanti nell'index */
-}
-.spinner-btn.decrement { border-right: 2px solid var(--primary-blue-light); }
-.spinner-btn.increment { border-left: 2px solid var(--primary-blue-light); }
-.spinner-btn:hover {
-    background: var(--text-secondary); /* Sfondo più scuro in hover */
-    color: white; /* Testo bianco in hover */
-    transform: none;
+.vat-rates input[type="radio"] {
+    accent-color: var(--primary-blue);
     box-shadow: none;
 }
-body.dark-theme .spinner-btn { color: var(--text-primary); }
-body.dark-theme .spinner-btn:hover { background: var(--text-secondary); color: white; }
 
-.button-wrapper {
+.vat-actions {
     display: flex;
+    gap: 10px;
     justify-content: center;
-    margin-top: 20px;
 }
 
-/* ===== CALCOLO IVA ===== */
-.vat-calculator { display: flex; flex-direction: column; gap: 15px; }
-.vat-calculator label { font-weight: 600; text-align: center; font-size: 14px; color: var(--primary-blue); }
-.vat-rates { display: flex; gap: 15px; justify-content: center; flex-wrap: wrap; }
-/* Stile per le label dei radio button (come un input field) */
-.vat-rates label { 
-    display: flex; align-items: center; gap: 8px; cursor: pointer; 
-    padding: 10px 15px; border-radius: var(--radius-large); 
-    transition: all 0.3s ease; 
-    border: 2px solid var(--primary-blue-light); 
-    background-color: var(--bg-display); 
-    color: var(--text-primary); 
-    font-weight: 600; min-height: 44px; 
+.vat-results {
+    background: var(--primary-blue-light);
+    padding: 15px;
+    border-radius: var(--radius-squadrato);
 }
-.vat-rates label:hover { 
-    box-shadow: 0 4px 12px rgba(9, 63, 180, 0.1); 
-    transform: translateY(-1px); 
-}
-.vat-rates input[type="radio"] { accent-color: var(--primary-blue); transform: scale(1.2); }
-.vat-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
-.vat-results { background: var(--primary-blue-light); padding: 15px; border-radius: var(--radius-medium); margin-top: 10px; border: 1px solid var(--primary-blue-light); transition: all 0.3s ease; }
-.vat-results:hover { box-shadow: 0 4px 12px rgba(9, 63, 180, 0.1); }
-.vat-results div { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; padding: 5px 0; }
-.vat-results div:last-child { margin-bottom: 0; border-top: 2px solid var(--primary-blue); padding-top: 10px; font-size: 16px; font-weight: 700; }
-.vat-results span { color: var(--primary-blue); } /* Reset colore per i valori nel tema chiaro */
-.vat-results span:last-child { font-weight: 600; color: var(--primary-blue); } /* Mantieni colore per i totali nel tema chiaro */
 
-/* ===== VERSAMENTO ===== */
+.vat-results div {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.vat-results div:last-child {
+    /* Rimossa la riga: border-top: 2px solid var(--primary-blue); */
+    font-weight: bold;
+    padding-top: 5px;
+}
+
+/* Tema scuro per IVA */
+body.dark-theme .vat-rates label {
+    background: var(--bg-white);
+    color: var(--text-primary);
+    border-color: var(--bg-display);
+}
+
+body.dark-theme .vat-rates label:hover {
+    background-color: var(--primary-blue-light);
+}
+
+body.dark-theme .vat-results {
+    background: var(--bg-display);
+    color: var(--text-primary);
+}
+
+/* ===== VERSAMENTO - SPECIFICO MONETARIO ===== */
 .versamento-grid {
     display: grid;
-    grid-template-columns: 50px 1fr 1fr; /* 50px per etichetta banconota, 1fr per spinner, 1fr per valore */
+    grid-template-columns: 50px 1fr 1fr;
     gap: 10px;
     align-items: center;
 }
-.versamento-banconota { color: white; padding: 8px; border-radius: 50%; font-weight: 700; text-align: center; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center; font-size: 14px; box-shadow: 0 2px 8px rgba(0,0,0,0.2); transition: transform 0.2s ease; }
-.versamento-banconota:hover { transform: scale(1.1); }
-.versamento-banconota.euro-500 { background: var(--purple); }
-.versamento-banconota.euro-200 { background: var(--warning); color: #333; }
-.versamento-banconota.euro-100 { background: var(--success); }
-.versamento-banconota.euro-50 { background: var(--orange); }
-.versamento-banconota.euro-20 { background: var(--primary-blue); }
-.versamento-banconota.euro-10 { background: var(--danger); }
 
-/* Allineamento del totale banconote e importo */
-/* Questi elementi ora occupano la loro posizione nella griglia senza una label esplicita nella riga */
-#versamento-total-banconote {
-    grid-column: 2 / span 1; /* Allinea sotto la colonna degli spinner (banconote) */
-    text-align: center; /* Centra il testo nel display field */
-}
-#versamento-total-importo {
-    grid-column: 3 / span 1; /* Allinea sotto la colonna degli importi */
-    text-align: center; /* Centra il testo nel display field */
-}
-
-/* Rimuovi over sui display-field dei totali */
-#versamento-total-banconote:hover,
-#versamento-total-importo:hover {
-    box-shadow: none !important; /* Rimuovi l'ombra in hover */
-    transform: none !important; /* Rimuovi l'animazione di sollevamento in hover */
-    background-color: var(--bg-display) !important; /* Mantieni il colore di sfondo originale */
-}
-/* Tema scuro - mantieni sfondo originale anche in hover */
-body.dark-theme #versamento-total-banconote:hover,
-body.dark-theme #versamento-total-importo:hover {
-    background-color: var(--bg-display) !important; /* Mantieni sfondo originale anche nel tema scuro */
-}
-
-/* ===== CALCOLATRICE ===== */
-.calculator-display {
-    color: var(--primary-blue);
-    font-size: 2rem;
-    font-weight: 700;
-    padding: 15px;
-    margin-bottom: 15px;
-    text-align: right;
-    background: var(--primary-blue-light);
-    border-radius: var(--radius-large);
-    border: 2px solid transparent;
-    transition: all 0.3s ease;
-    min-height: 60px;
+.versamento-banconota {
+    border-radius: var(--radius-squadrato);
+    width: 50px;
+    height: 50px;
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
 }
-/* ===== FIX TEMA SCURO ===== */
-body.dark-theme .calculator-display {
+
+.total-separator {
+    display: none; /* Nasconde i separatori del versamento */
+}
+
+#versamento-total-banconote, #versamento-total-importo {
+    font-weight: 700;
+}
+
+/* Colori banconote */
+.euro-500 { background: var(--purple); }
+.euro-200 { background: var(--warning); color: #333; }
+.euro-100 { background: var(--success); }
+.euro-50 { background: var(--orange); }
+.euro-20 { background: var(--primary-blue); }
+.euro-10 { background: var(--danger); }
+
+/* ===== CALCOLATRICE - SPECIFICO MONETARIO ===== */
+.calculator-display {
+    font-size: 2.5rem;
+    padding: 20px 15px;
+    text-align: right;
+    background: var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
     color: var(--text-primary);
-}
-.calculator-display:focus { border-color: var(--primary-blue); box-shadow: 0 0 0 3px var(--primary-blue-light); }
-.calculator-keys { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
-.key { padding: 15px; border: none; border-radius: var(--radius-large); font-weight: 600; font-size: 1.2rem; cursor: pointer; transition: all 0.2s ease; background: var(--bg-primary); border: 2px solid var(--primary-blue-light); color: var(--text-primary); user-select: none; position: relative; overflow: hidden; }
-.key::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); transition: left 0.3s ease; }
-.key:hover::before { left: 100%; }
-.key:hover { background-color: var(--primary-blue-light); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(9, 63, 180, 0.2); }
-.key:active { transform: translateY(0); box-shadow: 0 2px 6px rgba(9, 63, 180, 0.3); }
-.key-operator { background: var(--text-secondary); color: white; font-weight: 700; }
-.key-operator:hover { background: var(--primary-blue); }
-.key-equals { background: var(--success); color: white; grid-row: span 2; border-radius: var(--radius-pill); font-weight: 700; }
-.key-equals:hover { background: var(--success-hover); }
-.key-clear { background: var(--danger); color: white; font-weight: 700; }
-.key-clear:hover { background: #FF1A2D; }
-.key-zero { grid-column: span 2; border-radius: var(--radius-pill); }
-body.dark-theme .key:not(.key-operator):not(.key-equals):not(.key-clear) { color: var(--text-primary); background-color: var(--bg-white); border-color: var(--bg-display); }
-body.dark-theme .key:not(.key-operator):not(.key-equals):not(.key-clear):hover { background-color: var(--bg-display); }
-
-/* ===== CRONOLOGIA ORDINI ===== */
-.order-history-item { padding: 15px; border-bottom: 1px solid var(--primary-blue-light); display: flex; align-items: center; justify-content: space-between; gap: 15px; border-radius: var(--radius-medium); margin-bottom: 5px; } /* Rimosse transizioni */
-.order-history-item:hover { background-color: var(--primary-blue-light); transform: none; } /* Rimosso transform: translateX(5px) */
-.order-history-item:last-child { border-bottom: none; }
-.order-details { flex-grow: 1; }
-.order-history-header { display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 8px; }
-.order-date { color: var(--text-secondary); font-size: 0.9em; }
-.order-amount { color: var(--primary-blue); font-weight: 700; }
-.order-products { font-size: 0.9em; color: var(--text-secondary); word-break: break-word; line-height: 1.4; }
-/* Il pulsante di eliminazione ordine è ora gestito dal raggruppamento dei pulsanti icona tondi */
-
-/* ===== DISPLAY FIELDS ===== */
-.display-field { background-color: var(--bg-display); border-radius: var(--radius-large); padding: 10px 15px; font-size: 14px; font-weight: 600; color: var(--text-primary); text-align: center; min-height: 44px; display: flex; align-items: center; justify-content: center; flex-grow: 1; width: 100%; border: 2px solid var(--primary-blue-light); transition: all 0.3s ease; }
-.display-field:hover { background-color: rgba(9, 63, 180, 0.05); }
-body.dark-theme .display-field { background-color: var(--bg-display); }
-body.dark-theme .display-field:hover { background-color: var(--bg-white); }
-
-/* ===== MODAL ===== */
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 1000; display: flex; justify-content: center; align-items: center; opacity: 0; visibility: hidden; transition: all 0.3s ease; }
-.modal-overlay.active { opacity: 1; visibility: visible; }
-.modal { 
-    background: var(--bg-white); border-radius: var(--radius-large); 
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2); width: 100%; max-width: 500px; 
-    margin: 20px;
-    opacity: 0;
-    transform: scale(0.3);
-}
-.modal-overlay.active .modal {
-    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-.modal-header { display: flex; justify-content: space-between; align-items: center; padding: 20px; border-bottom: 1px solid var(--primary-blue-light); }
-.modal-title { font-size: 18px; font-weight: 700; text-transform: uppercase; color: var(--primary-blue); }
-.modal-content { padding: 20px; text-align: center; }
-.modal-content p { font-size: 16px; line-height: 1.6; }
-.modal-actions { display: flex; gap: 12px; justify-content: flex-end; padding: 20px; border-top: 1px solid var(--primary-blue-light); }
-
-/* ===== STILI PER MODALE INFO ===== */
-/* L'icona del modal info è ora Font Awesome */
-.modal-info-icon {
-    font-size: 60px; /* Dimensione per icona Font Awesome */
-    color: var(--primary-blue); /* Colore base */
-    margin: 0 auto 20px;
-    display: block;
-    text-align: center;
-    transition: all 0.3s ease;
-    /* Filtro rimosso, ora gestito dal colore intrinseco dell'icona FA */
-}
-
-.modal-info-icon:hover {
-    color: var(--info); /* Colore hover */
-    transform: scale(1.1);
-}
-
-body.dark-theme .modal-info-icon {
-    color: var(--text-primary);
-}
-body.dark-theme .modal-info-icon:hover {
-    color: var(--info);
-}
-
-.info-modal-content .info-modal-brand {
-    font-size: 38px;
-    font-weight: 800;
-    margin-bottom: 15px;
-    background: linear-gradient(45deg, var(--primary-blue), #42D7F4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.info-modal-content p {
-    margin-bottom: 15px;
-    color: var(--text-secondary);
-}
-.info-modal-content .programmer-info {
-    font-size: 14px;
-    border-top: 1px solid var(--primary-blue-light);
-    padding-top: 15px;
-    line-height: 1.8;
-}
-.info-link {
-    color: var(--text-primary);
-    text-decoration: none;
     font-weight: 600;
 }
-.info-link:hover {
-    text-decoration: underline;
-    color: var(--primary-blue);
+
+.calculator-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 15px;
 }
 
-/* ===== SPINNER INPUT GROUP (NEW) ===== */
-.spinner-input-group { display: flex; align-items: center; gap: 0; border: 2px solid var(--primary-blue-light); border-radius: var(--radius-large); overflow: hidden; background: var(--bg-white); transition: border-color 0.3s ease, box-shadow 0.3s ease; }
-.spinner-input-group:hover { border-color: var(--primary-blue-light); box-shadow: none; }
-.spinner-input-group:focus-within { border-color: var(--primary-blue); box-shadow: 0 0 0 3px var(--primary-blue-light); }
-.spinner-btn { background: var(--bg-display); color: var(--text-primary); border: none; padding: 0; width: 44px; height: 44px; font-size: 24px; font-weight: normal; cursor: pointer; transition: background-color 0.2s, color 0.2s; flex-shrink: 0; display: flex; align-items: center; justify-content: center; user-select: none; outline: none; border-radius: 0; }
-.spinner-btn.decrement { border-right: 2px solid var(--primary-blue-light); }
-.spinner-btn.increment { border-left: 2px solid var(--primary-blue-light); }
-.spinner-btn:hover { background: var(--text-secondary); color: white; transform: none; box-shadow: none; }
-.spinner-btn:active { transform: translateY(0); }
-body.dark-theme .spinner-btn { background: var(--bg-display); color: var(--text-primary); }
-body.dark-theme .spinner-btn:hover { background: var(--text-secondary); color: white; }
-.spinner-value { flex-grow: 1; border: none !important; border-radius: 0 !important; padding: 10px 5px; text-align: center; font-size: 14px; font-weight: 500; background: var(--bg-white); color: var(--text-primary); min-height: 44px; outline: none !important; box-shadow: none !important; }
-.spinner-value:focus { outline: none !important; border: none !important; border-color: transparent !important; box-shadow: none !important; }
-body.dark-theme .spinner-input-group { background: var(--bg-primary); border-color: var(--bg-display); }
-body.dark-theme .spinner-value { background: var(--bg-primary); color: var(--text-primary); }
-
-/* ===== MOBILE MENU SPECIFIC STYLES ===== */
-.hamburger-menu-btn {
-    display: none; /* Hidden by default */
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-primary);
+.key {
+    padding: 18px 15px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    font-weight: 600;
+    font-size: 1.5rem;
     cursor: pointer;
-    padding: 8px;
-    transition: color 0.3s ease;
-}
-.hamburger-menu-btn:hover {
-    color: var(--primary-blue);
-}
-body.dark-theme .hamburger-menu-btn {
+    background: var(--bg-white);
     color: var(--text-primary);
-}
-body.dark-theme .hamburger-menu-btn:hover {
-    color: var(--primary-blue);
+    transition: all 0.2s ease;
 }
 
-.mobile-menu-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px);
-    z-index: 99; /* Below modals, above content */
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.key:hover {
+    background-color: var(--primary-blue-light);
+    transform: translateY(-2px);
 }
-.mobile-menu-overlay.active {
-    display: block;
-    opacity: 1;
+
+.key-operator {
+    background: var(--text-secondary);
+    color: white;
+}
+
+.key-operator:hover {
+    background: var(--primary-blue);
+}
+
+.key-clear {
+    background: var(--danger);
+    color: white;
+}
+
+.key-clear:hover {
+    background: var(--primary-blue-hover);
+}
+
+.key-equals {
+    background: var(--success);
+    color: white;
+    grid-row: span 2;
+}
+
+.key-equals:hover {
+    background: var(--success-hover);
+}
+
+.key-zero {
+    grid-column: span 2;
+}
+
+/* Tema scuro per calcolatrice */
+body.dark-theme .calculator-display {
+    background: var(--bg-display);
+    color: var(--text-primary);
+}
+
+body.dark-theme .key {
+    background: var(--bg-white);
+    color: var(--text-primary);
+    border-color: var(--bg-display);
+}
+
+body.dark-theme .key:hover {
+    background-color: var(--primary-blue-light);
+}
+
+/* ===== RESPONSIVE MONETARIO ===== */
+@media (max-width: 768px) {
+    .content-grid,
+    .second-row-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 120px 1fr 1fr; /* Mantenuta larghezza mobile ottimale */
+    }
+    
+    .fuel-order-grid,
+    .fuel-order-totals {
+        grid-template-columns: 120px 1fr 1fr; /* Mantenuta larghezza mobile ottimale */
+    }
+    
+    .fuel-order-totals > .display-field:last-of-type {
+        grid-column: 3 / 4;
+    }
+    
+    .versamento-grid {
+        grid-template-columns: 40px 1fr 1fr;
+    }
+    
+    .versamento-banconota {
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+    }
 }

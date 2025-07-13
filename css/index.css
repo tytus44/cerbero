@@ -1,782 +1,8 @@
-/* ===== FOCUS STYLES UNIVERSALI ===== */
-*:focus {
-    outline: none;
-}
-
-*:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--primary-blue-light);
-}
-
-/* ===== DESIGN SYSTEM CERBERO ===== */
-:root {
-    --primary-blue: #093fb4;
-    --primary-blue-hover: #0730a3;
-    --primary-blue-light: rgba(9, 63, 180, 0.1);
-    --text-primary: #334155;
-    --text-secondary: #64748b;
-    --bg-primary: #f4f4f9;
-    --bg-white: #ffffff;
-    --bg-display: #e5eef7;
-    --success: #00C851;
-    --success-hover: #00A142;
-    --danger: #FF3547;
-    --info: #0ABAB5;
-    --warning: #FFD700;
-    --purple: #6f42c1;
-    --orange: #ff9f00;
-    --radius-large: 20px;
-    --radius-medium: 12px;
-    --radius-pill: 50px;
-    --shadow-light: 0 2px 10px rgba(0, 0, 0, 0.05);
-    --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.1);
-    --shadow-heavy: 0 8px 25px rgba(0, 0, 0, 0.15);
-    
-    /* Prodotti - COLORI AGGIORNATI */
-    --product-benzina: #00C851;    /* Verde brillante */
-    --product-gasolio: #FFD700;    /* Giallo oro */
-    --product-diesel: #FF4444;     /* Rosso vivace */
-    --product-hvolution: #2196F3;  /* Blu brillante */
-    --product-adblue: #0ABAB5;     /* Turchese */
-}
-
-/* ===== TEMA SCURO AGGIORNATO ===== */
-body.dark-theme {
-    --text-primary: #e2e8f0;
-    --text-secondary: #94a3b8;
-    --bg-primary: #0f172a;
-    --bg-white: #1e293b;
-    --bg-display: #334155;
-    --primary-blue-light: rgba(59, 130, 246, 0.2);
-}
-
-/* Sfondo e testo dei link di navigazione nel tema scuro */
-body.dark-theme .nav a { color: var(--text-secondary) !important; }
-body.dark-theme .nav a:hover {
-    color: var(--text-primary) !important; /* Testo più chiaro in hover */
-    background-color: var(--primary-blue-light);
-}
-body.dark-theme .nav a.active {
-    background: var(--primary-blue);
-    color: #ffffff !important;
-}
-
-/* Sottolineatura dei link di navigazione nel tema scuro */
-body.dark-theme .nav a::before {
-    background: var(--text-primary); /* Colore chiaro per la sottolineatura */
-}
-
-/* Colore delle icone dell'header nel tema scuro */
-body.dark-theme #info-btn i,
-body.dark-theme #theme-switcher i {
-    color: var(--text-primary);
-}
-
-/* Campi input e display nel tema scuro */
-body.dark-theme .grid-input {
-    background: var(--bg-primary);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-body.dark-theme .display-field,
-body.dark-theme .grid-input[readonly] {
-    background-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
-/* Textarea Note nel tema scuro */
-body.dark-theme #notes-card textarea {
-    background-color: var(--bg-primary);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
-/* Input TODO nel tema scuro */
-body.dark-theme .todo-input-group input {
-    background-color: var(--bg-primary);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
-/* Input e valori corrispettivi nel tema scuro */
-body.dark-theme .corrispettivi-value,
-body.dark-theme .corrispettivi-input {
-    background-color: var(--bg-display);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
-body.dark-theme .corrispettivi-input:focus {
-    background-color: var(--bg-primary);
-}
-
-/* Scrollbar nel tema scuro */
-body.dark-theme ::-webkit-scrollbar-track {
-    background: transparent; /* Traccia completamente trasparente */
-}
-body.dark-theme ::-webkit-scrollbar-thumb {
-    background-color: rgba(255, 255, 255, 0.2); /* Grigio chiaro per il pollice */
-    border: none; /* Rimuovi bordo */
-}
-body.dark-theme ::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-blue); /* Blu in hover */
-}
-
-
-/* ===== BASE ===== */
-* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-    font-family: 'Montserrat', sans-serif;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 16px;
-    line-height: 1.5;
-    overflow-x: hidden; /* Prevent horizontal scroll for mobile menu */
-}
-
-/* Stili di base per le scrollbar (per tema chiaro) */
-::-webkit-scrollbar {
-    width: 8px; /* Larghezza della scrollbar verticale */
-    height: 8px; /* Altezza della scrollbar orizzontale */
-}
-
-::-webkit-scrollbar-track {
-    background: transparent; /* Traccia completamente trasparente */
-    border-radius: 10px;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: rgba(0, 0, 0, 0.2); /* Grigio chiaro per il pollice */
-    border-radius: 10px;
-    border: none; /* Rimuovi bordo */
-}
-
-::-webkit-scrollbar-thumb:hover {
-    background-color: var(--primary-blue); /* Blu in hover */
-}
-
-
-.container {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 20px 25px;
-    min-width: 0;
-    overflow-x: hidden;
-}
-
-.page-title {
-    text-align: center;
-    color: var(--primary-blue);
-    font-size: 24px;
-    font-weight: 800;
-    margin-bottom: 25px;
-}
-
-/* ===== HEADER (STILE NUOVO) ===== */
-.header { 
-    background: var(--bg-white); 
-    padding: 15px 25px; 
-    display: flex; 
-    justify-content: space-between; 
-    align-items: center; 
-    border-bottom: 1px solid var(--primary-blue-light); 
-    box-shadow: var(--shadow-light);
-    min-height: 70px;
-}
-
-.header-brand { 
-    font-size: 32px; 
-    font-weight: 800; 
-    color: var(--primary-blue); 
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    background: linear-gradient(45deg, var(--primary-blue), #42D7F4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    flex-shrink: 0;
-}
-
-/* ===== MENU NAVIGAZIONE (Desktop) ===== */
-.nav { 
-    display: flex; /* Always flex for desktop */
-    align-items: center; 
-    flex: 1; 
-    justify-content: center; 
-    position: static; /* Reset from fixed for desktop */
-    left: auto; /* Reset from -250px for desktop */
-    width: auto; /* Reset from fixed width for desktop */
-    height: auto; /* Reset from 100% height for desktop */
-    background: transparent; /* Reset from white/primary for desktop */
-    box-shadow: none; /* Reset from heavy shadow for desktop */
-    flex-direction: row; /* Reset from column for desktop */
-    padding-top: 0; /* Reset from 70px for desktop */
-    z-index: auto; /* Reset from 100 for desktop */
-}
-
-.nav ul { 
-    list-style: none; 
-    display: flex; 
-    gap: 8px; /* Allineato con credito.css */
-    margin: 0;
-    padding: 0;
-    align-items: center;
-    flex-direction: row; /* Ensure row direction for desktop */
-}
-
-.nav a { 
-    text-decoration: none; 
-    color: var(--text-secondary); 
-    font-weight: 600; 
-    padding: 12px 20px; /* Allineato con credito.css */
-    border-radius: 50px; 
-    transition: all 0.3s ease; 
-    position: relative;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    font-size: 14px; /* Allineato con credito.css */
-    height: 44px; /* Allineato con credito.css */
-    box-sizing: border-box;
-    gap: 8px; /* Allineato con credito.css */
-}
-
-/* Stili per le icone del menu */
-.nav a i {
-    font-size: 16px; /* Allineato con credito.css */
-    color: var(--text-secondary); /* Colore base icona */
-    transition: color 0.3s ease;
-}
-.nav a:hover i {
-    color: var(--primary-blue); /* Colore icona in hover (tema chiaro) */
-}
-.nav a.active i {
-    color: var(--bg-white) !important; /* Colore icona quando attivo (tema chiaro) */
-}
-
-
-.nav a::before {
-    content: '';
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-blue);
-    transform: translateX(-50%);
-    transition: width 0.3s ease;
-}
-
-.nav a:hover::before {
-    width: 60%;
-}
-
-.nav a:hover { 
-    color: var(--primary-blue); 
-    background-color: var(--primary-blue-light); 
-}
-
-.nav a.active { 
-    background: var(--primary-blue); 
-    color: var(--bg-white) !important; 
-    box-shadow: var(--shadow-medium);
-}
-
-.nav a.active::before {
-    display: none;
-}
-
-/* Tema scuro per i link di navigazione */
-body.dark-theme .nav a {
-    color: var(--text-secondary) !important; /* Testo grigio scuro */
-}
-body.dark-theme .nav a:hover {
-    color: var(--text-primary) !important; /* Testo più chiaro in hover */
-    background-color: var(--primary-blue-light);
-}
-body.dark-theme .nav a.active {
-    background: var(--primary-blue);
-    color: #ffffff !important; /* Testo bianco quando attivo */
-}
-
-/* Tema scuro per le icone dei link di navigazione */
-body.dark-theme .nav a i {
-    color: var(--text-secondary); /* Icona grigio scuro */
-}
-body.dark-theme .nav a:hover i {
-    color: var(--text-primary) !important; /* Icona più chiara in hover */
-}
-body.dark-theme .nav a.active i {
-    color: #ffffff !important; /* Icona bianca quando attivo */
-}
-
-.header-actions { 
-    display: flex; 
-    align-items: center; 
-    justify-content: flex-end;
-    gap: 10px; 
-}
-
-/* Hamburger Menu Button - Hidden by default for desktop */
-.hamburger-menu-btn {
-    display: none; /* Hide on desktop */
-}
-
-/* Stili per pulsanti icona header (FONT AWESOME) */
-#theme-switcher,
-#info-btn { 
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    width: 40px; 
-    height: 40px; 
-    border-radius: 50%; 
-    background: var(--bg-display); 
-    transition: all 0.3s ease; 
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#theme-switcher:hover,
-#info-btn:hover { 
-    background: var(--primary-blue-light); 
-    transform: scale(1.1) rotate(180deg); 
-}
-
-/* Colore delle icone Font Awesome nell'header */
-#info-btn i,
-#theme-switcher i {
-    font-size: 20px;
-    color: var(--text-primary);
-    transition: color 0.3s ease;
-}
-
-.theme-icon-hidden { 
-    display: none !important; 
-}
-
-/* Mobile Menu Overlay */
-.mobile-menu-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px);
-    z-index: 99; /* Below modals, above content */
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.mobile-menu-overlay.active {
-    display: block;
-    opacity: 1;
-}
-
-body.no-scroll {
-    overflow: hidden; /* Prevent scrolling background when menu is open */
-}
-
-/* ===== BOX/CARD ===== */
-.box {
-    background: var(--bg-white);
-    border-radius: var(--radius-large);
-    border: 1px solid var(--primary-blue-light);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 250px;
-    transition: all 0.3s ease;
-}
-
-.box-header {
-    color: var(--primary-blue);
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    padding: 15px;
-    border-bottom: 2px solid var(--primary-blue-light);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px; /* Spazio tra icona e titolo */
-}
-
-/* Allinea il titolo del box quando c'è un'icona */
-.box-header > span {
-    flex-grow: 1;
-}
-
-.box-content {
-    padding: 15px;
-    flex-grow: 1;
-}
-
-/* NUOVO: Stile per linea animata (usato in summary-box) */
-.summary-box { 
-    position: relative;
-    overflow: hidden;
-}
-
-.summary-box::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-blue), var(--info), var(--success));
-    transform: scaleX(0);
-    transform-origin: left;
-    transition: transform 0.4s ease-out;
-}
-
-.summary-box:hover::before {
-    transform: scaleX(1);
-}
-
-.summary-box.box:hover { 
-    box-shadow: var(--shadow-heavy); 
-}
-
-
-/* ===== PULSANTI - STILI UNIFORMI COME VOCI DI MENU ===== */
-.action-bar {
-    display: flex;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 25px;
-    flex-wrap: wrap;
-}
-
-/* Stili base per TUTTI i pulsanti testuali */
-.action-btn,
-.modal-actions .action-btn,
-.calendar-header button { /* Includi qui il pulsante del calendario per omogeneità nel tema chiaro */
-    font-size: 14px;
-    padding: 12px 25px; /* Grandezza originale */
-    height: 44px; /* Grandezza originale (se applicabile) */
-    text-decoration: none;
-    color: var(--text-secondary); /* Colore uniforme per tutti */
-    background: none; /* Sfondo trasparente per tutti */
-    font-weight: 600;
-    border: none;
-    border-radius: var(--radius-pill); /* Forma a pillola come i link nav */
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px; /* Grandezza originale dello spazio icona-testo */
-    box-shadow: none;
-}
-
-/* Sottolineatura animata per TUTTI i pulsanti testuali */
-.action-btn::before,
-.modal-actions .action-btn::before,
-.calendar-header button::before { /* Includi qui il pulsante del calendario */
-    content: '';
-    position: absolute;
-    bottom: 8px;
-    left: 50%;
-    width: 0;
-    height: 2px;
-    background: var(--primary-blue);
-    transform: translateX(-50%);
-    transition: width 0.3s ease;
-    z-index: 1;
-}
-
-/* Effetto hover per i pulsanti testuali */
-.action-btn:hover,
-.modal-actions .action-btn:hover,
-.calendar-header button:hover { /* Includi qui il pulsante del calendario */
-    color: var(--primary-blue);
-    background-color: var(--primary-blue-light);
-    box-shadow: none;
-}
-
-/* Larghezza della sottolineatura in hover per TUTTI i pulsanti testuali */
-.action-btn:hover::before,
-.modal-actions .action-btn:hover::before,
-.calendar-header button:hover::before { /* Includi qui il pulsante del calendario */
-    width: 60%;
-}
-
-/* Tema scuro per i pulsanti testuali */
-body.dark-theme .action-btn,
-body.dark-theme .modal-actions .action-btn,
-body.dark-theme .calendar-header button {
-    color: var(--text-secondary); /* Testo base secondario scuro */
-}
-body.dark-theme .action-btn:hover,
-body.dark-theme .modal-actions .action-btn:hover,
-body.dark-theme .calendar-header button:hover {
-    color: var(--text-primary); /* Testo più chiaro in hover */
-    background-color: var(--primary-blue-light);
-}
-body.dark-theme .action-btn::before,
-body.dark-theme .modal-actions .action-btn::before,
-body.dark-theme .calendar-header button::before {
-    background: var(--text-primary); /* Sottolineatura chiara */
-}
-
-
-/* Stili specifici per le varianti (mantengono il colore di base ma adottano hover uniforme) */
-/* Rimosse le regole colore specifiche per .action-btn.secondary, .action-btn.success, etc. */
-/* Il colore del testo sarà gestito dal tema come gli altri .action-btn */
-
-.action-btn:disabled {
-    background: #adb5bd;
-    color: white; /* I pulsanti disabilitati mantengono il testo bianco */
-    cursor: not-allowed;
-    opacity: 0.6;
-    transform: none;
-    box-shadow: none;
-}
-.action-btn:disabled:hover {
-    background: #adb5bd;
-    color: white;
-}
-.action-btn:disabled::before {
-    display: none;
-}
-
-
-/* PULSANTI ICONA TONDI (Reset, Todo, Modal Close, Calendar Nav, Transaction Delete) */
-/* Raggruppamento per stili comuni */
-/* NOTA: In registro.html non ci sono pulsanti Reset, Todo o Calendar Nav, ma li includo per coerenza con l'Index e future espansioni */
-.reset-fatturato-btn, /* Da index.html */
-.todo-input-group button, /* Da index.html */
-.modal-close-btn, /* Presente qui e in index */
-.calendar-header button, /* Da index.html */
-.transaction-delete-btn { /* Specifico di registro.html */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%; /* Tutti tondi */
-    background: none; /* Sfondo trasparente di base */
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: none;
-    line-height: 1; /* Per centrare bene le icone */
-    flex-shrink: 0;
-}
-
-/* Nascondi la pseudo-classe ::before (sottolineatura) per i pulsanti icona */
-.reset-fatturato-btn::before,
-.todo-input-group button::before,
-.modal-close-btn::before,
-.calendar-header button::before,
-.transaction-delete-btn::before {
-    display: none;
-}
-
-/* Effetto hover uniforme per i pulsanti icona */
-.reset-fatturato-btn:hover,
-.todo-input-group button:hover,
-.calendar-header button:hover { /* modal-close-btn e transaction-delete-btn stilizzati a parte per hover rosso */
-    background-color: var(--primary-blue-light); /* Sfondo come hover link nav */
-}
-
-/* Tema scuro per i pulsanti icona */
-body.dark-theme .reset-fatturato-btn,
-body.dark-theme .todo-input-group button,
-body.dark-theme .calendar-header button { /* modal-close-btn e transaction-delete-btn stilizzati a parte per hover rosso */
-    color: var(--text-secondary); /* Colore base secondario scuro */
-}
-body.dark-theme .reset-fatturato-btn:hover,
-body.dark-theme .todo-input-group button:hover,
-body.dark-theme .calendar-header button:hover { /* modal-close-btn e transaction-delete-btn stilizzati a parte per hover rosso */
-    color: var(--text-primary); /* Colore più chiaro in hover */
-    background-color: var(--primary-blue-light);
-}
-
-
-/* Stili specifici per ogni pulsante icona, mantenendo le dimensioni originali */
-
-/* PULSANTE RESET CORRISPETTIVI (da index.html) */
-.reset-fatturato-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 14px;
-    color: var(--text-primary); /* Colore icona base */
-}
-.reset-fatturato-btn:hover {
-    color: var(--primary-blue); /* Colore icona hover */
-}
-body.dark-theme .reset-fatturato-btn { color: var(--text-primary); }
-body.dark-theme .reset-fatturato-btn:hover { color: var(--text-primary); }
-
-
-/* PULSANTE AGGIUNGI TODO (da index.html) */
-.todo-input-group button {
-    width: 44px;
-    height: 44px;
-    font-size: 16px;
-    color: var(--text-primary);
-}
-.todo-input-group button:hover {
-    color: var(--primary-blue);
-}
-body.dark-theme .todo-input-group button { color: var(--text-primary); }
-body.dark-theme .todo-input-group button:hover { color: var(--text-primary); }
-
-
-/* PULSANTE CHIUSURA MODAL (Ora uniforme: sfondo trasparente, hover rosso) */
-.modal-close-btn {
-    width: 32px;
-    height: 32px;
-    font-size: 24px; /* Dimensione dell'icona 'x' */
-    font-weight: bold;
-    color: var(--text-secondary); /* Colore base dell'icona */
-    background-color: transparent; /* Sfondo trasparente di base */
-}
-.modal-close-btn:hover {
-    background-color: var(--danger); /* Sfondo rosso in hover */
-    color: white; /* Testo/icona bianco in hover */
-    transform: none; /* Rimuovi lo scale se non lo vuoi */
-}
-/* Tema scuro per il pulsante di chiusura modale */
-body.dark-theme .modal-close-btn {
-    color: var(--text-secondary);
-}
-body.dark-theme .modal-close-btn:hover {
-    background-color: var(--danger);
-    color: white;
-}
-
-
-/* PULSANTE DI ELIMINAZIONE TASK */
-/* PULSANTE DI ELIMINAZIONE TASK - VERSIONE CORRETTA */
-.todo-delete {
-    width: 28px;
-    height: 28px;
-    background-color: transparent;
-    border: none;
-    border-radius: 50%;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-    box-shadow: none;
-    line-height: 1;
-    flex-shrink: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: Arial, sans-serif; /* Font di fallback per la X */
-}
-
-/* Nascondi la pseudo-classe ::before (sottolineatura) per il pulsante di eliminazione */
-.todo-delete::before {
-    display: none;
-}
-
-/* Se usa Font Awesome */
-.todo-delete i {
-    font-weight: bold;
-    font-size: 14px;
-    color: var(--text-secondary) !important;
-    transition: color 0.3s ease;
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-}
-
-/* Specifico per fa-xmark */
-.todo-delete .fa-xmark {
-    font-size: 14px;
-    color: var(--text-secondary) !important;
-    font-weight: 900; /* Font Awesome solid weight */
-}
-
-/* Se usa testo semplice (×) */
-.todo-delete:not(:has(i)) {
-    font-weight: bold;
-    font-size: 18px;
-    color: var(--text-secondary);
-    font-family: Arial, sans-serif;
-}
-
-/* Fallback con contenuto CSS se non c'è nulla */
-.todo-delete:empty::after {
-    content: "×";
-    font-weight: bold;
-    font-size: 18px;
-    color: var(--text-secondary);
-    display: block;
-    line-height: 1;
-}
-
-/* Stile hover per il pulsante di eliminazione (sfondo rosso, icona bianca) */
-.todo-delete:hover {
-    background-color: var(--danger);
-    transform: scale(1.05);
-    color: white;
-}
-
-/* Colore dell'icona in hover */
-.todo-delete:hover i {
-    color: white !important;
-}
-
-/* Specifico per fa-xmark in hover */
-.todo-delete:hover .fa-xmark {
-    color: white !important;
-}
-
-.todo-delete:hover::after {
-    color: white;
-}
-
-/* Tema scuro per il pulsante di eliminazione task */
-body.dark-theme .todo-delete {
-    background-color: transparent;
-    color: var(--text-secondary);
-}
-
-body.dark-theme .todo-delete:hover {
-    background-color: var(--danger);
-    color: white;
-}
-
-body.dark-theme .todo-delete i {
-    color: var(--text-secondary) !important;
-}
-
-body.dark-theme .todo-delete .fa-xmark {
-    color: var(--text-secondary) !important;
-}
-
-body.dark-theme .todo-delete:hover i {
-    color: white !important;
-}
-
-body.dark-theme .todo-delete:hover .fa-xmark {
-    color: white !important;
-}
-
-body.dark-theme .todo-delete:empty::after {
-    color: var(--text-secondary);
-}
-
-body.dark-theme .todo-delete:hover::after {
-    color: white;
-}
-
-
-/* ===== LAYOUT GRIGLIA ===== */
+/* ===== INDEX.CSS - SPECIFICITÀ DASHBOARD ===== */
+/* Questo file contiene SOLO gli stili specifici per la dashboard (index) */
+/* Gli stili comuni sono in style.css */
+
+/* ===== LAYOUT GRIGLIA DASHBOARD ===== */
 .dashboard-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -786,6 +12,7 @@ body.dark-theme .todo-delete:hover::after {
         "giornata-box box-libero-1 vendite-summary"
         "note calendario todo";
     align-items: stretch;
+    margin-top: 110px;
 }
 
 .giornata-box { grid-area: giornata-box; }
@@ -800,7 +27,7 @@ body.dark-theme .todo-delete:hover::after {
     flex-direction: column;
 }
 
-/* ===== BOX GIORNATA ===== */
+/* ===== BOX GIORNATA - SPECIFICO DASHBOARD ===== */
 .giornata-content {
     display: flex;
     flex-direction: column;
@@ -816,19 +43,21 @@ body.dark-theme .todo-delete:hover::after {
     margin-bottom: 15px;
 }
 
+/* ===== ORARIO E DATA GRANDI COME I BOX RIEPILOGO ===== */
 #currentTime {
-    font-size: 42px;
+    font-size: 2.5rem !important;
     font-weight: 800;
     color: var(--primary-blue);
-    line-height: 1;
+    line-height: 1.2;
     margin-bottom: 8px;
 }
 
 #currentDateDisplay {
-    font-size: 16px;
+    font-size: 1rem !important;
     color: var(--text-secondary);
-    font-weight: 600;
+    font-weight: 700;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .form-fields {
@@ -850,51 +79,10 @@ body.dark-theme .todo-delete:hover::after {
     color: var(--text-secondary);
     text-transform: uppercase;
     text-align: center;
-    font-size: 14px;
+    font-size: var(--font-size-standard);
 }
 
-.grid-input, .display-field {
-    width: 100%;
-    padding: 10px 14px;
-    border: 2px solid var(--primary-blue-light);
-    border-radius: var(--radius-large);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    background: var(--bg-white);
-    color: var(--text-primary);
-    text-align: center;
-    transition: all 0.3s ease;
-    font-size: 16px;
-    min-height: 44px;
-    box-sizing: border-box;
-}
-
-.display-field {
-    background-color: var(--bg-display);
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.grid-input:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px var(--primary-blue-light);
-}
-
-.display-field:hover {
-    box-shadow: 0 4px 12px rgba(9, 63, 180, 0.1);
-}
-
-.grid-input[readonly] {
-    background-color: var(--bg-display);
-    cursor: not-allowed;
-    pointer-events: none;
-}
-
-
-/* ===== BOX CORRISPETTIVI ===== */
+/* ===== BOX CORRISPETTIVI - SPECIFICO DASHBOARD ===== */
 .corrispettivi-content {
     display: flex;
     flex-direction: column;
@@ -935,29 +123,29 @@ body.dark-theme .todo-delete:hover::after {
 
 .corrispettivi-value {
     background-color: var(--bg-display);
-    border-radius: var(--radius-large);
-    padding: 8px 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    text-align: center;
-    min-height: 44px; /* Altezza allineata all'input */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 2px solid var(--primary-blue-light);
-    font-size: 16px;
-    width: 100%;
-}
-
-.corrispettivi-input {
-    background-color: var(--bg-white);
-    border-radius: var(--radius-large);
+    border-radius: var(--radius-squadrato);
     padding: 8px 12px;
     font-weight: 600;
     color: var(--text-primary);
     text-align: center;
     min-height: 44px;
-    border: 2px solid var(--primary-blue-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    font-size: 16px;
+    width: 100%;
+}
+
+.corrispettivi-input {
+    background-color: var(--bg-display);
+    border-radius: var(--radius-squadrato);
+    padding: 8px 12px;
+    font-weight: 600;
+    color: var(--text-primary);
+    text-align: center;
+    min-height: 44px;
+    border: none;
     font-size: 16px;
     width: 100%;
     font-family: 'Montserrat', sans-serif;
@@ -965,14 +153,17 @@ body.dark-theme .todo-delete:hover::after {
 }
 
 .corrispettivi-input:focus {
-    border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px var(--primary-blue-light);
     background-color: var(--bg-white);
 }
 
+/* ===== NOTE - SPECIFICO DASHBOARD ===== */
+#notes-card .box-content { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+}
 
-/* ===== NOTE ===== */
-#notes-card .box-content { display: flex; flex-direction: column; height: 100%; }
 #notes-card textarea {
     width: 100%;
     height: 100%;
@@ -985,7 +176,7 @@ body.dark-theme .todo-delete:hover::after {
     background-color: var(--bg-white);
     color: var(--text-primary);
     transition: border-color 0.3s;
-    font-size: 14px;
+    font-size: var(--font-size-standard) !important;
 }
 
 #notes-card textarea:focus {
@@ -994,8 +185,7 @@ body.dark-theme .todo-delete:hover::after {
     box-shadow: 0 0 0 3px var(--primary-blue-light);
 }
 
-
-/* ===== CALENDARIO ===== */
+/* ===== CALENDARIO - SPECIFICO DASHBOARD ===== */
 .calendar-header {
     display: flex;
     justify-content: space-between;
@@ -1016,8 +206,15 @@ body.dark-theme .todo-delete:hover::after {
     text-align: center;
 }
 
-.calendar-grid > div { font-weight: 600; padding: 2px 0; }
-.weekday { color: var(--text-secondary); font-size: 14px; }
+.calendar-grid > div { 
+    font-weight: 600; 
+    padding: 2px 0; 
+}
+
+.weekday { 
+    color: var(--text-secondary); 
+    font-size: var(--font-size-standard); 
+}
 
 .day {
     cursor: pointer;
@@ -1026,19 +223,38 @@ body.dark-theme .todo-delete:hover::after {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 32px; height: 32px;
+    width: 32px; 
+    height: 32px;
     margin: auto;
-    font-size: 14px;
+    font-size: var(--font-size-standard);
 }
 
-.day:hover { background-color: var(--primary-blue-light); }
-.day.current-day { background-color: var(--primary-blue); color: white; font-weight: 700; }
-.day.other-month { color: var(--text-secondary); opacity: 0.5; }
-.day.holiday { color: var(--danger); font-weight: 700; }
-.day.holiday.current-day { color: white; }
+.day:hover { 
+    background-color: var(--primary-blue-light); 
+}
+.day.current-day { 
+    background-color: var(--primary-blue); 
+    color: white; 
+    font-weight: 700; 
+}
+.day.other-month { 
+    color: var(--text-secondary); 
+    opacity: 0.5; 
+}
+.day.holiday { 
+    color: var(--danger); 
+    font-weight: 700; 
+}
+.day.holiday.current-day { 
+    color: white; 
+}
 
-/* ===== TODO ===== */
-#todo-card .box-content { display: flex; flex-direction: column; height: 100%; }
+/* ===== TODO - SPECIFICO DASHBOARD ===== */
+#todo-card .box-content { 
+    display: flex; 
+    flex-direction: column; 
+    height: 100%; 
+}
 
 .todo-input-group {
     display: flex;
@@ -1051,12 +267,12 @@ body.dark-theme .todo-delete:hover::after {
     flex-grow: 1;
     padding: 10px 14px;
     border: 2px solid var(--primary-blue-light);
-    border-radius: var(--radius-large);
+    border-radius: var(--radius-squadrato);
     font-family: 'Montserrat', sans-serif;
     font-weight: 500;
     background-color: var(--bg-white);
     color: var(--text-primary);
-    font-size: 14px;
+    font-size: var(--font-size-standard);
 }
 
 .todo-input-group input:focus {
@@ -1064,7 +280,6 @@ body.dark-theme .todo-delete:hover::after {
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px var(--primary-blue-light);
 }
-
 
 #todo-list {
     list-style: none;
@@ -1084,296 +299,62 @@ body.dark-theme .todo-delete:hover::after {
     transition: background-color 0.2s;
 }
 
-#todo-list li:hover { background: var(--primary-blue-light); }
+#todo-list li:hover { 
+    background: var(--primary-blue-light); 
+}
 
 #todo-list label {
     flex: 1;
     word-break: break-word;
     color: var(--text-primary);
     line-height: 1.4;
-    font-size: 14px;
+    font-size: var(--font-size-standard);
     font-weight: 500;
 }
 
-
-/* ===== STILI PER IL NUOVO BOX RIEPILOGO VENDITE ===== */
+/* ===== RIEPILOGO VENDITE - SPECIFICO DASHBOARD ===== */
 .vendite-summary-box .box-content {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
+    gap: 15px;
     height: 100%;
 }
 
-#product-liters-summary {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 15px 0;
+/* Griglia 2 colonne per prodotti e valori */
+.vendite-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
     flex-grow: 1;
 }
 
-#product-liters-summary li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 5px;
-    border-bottom: 1px solid var(--primary-blue-light);
-    font-size: 14px;
+/* Riga totali */
+.vendite-totals {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 10px;
 }
 
-#product-liters-summary li:last-child {
-    border-bottom: none;
-}
+/* ===== RESPONSIVE SPECIFICO DASHBOARD ===== */
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-areas: 
+            "giornata-box"
+            "box-libero-1"
+            "vendite-summary"
+            "note" 
+            "calendario"
+            "todo";
+    }
 
-#product-liters-summary li span:first-child {
-    font-weight: 600;
-    color: var(--text-primary);
-}
+    /* Font responsivi per mobile */
+    #currentTime {
+        font-size: 2rem !important;
+    }
 
-#product-liters-summary li .value {
-    font-weight: 700;
-    color: var(--primary-blue);
-    background-color: var(--bg-display);
-    padding: 4px 10px;
-    border-radius: var(--radius-pill);
-    font-size: 13px;
-}
-
-/* Stili per colorare le etichette dei litri per prodotto */
-#product-liters-summary .product-gasolio .value { background-color: var(--product-gasolio); color: #333; }
-#product-liters-summary .product-diesel .value { background-color: var(--product-diesel); color: white; }
-#product-liters-summary .product-adblue .value { background-color: var(--product-adblue); color: white; }
-#product-liters-summary .product-benzina .value { background-color: var(--product-benzina); color: white; }
-#product-liters-summary .product-hvolution .value { background-color: var(--product-hvolution); color: white; }
-
-
-.servito-percentage-summary {
-    text-align: center;
-    padding-top: 15px;
-    border-top: 2px solid var(--primary-blue-light);
-}
-
-.servito-percentage-summary .label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.servito-percentage-summary .value {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--primary-blue);
-    margin-bottom: 10px;
-}
-
-.progress-bar-container {
-    width: 100%;
-    height: 10px;
-    background-color: var(--primary-blue-light);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background-color: var(--product-hvolution);
-    border-radius: 5px;
-    transition: width 0.5s ease-in-out;
-}
-
-/* ===== MODAL ===== */
-@keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.5);
-    backdrop-filter: blur(5px);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.modal-overlay.active { opacity: 1; visibility: visible; }
-
-.modal {
-    background: var(--bg-white);
-    border-radius: var(--radius-large);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-    width: 100%;
-    max-width: 500px;
-    margin: 20px;
-    opacity: 0;
-    transform: scale(0.3);
-}
-
-.modal-overlay.active .modal {
-    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    border-bottom: 1px solid var(--primary-blue-light);
-}
-
-.modal-title {
-    font-size: 18px;
-    font-weight: 700;
-    text-transform: uppercase;
-    color: var(--primary-blue);
-}
-
-.modal-content { padding: 20px; text-align: center; }
-.modal-content p { font-size: 16px; line-height: 1.6; }
-
-.modal-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
-    padding: 20px;
-    border-top: 1px solid var(--primary-blue-light);
-}
-
-/* Stili per nuovo modale info */
-.modal-info-icon {
-    font-size: 60px;
-    color: var(--primary-blue);
-    margin: 0 auto 20px;
-    display: block;
-    text-align: center;
-    transition: all 0.3s ease;
-}
-
-.modal-info-icon:hover {
-    color: var(--info);
-    transform: scale(1.1);
-}
-
-.info-modal-content .info-modal-brand {
-    font-size: 38px;
-    font-weight: 800;
-    margin-bottom: 15px;
-    background: linear-gradient(45deg, var(--primary-blue), #42D7F4);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-.info-modal-content p {
-    margin-bottom: 15px;
-    color: var(--text-secondary);
-}
-.info-modal-content .programmer-info {
-    font-size: 14px;
-    border-top: 1px solid var(--primary-blue-light);
-    padding-top: 15px;
-    line-height: 1.8;
-}
-.info-link {
-    color: var(--text-primary);
-    text-decoration: none;
-    font-weight: 600;
-}
-.info-link:hover {
-    text_decoration: underline;
-    color: var(--primary-blue);
-}
-
-/* ===== TOAST ===== */
-.toast {
-    position: fixed;
-    top: 20px; right: 20px;
-    background: var(--success);
-    color: white;
-    padding: 15px 20px;
-    border-radius: var(--radius-large);
-    box-shadow: 0 4px 20px rgba(0, 200, 81, 0.3);
-    font-weight: 600;
-    font-size: 14px;
-    z-index: 1001;
-    max-width: 350px;
-    animation: slideIn 0.3s ease-out;
-}
-
-.toast.error { background: var(--danger); box-shadow: 0 4px 20px rgba(255, 53, 71, 0.3); }
-.toast.warning { background: var(--warning); color: #333; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3); }
-.toast.info { background: var(--info); box-shadow: 0 4px 20px rgba(10, 186, 181, 0.3); }
-
-@keyframes slideIn {
-    from { opacity: 0; transform: translateX(100px); }
-    to { opacity: 1; transform: translateX(0); }
-}
-
-@keyframes slideOut {
-    from { opacity: 1; transform: translateX(0); }
-    to { opacity: 0; transform: translateX(100px); }
-}
-
-/* ===== RESPONSIVE ===== */
-/* Mobile Menu Specific Styles */
-.hamburger-menu-btn {
-    display: none; /* Hidden by default for desktop */
-    background: none;
-    border: none;
-    font-size: 24px;
-    color: var(--text-primary);
-    cursor: pointer;
-    padding: 8px;
-    transition: color 0.3s ease;
-    /* order: 2; This will be set in media query if needed */
-}
-.hamburger-menu-btn:hover {
-    color: var(--primary-blue);
-}
-body.dark-theme .hamburger-menu-btn {
-    color: var(--text-primary);
-}
-body.dark-theme .hamburger-menu-btn:hover {
-    color: var(--primary-blue);
-}
-
-.mobile-menu-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(3px);
-    z-index: 99; /* Below modals, above content */
-    opacity: 0;
-    transition: opacity 0.3s ease;
-}
-.mobile-menu-overlay.active {
-    display: block;
-    opacity: 1;
-}
-
-body.no-scroll {
-    overflow: hidden; /* Prevent scrolling background when menu is open */
+    #currentDateDisplay {
+        font-size: 0.9rem !important;
+    }
 }

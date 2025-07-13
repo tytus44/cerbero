@@ -25,7 +25,46 @@ function initializeThemeSwitcher() {
     applyTheme(savedTheme);
 }
 
-/* ===== NUOVA FUNZIONE PER MODALE INFO ===== */
+/* ===== GESTIONE SIDEBAR MOBILE ===== */
+function initializeMobileMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    const overlay = document.querySelector('.mobile-menu-overlay');
+    
+    // Crea il pulsante hamburger se non esiste
+    if (!document.querySelector('.hamburger-menu-btn')) {
+        const hamburgerBtn = document.createElement('button');
+        hamburgerBtn.className = 'hamburger-menu-btn';
+        hamburgerBtn.innerHTML = '<i class="fa-solid fa-bars"></i>';
+        hamburgerBtn.setAttribute('aria-label', 'Apri menu');
+        
+        // Inserisci il pulsante nell'action bar
+        const actionBar = document.querySelector('.action-bar-floating');
+        if (actionBar) {
+            actionBar.insertBefore(hamburgerBtn, actionBar.firstChild);
+        }
+        
+        hamburgerBtn.addEventListener('click', () => {
+            sidebar?.classList.toggle('active');
+            overlay?.classList.toggle('active');
+            document.body.classList.toggle('no-scroll');
+        });
+    }
+    
+    // Crea l'overlay se non esiste
+    if (!overlay) {
+        const newOverlay = document.createElement('div');
+        newOverlay.className = 'mobile-menu-overlay';
+        document.body.appendChild(newOverlay);
+        
+        newOverlay.addEventListener('click', () => {
+            sidebar?.classList.remove('active');
+            newOverlay.classList.remove('active');
+            document.body.classList.remove('no-scroll');
+        });
+    }
+}
+
+/* ===== GESTIONE MODALE INFO ===== */
 function initializeInfoButton() {
     try {
         const infoBtn = document.getElementById('info-btn');
@@ -78,7 +117,7 @@ function showMessage(message, type = 'info') {
             background: ${colors[type] || colors.info};
             color: ${type === 'warning' ? '#333' : 'white'};
             padding: 15px 20px; z-index: 1001; font-family: 'Montserrat', sans-serif; font-weight: 600;
-            font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); border-radius: 20px;
+            font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2); border-radius: 4px;
             max-width: 350px; word-wrap: break-word;
             animation: slideIn 0.3s ease-out;
         `;
@@ -179,12 +218,14 @@ class CargoManager {
 
     init() {
         this.bindEvents();
+        this.updateFilterValueOptions(); // Popola i filtri all'avvio
         this.loadRimanenzeUI();
         this.updateTotals();
         this.renderHistory();
         this.renderChart();
         this.updateYearDisplay();
         this.initializeCollapseState();
+        this.updateSummaryBoxes();
     }
 
     safeBind(elementId, event, handler) {
@@ -214,6 +255,57 @@ class CargoManager {
         ['benzina', 'gasolio', 'diesel', 'hvolution'].forEach(p => {
             this.safeBind(`rimanenza-${p}`, 'change', () => this.saveRimanenzeFromUI());
         });
+        
+        // Nuovi bind per i filtri
+        this.safeBind('btn-apply-filter', 'click', () => this.applyPeriodFilter());
+        this.safeBind('btn-reset-filter', 'click', () => this.resetPeriodFilter());
+        this.safeBind('filter-type', 'change', () => this.updateFilterValueOptions());
+    }
+
+    updateFilterValueOptions() {
+        const type = document.getElementById('filter-type').value;
+        const valueSelect = document.getElementById('filter-value');
+        valueSelect.innerHTML = '';
+        let options = [];
+
+        if (type === 'mese') {
+            options = ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"]
+                .map((mese, index) => `<option value="${index}">${mese}</option>`);
+        } else if (type === 'trimestre') {
+            options = [1, 2, 3, 4].map(q => `<option value="${q}">Trimestre ${q}</option>`);
+        } else if (type === 'semestre') {
+            options = [1, 2].map(s => `<option value="${s}">Semestre ${s}</option>`);
+        }
+        valueSelect.innerHTML = options.join('');
+    }
+
+    applyPeriodFilter() {
+        const type = document.getElementById('filter-type').value;
+        const value = parseInt(document.getElementById('filter-value').value);
+
+        let startDate, endDate;
+        const year = this.currentYear;
+
+        if (type === 'mese') {
+            startDate = new Date(year, value, 1);
+            endDate = new Date(year, value + 1, 0, 23, 59, 59);
+        } else if (type === 'trimestre') {
+            const startMonth = (value - 1) * 3;
+            startDate = new Date(year, startMonth, 1);
+            endDate = new Date(year, startMonth + 3, 0, 23, 59, 59);
+        } else if (type === 'semestre') {
+            const startMonth = (value - 1) * 6;
+            startDate = new Date(year, startMonth, 1);
+            endDate = new Date(year, startMonth + 6, 0, 23, 59, 59);
+        }
+        
+        const titleLabel = document.getElementById('filter-value').options[document.getElementById('filter-value').selectedIndex].text;
+        this.updateTotals({ start: startDate, end: endDate }, titleLabel);
+    }
+    
+    resetPeriodFilter() {
+        document.getElementById('box-sinistro').classList.remove('period-filtered');
+        this.updateTotals(); // Chiama senza argomenti per tornare all'annuale
     }
 
     importData() {
@@ -268,7 +360,7 @@ class CargoManager {
             rimanenze: this.cargoData.rimanenze
         };
         const dataStr = JSON.stringify(dataToExport, null, 2);
-        const dataBlob = new Blob([jsonString], { type: 'application/json' });
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
         const url = URL.createObjectURL(dataBlob);
         const a = document.createElement('a');
         a.href = url;
@@ -283,9 +375,89 @@ class CargoManager {
         this.updateTotals();
         this.renderHistory();
         this.renderChart();
+        this.updateSummaryBoxes(); 
         Storage.save(Storage.KEYS.CARICO_TOTALS, this.cargoData.totals);
         Storage.save(Storage.KEYS.CARICO_HISTORY, this.cargoData.history);
         Storage.save(Storage.KEYS.CARICO_RIMANENZE, this.cargoData.rimanenze);
+    }
+
+    updateSummaryBoxes() {
+        const currentYearData = this.cargoData.history.filter(c => {
+            const cargoDate = parseDate(c.date);
+            return cargoDate && cargoDate.getFullYear() === this.currentYear;
+        });
+
+        const totaleProdotti = currentYearData.reduce((sum, cargo) => {
+            return sum + (cargo.benzina || 0) + (cargo.gasolio || 0) + (cargo.diesel || 0) + (cargo.hvolution || 0);
+        }, 0);
+
+        const prodottiTotali = {
+            'BENZINA': currentYearData.reduce((sum, c) => sum + (c.benzina || 0), 0),
+            'GASOLIO': currentYearData.reduce((sum, c) => sum + (c.gasolio || 0), 0),
+            'DIESEL+': currentYearData.reduce((sum, c) => sum + (c.diesel || 0), 0),
+            'HVOLUTION': currentYearData.reduce((sum, c) => sum + (c.hvolution || 0), 0)
+        };
+
+        let prodottoPiuCaricato = '--';
+        let maxLitri = 0;
+        for (const [prodotto, litri] of Object.entries(prodottiTotali)) {
+            if (litri > maxLitri) {
+                maxLitri = litri;
+                prodottoPiuCaricato = prodotto;
+            }
+        }
+
+        const autistiCarichi = {};
+        currentYearData.forEach(cargo => {
+            if (cargo.driver) {
+                const autista = cargo.driver.trim().toUpperCase();
+                if (!autistiCarichi[autista]) {
+                    autistiCarichi[autista] = 0;
+                }
+                autistiCarichi[autista]++;
+            }
+        });
+
+        let autistaTop = '--';
+        let maxCarichi = 0;
+        for (const [autista, numeroCarichi] of Object.entries(autistiCarichi)) {
+            if (numeroCarichi > maxCarichi) {
+                maxCarichi = numeroCarichi;
+                autistaTop = autista;
+            }
+        }
+
+        const totaleProdottiEl = document.getElementById('totaleProdottiCaricati');
+        if (totaleProdottiEl) {
+            totaleProdottiEl.textContent = totaleProdotti > 0 ? formatter.liters(totaleProdotti) + ' L' : '0 L';
+        }
+
+        const prodottoPiuCaricatoEl = document.getElementById('prodottoPiuCaricato');
+        const prodottoPiuCaricatoDettagliEl = document.getElementById('prodottoPiuCaricatoDettagli');
+        if (prodottoPiuCaricatoEl) {
+            prodottoPiuCaricatoEl.textContent = prodottoPiuCaricato;
+        }
+        if (prodottoPiuCaricatoDettagliEl) {
+            prodottoPiuCaricatoDettagliEl.textContent = maxLitri > 0 ? formatter.liters(maxLitri) + ' litri' : '';
+        }
+
+        const autistaTopEl = document.getElementById('autistaTop');
+        const autistaTopDettagliEl = document.getElementById('autistaTopDettagli');
+        if (autistaTopEl) {
+            let displayName = autistaTop;
+            if (autistaTop !== '--' && autistaTop.includes(' ')) {
+                displayName = autistaTop.split(' ')[0];
+            }
+            autistaTopEl.textContent = displayName;
+            if (autistaTop !== '--' && autistaTop.includes(' ')) {
+                autistaTopEl.title = autistaTop;
+            } else {
+                autistaTopEl.removeAttribute('title');
+            }
+        }
+        if (autistaTopDettagliEl) {
+            autistaTopDettagliEl.textContent = maxCarichi > 0 ? maxCarichi + ' carichi' : '';
+        }
     }
     
     toggleHistoryCollapse() { 
@@ -298,7 +470,7 @@ class CargoManager {
             btn.classList.toggle('collapsed', isCollapsed);
             
             if (editBtn) {
-                editBtn.style.display = isCollapsed ? 'none' : 'inline-block';
+                editBtn.style.display = isCollapsed ? 'none' : 'flex';
             }
             
             if (isCollapsed && this.isEditingHistory) {
@@ -325,7 +497,7 @@ class CargoManager {
             if(btn) btn.classList.add('collapsed');
             if(editBtn) editBtn.style.display = 'none';
         } else {
-            if(editBtn) editBtn.style.display = 'inline-block';
+            if(editBtn) editBtn.style.display = 'flex';
         }
     }
     
@@ -357,7 +529,7 @@ class CargoManager {
         
         const formData = {
             date: timestamp,
-            driver: document.getElementById('load-driver').value.trim(),
+            driver: document.getElementById('load-driver').value.trim().toUpperCase(),
             benzina: parseInt(document.getElementById('load-benzina').value) || 0,
             diffBenzina: parseInt(document.getElementById('load-diff-benzina').value) || 0,
             gasolio: parseInt(document.getElementById('load-gasolio').value) || 0,
@@ -396,13 +568,14 @@ class CargoManager {
 
     toggleEditMode() {
         this.isEditingHistory = !this.isEditingHistory;
-        this.renderHistory();
         
         const editBtn = document.getElementById('edit-history-btn');
         if (editBtn) {
             editBtn.classList.toggle('editing', this.isEditingHistory);
             editBtn.title = this.isEditingHistory ? 'Fine modifica' : 'Modifica carichi';
         }
+        
+        this.renderHistory();
         
         showMessage(
             this.isEditingHistory ? 'Modalità modifica attivata' : 'Modalità modifica disattivata', 
@@ -436,7 +609,7 @@ class CargoManager {
                 <div class="modal">
                     <div class="modal-header">
                         <h3 class="modal-title">Modifica Carico</h3>
-                        <button class="modal-close" id="edit-close-modal">&times;</button>
+                        <button class="modal-close-btn" id="edit-close-modal" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
                     </div>
                     <div class="modal-content">
                         <form class="modal-form" id="editCargoForm">
@@ -478,7 +651,7 @@ class CargoManager {
 
                             <div class="modal-actions">
                                 <button type="button" class="action-btn secondary" id="edit-cancel-modal">Annulla</button>
-                                <button type="button" class="action-btn warning" id="edit-delete-modal">Elimina Carico</button>
+                                <button type="button" class="action-btn danger" id="edit-delete-modal">Elimina Carico</button>
                                 <button type="submit" class="action-btn">Salva Modifiche</button>
                             </div>
                         </form>
@@ -518,7 +691,7 @@ class CargoManager {
 
             const updatedCargo = {
                 date: timestamp,
-                driver: document.getElementById('edit-load-driver').value.trim(),
+                driver: document.getElementById('edit-load-driver').value.trim().toUpperCase(),
                 benzina: parseInt(document.getElementById('edit-load-benzina').value) || 0,
                 diffBenzina: parseInt(document.getElementById('edit-load-diff-benzina').value) || 0,
                 gasolio: parseInt(document.getElementById('edit-load-gasolio').value) || 0,
@@ -550,11 +723,25 @@ class CargoManager {
         document.getElementById('edit-load-driver').focus();
     }
     
-    updateTotals() {
-        const currentYearData = this.cargoData.history.filter(c => {
-            const cargoDate = parseDate(c.date);
-            return cargoDate && cargoDate.getFullYear() === this.currentYear;
-        });
+    updateTotals(dateRange = null, filterLabel = '') {
+        const box = document.getElementById('box-sinistro');
+        let currentYearData;
+        
+        if (dateRange) {
+            box.classList.add('period-filtered');
+            currentYearData = this.cargoData.history.filter(c => {
+                const cargoDate = parseDate(c.date);
+                return cargoDate && cargoDate >= dateRange.start && cargoDate <= dateRange.end;
+            });
+            document.getElementById('box-title-anno').textContent = `TOTALE ${filterLabel.toUpperCase()}`;
+        } else {
+            box.classList.remove('period-filtered');
+            currentYearData = this.cargoData.history.filter(c => {
+                const cargoDate = parseDate(c.date);
+                return cargoDate && cargoDate.getFullYear() === this.currentYear;
+            });
+            this.updateYearDisplay();
+        }
         
         const totals = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0 };
         const diffs = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0 };
@@ -583,8 +770,11 @@ class CargoManager {
             else diffsNegative.hvolution += cargo.diffHvolution;
         });
         
-        this.cargoData.totals = totals;
-        this.renderTotals(totals, diffs, diffsPositive, diffsNegative); 
+        if (!dateRange) {
+            this.cargoData.totals = totals;
+        }
+
+        this.renderTotals(totals, diffs, diffsPositive, diffsNegative);
     }
     
     renderTotals(totals, diffs, diffsPositive, diffsNegative) {
@@ -608,6 +798,38 @@ class CargoManager {
             const totaleEl = document.getElementById(`totale-${p}`);
             if (totaleEl) totaleEl.value = formatter.liters(totals[p] + diffs[p] + rimanenza);
         });
+
+        this.renderGrandTotals(totals, diffs, diffsPositive, diffsNegative);
+    }
+
+    renderGrandTotals(totals, diffs, diffsPositive, diffsNegative) {
+        const totalLitri = Object.values(totals).reduce((sum, val) => sum + (val || 0), 0);
+        const totalPiu = Object.values(diffsPositive).reduce((sum, val) => sum + (val || 0), 0);
+        const totalMeno = Object.values(diffsNegative).reduce((sum, val) => sum + (val || 0), 0);
+        const totalDiff = Object.values(diffs).reduce((sum, val) => sum + (val || 0), 0);
+        const totalRimanenze = Object.values(this.cargoData.rimanenze).reduce((sum, val) => sum + (val || 0), 0);
+        const totalFinale = totalLitri + totalDiff + totalRimanenze;
+
+        const totaliLitriEl = document.getElementById('totali-litri');
+        if (totaliLitriEl) totaliLitriEl.value = formatter.liters(totalLitri);
+
+        const totaliPiuEl = document.getElementById('totali-piu');
+        if (totaliPiuEl) totaliPiuEl.value = formatter.liters(totalPiu);
+
+        const totaliMenoEl = document.getElementById('totali-meno');
+        if (totaliMenoEl) totaliMenoEl.value = formatter.liters(totalMeno);
+
+        const totaliDiffEl = document.getElementById('totali-diff');
+        if (totaliDiffEl) {
+            totaliDiffEl.value = formatter.diff.format(totalDiff);
+            totaliDiffEl.style.color = totalDiff > 0 ? 'var(--success)' : totalDiff < 0 ? 'var(--danger)' : 'var(--text-secondary)';
+        }
+
+        const totaliRimanenzaEl = document.getElementById('totali-rimanenza');
+        if (totaliRimanenzaEl) totaliRimanenzaEl.value = formatter.liters(totalRimanenze);
+
+        const totaliTotaleEl = document.getElementById('totali-totale');
+        if (totaliTotaleEl) totaliTotaleEl.value = formatter.liters(totalFinale);
     }
 
     renderHistory() {
@@ -615,10 +837,10 @@ class CargoManager {
         if(!tbody) return;
         tbody.innerHTML = '';
         
-        const table = document.querySelector('.history-table');
-        if (table) {
+        const tables = document.querySelectorAll('.history-table');
+        tables.forEach(table => {
             table.classList.toggle('editing', this.isEditingHistory);
-        }
+        });
         
         const currentYearHistory = this.cargoData.history.filter(c => {
             const cargoDate = parseDate(c.date);
@@ -644,16 +866,19 @@ class CargoManager {
                     <td>${formatter.diff.format(cargo.diffDiesel || 0)}</td>
                     <td>${formatter.liters(cargo.hvolution || 0)}</td>
                     <td>${formatter.diff.format(cargo.diffHvolution || 0)}</td>
-                    <td>${cargo.driver || ''}</td>
+                    <td style="text-transform: uppercase; text-align: left; padding-left: 8px;">${cargo.driver || ''}</td>
                     <td>
-                        <button class="edit-btn" data-timestamp="${cargo.timestamp}">✎</button>
+                        <button class="edit-btn" data-timestamp="${cargo.timestamp}" title="Modifica carico"><i class="fa-solid fa-pen"></i></button>
                     </td>
                 `;
                 
                 const editBtn = row.querySelector('.edit-btn');
-                
                 if (editBtn) {
-                    editBtn.addEventListener('click', () => this.editCargo(cargo.timestamp));
+                    editBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.editCargo(cargo.timestamp);
+                    });
                 }
             });
     }
@@ -757,7 +982,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         
         initializeThemeSwitcher();
-        initializeInfoButton(); // AGGIUNTA CHIAMATA
+        initializeInfoButton();
+        initializeMobileMenu();
         
         window.cargoManager = new CargoManager();
         
