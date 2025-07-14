@@ -3,7 +3,7 @@
 /* ===== INIZIO VARIABILI GLOBALI ===== */
 let calendarWidget = null;
 let todoWidget = null;
-const VAT_RATE = 0.22; // Aliquota IVA fissa al 22% per i carburanti in Italia
+const VAT_RATE = 0.22;
 const MARGIN_NON_SERVITO = 0.035;
 const MARGIN_SERVITO = 0.065;
 /* ===== FINE VARIABILI GLOBALI ===== */
@@ -12,53 +12,23 @@ const MARGIN_SERVITO = 0.065;
 function showMessage(message, type = 'info') {
     try {
         const allowedTypes = ['error', 'warning', 'info', 'success'];
-        if (!allowedTypes.includes(type)) {
-            return;
-        }
-        
+        if (!allowedTypes.includes(type)) return;
         const toast = document.createElement('div');
         toast.className = `toast toast-${type}`;
         toast.textContent = message;
-        
-        const colors = {
-            error: '#FF3547',
-            info: '#0ABAB5',
-            warning: '#FFD700',
-            success: '#00C851'
-        };
-        
+        const colors = { error: '#FF3547', info: '#0ABAB5', warning: '#FFD700', success: '#00C851' };
         toast.style.cssText = `
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: ${colors[type] || colors.info};
-            color: ${type === 'warning' ? '#333' : 'white'};
-            padding: 15px 20px;
-            z-index: 1001;
-            font-family: 'Montserrat', sans-serif;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
-            border-radius: 20px;
-            max-width: 350px;
-            word-wrap: break-word;
-            animation: slideIn 0.3s ease-out;
-        `;
-        
+            position: fixed; top: 20px; right: 20px; background: ${colors[type] || colors.info};
+            color: ${type === 'warning' ? '#333' : 'white'}; padding: 15px 20px; z-index: 1001;
+            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2); border-radius: 20px; max-width: 350px;
+            word-wrap: break-word; animation: slideIn 0.3s ease-out;`;
         document.body.appendChild(toast);
-        
         setTimeout(() => {
             toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => {
-                if (toast.parentNode) {
-                    toast.parentNode.removeChild(toast);
-                }
-            }, 300);
+            setTimeout(() => { if (toast.parentNode) toast.parentNode.removeChild(toast); }, 300);
         }, 3000);
-    } catch (error) {
-        console.error('Errore visualizzazione messaggio:', error);
-        alert(message);
-    }
+    } catch (error) { console.error('Errore visualizzazione messaggio:', error); alert(message); }
 }
 
 function showConfirmModal(title, text, onConfirm) {
@@ -67,170 +37,52 @@ function showConfirmModal(title, text, onConfirm) {
     const modalText = document.getElementById('confirm-modal-text');
     const btnOk = document.getElementById('confirm-modal-ok');
     const btnCancel = document.getElementById('confirm-modal-cancel');
-
     modalTitle.textContent = title;
     modalText.textContent = text;
-
     const hideModal = () => modal.classList.remove('active');
-
     const newBtnOk = btnOk.cloneNode(true);
     btnOk.parentNode.replaceChild(newBtnOk, btnOk);
-    
     const newBtnCancel = btnCancel.cloneNode(true);
     btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
-
-    newBtnOk.addEventListener('click', () => {
-        onConfirm();
-        hideModal();
-    });
+    newBtnOk.addEventListener('click', () => { onConfirm(); hideModal(); });
     newBtnCancel.addEventListener('click', hideModal);
-    
     modal.classList.add('active');
 }
 
 function debounce(func, wait) {
     let timeout;
     return function executedFunction(...args) {
-        const later = () => {
-            clearTimeout(timeout);
-            func(...args);
-        };
+        const later = () => { clearTimeout(timeout); func(...args); };
         clearTimeout(timeout);
         timeout = setTimeout(later, wait);
     };
 }
 
-const formatEuro = (num) => {
-    return new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(num);
-};
-
-const formatLiters = (num) => {
-    return new Intl.NumberFormat('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
-};
-
+const formatEuro = (num) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(num);
+const formatLiters = (num) => new Intl.NumberFormat('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(num);
 const parseNumberInput = (value) => {
     if (typeof value !== 'string') value = String(value);
-    
     let cleaned = value.replace(/[€\s\u00A0]/g, '').replace(/\./g, '').replace(',', '.');
-    
     const parsed = parseFloat(cleaned);
     return isNaN(parsed) ? 0 : parsed;
 };
 
 function formatProductName(product) {
-    const productNames = {
-        'gasolio': 'Gasolio',
-        'diesel': 'Diesel+',
-        'adblue': 'AdBlue',
-        'benzina': 'Benzina',
-        'hvolution': 'HVolution'
-    };
+    const productNames = { 'gasolio': 'Gasolio', 'diesel': 'Diesel+', 'adblue': 'AdBlue', 'benzina': 'Benzina', 'hvolution': 'HVolution' };
     return productNames[product] || product.charAt(0).toUpperCase() + product.slice(1);
 }
 
-/**
- * Gestione del fullscreen semplificata
- */
-function initializeFullscreenButton() {
-    try {
-        const fullscreenBtn = document.getElementById('fullscreen-btn');
-        if (fullscreenBtn) {
-            fullscreenBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                
-                if (!document.fullscreenElement) {
-                    // Entra in fullscreen
-                    const fullscreenPromise = document.documentElement.requestFullscreen ? 
-                        document.documentElement.requestFullscreen() :
-                        document.documentElement.mozRequestFullScreen ? 
-                        document.documentElement.mozRequestFullScreen() :
-                        document.documentElement.webkitRequestFullscreen ? 
-                        document.documentElement.webkitRequestFullscreen() :
-                        document.documentElement.msRequestFullscreen ? 
-                        document.documentElement.msRequestFullscreen() : null;
-                    
-                    if (fullscreenPromise) {
-                        fullscreenPromise.then(() => {
-                            // Salva lo stato fullscreen solo se riesce
-                            Storage.save('fullscreen_state', true);
-                        }).catch(err => {
-                            console.warn('Fullscreen non supportato:', err);
-                            Storage.save('fullscreen_state', false);
-                        });
-                    }
-                } else {
-                    // Esce dal fullscreen
-                    const exitPromise = document.exitFullscreen ? 
-                        document.exitFullscreen() :
-                        document.mozCancelFullScreen ? 
-                        document.mozCancelFullScreen() :
-                        document.webkitExitFullscreen ? 
-                        document.webkitExitFullscreen() :
-                        document.msExitFullscreen ? 
-                        document.msExitFullscreen() : null;
-                    
-                    if (exitPromise) {
-                        exitPromise.then(() => {
-                            Storage.save('fullscreen_state', false);
-                        }).catch(err => {
-                            console.warn('Errore uscita fullscreen:', err);
-                        });
-                    }
-                }
-            });
-        }
-
-        // Listener per quando l'utente esce dal fullscreen con ESC
-        document.addEventListener('fullscreenchange', () => {
-            if (!document.fullscreenElement) {
-                Storage.save('fullscreen_state', false);
-            }
-        });
-
-        // Compatibilità con altri browser
-        document.addEventListener('webkitfullscreenchange', () => {
-            if (!document.webkitFullscreenElement) {
-                Storage.save('fullscreen_state', false);
-            }
-        });
-
-        document.addEventListener('mozfullscreenchange', () => {
-            if (!document.mozFullScreenElement) {
-                Storage.save('fullscreen_state', false);
-            }
-        });
-
-    } catch (error) {
-        console.error('Errore inizializzazione pulsante fullscreen:', error);
-    }
+function getFormattedTimestamp() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const seconds = String(now.getSeconds()).padStart(2, '0');
+    return `${year}${month}${day}_${hours}${minutes}${seconds}`;
 }
 /* ===== FINE UTILITY ===== */
-
-/* ===== INIZIO GESTIONE TEMA ===== */
-function applyTheme(theme) {
-    const lightIcon = document.getElementById('theme-icon-light');
-    const darkIcon = document.getElementById('theme-icon-dark');
-    document.body.classList.toggle('dark-theme', theme === 'dark');
-    if (lightIcon && darkIcon) {
-        lightIcon.classList.toggle('theme-icon-hidden', theme === 'dark');
-        darkIcon.classList.toggle('theme-icon-hidden', theme !== 'dark');
-    }
-    Storage.save(Storage.KEYS.THEME, theme);
-}
-
-function initializeThemeSwitcher() {
-    const themeSwitcher = document.getElementById('theme-switcher');
-    if (themeSwitcher) {
-        themeSwitcher.addEventListener('click', (e) => {
-            e.preventDefault();
-            const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
-            applyTheme(newTheme);
-        });
-    }
-    const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
-    applyTheme(savedTheme);
-}
-/* ===== FINE GESTIONE TEMA ===== */
 
 /* ===== INIZIO WIDGETS ===== */
 class CalendarWidget {
@@ -255,21 +107,17 @@ class TodoWidget {
 }
 /* ===== FINE WIDGETS ===== */
 
-/* ===== INIZIO FUNZIONI PER RIEPILOGO VENDITE ===== */
-
+/* ===== FUNZIONI CENTRALI E DI RIEPILOGO ===== */
 function getSalesSummaryData() {
     const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
-    
     const productTotals = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0, adblue: 0 };
     const modalityTotals = { servito: 0, iperself: 0, selfservice: 0 };
-
     for (const key in virtualstationData) {
         if (key.startsWith('turn-')) {
             const turnData = virtualstationData[key];
             if (turnData && typeof turnData === 'object') {
                 for (const product in productTotals) {
                     const productInfo = turnData[product] || {};
-                    
                     productTotals[product] += productInfo.totalLiters || 0;
                     modalityTotals.servito += productInfo.servito || 0;
                     modalityTotals.iperself += productInfo.iperself || 0;
@@ -278,52 +126,34 @@ function getSalesSummaryData() {
             }
         }
     }
-    
     return { productTotals, modalityTotals };
 }
 
 function updateSalesSummaryWidget() {
-    const { productTotals, modalityTotals } = getSalesSummaryData();
-    
-    // Aggiorna i singoli valori dei prodotti nel riepilogo vendite della dashboard
+    const { productTotals } = getSalesSummaryData();
     Object.entries(productTotals).forEach(([product, liters]) => {
         const element = document.getElementById(`${product}-liters`);
-        if (element) {
-            element.textContent = `${formatLiters(liters)} L`;
-        }
+        if (element) element.textContent = `${formatLiters(liters)} L`;
     });
-
-    // Calcola e aggiorna il totale litri
     const totalLiters = Object.values(productTotals).reduce((sum, liters) => sum + liters, 0);
     const totalElement = document.getElementById('total-liters');
-    if (totalElement) {
-        totalElement.textContent = `${formatLiters(totalLiters)} L`;
-    }
+    if (totalElement) totalElement.textContent = `${formatLiters(totalLiters)} L`;
 }
 
-/* ===== FINE FUNZIONI PER RIEPILOGO VENDITE ===== */
-
-/* ===== INIZIO FUNZIONI CENTRALI ===== */
 function calculateFatturatoFromVenditeData() {
     const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
     if (virtualstationData.globalTotals?.general?.amount) {
         return virtualstationData.globalTotals.general.amount;
     }
-    
     let totalFromAllTurns = 0;
     const turnKeys = Object.keys(virtualstationData).filter(key => key.startsWith('turn-'));
-    turnKeys.forEach(turnKey => {
-        totalFromAllTurns += virtualstationData[turnKey].totalTurnAmount || 0;
-    });
-
+    turnKeys.forEach(turnKey => { totalFromAllTurns += virtualstationData[turnKey].totalTurnAmount || 0; });
     if (totalFromAllTurns > 0) return totalFromAllTurns;
-
     const venditeHistory = Storage.load(Storage.KEYS.VENDITE_HISTORY, []);
     if (venditeHistory.length > 0) {
         const lastSnapshot = venditeHistory[venditeHistory.length - 1];
         if (lastSnapshot.totalSales) return lastSnapshot.totalSales;
     }
-    
     return 0;
 }
 
@@ -331,10 +161,8 @@ function updateIncassoBox(fatturatoValue) {
     const imponibileElement = document.getElementById('corrispettivi-imponibile');
     const ivaElement = document.getElementById('corrispettivi-iva');
     if (!imponibileElement || !ivaElement) return;
-
     const imponibile = fatturatoValue / (1 + VAT_RATE);
     const iva = fatturatoValue - imponibile;
-    
     imponibileElement.textContent = formatEuro(imponibile);
     ivaElement.textContent = formatEuro(iva);
 }
@@ -342,24 +170,18 @@ function updateIncassoBox(fatturatoValue) {
 function updateMarginBox() {
     const marginElement = document.getElementById('corrispettivi-margine');
     if (!marginElement) return;
-
     const { modalityTotals } = getSalesSummaryData();
-
     const nonServitoLiters = modalityTotals.iperself + modalityTotals.selfservice;
     const servitoLiters = modalityTotals.servito;
-
     const nonServitoMargin = nonServitoLiters * MARGIN_NON_SERVITO;
     const servitoMargin = servitoLiters * MARGIN_SERVITO;
-
     const totalMargin = nonServitoMargin + servitoMargin;
-
     marginElement.textContent = formatEuro(totalMargin);
 }
 
 function initializeIncassoBox() {
     const fatturatoInput = document.getElementById('corrispettivi-fatturato');
     if (!fatturatoInput) return;
-
     const savedManualFatturato = Storage.load(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE, null);
     let initialFatturato = 0;
     if (savedManualFatturato !== null) {
@@ -367,31 +189,25 @@ function initializeIncassoBox() {
     } else {
         initialFatturato = calculateFatturatoFromVenditeData();
     }
-
     fatturatoInput.value = formatEuro(initialFatturato);
     updateIncassoBox(initialFatturato);
-
     const handleFatturatoChange = debounce(() => {
         const manualValue = parseNumberInput(fatturatoInput.value);
         Storage.save(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE, manualValue);
         updateIncassoBox(manualValue);
     }, 400);
-
     fatturatoInput.addEventListener('input', handleFatturatoChange);
-
     fatturatoInput.addEventListener('focus', () => {
         const rawValue = parseNumberInput(fatturatoInput.value);
         fatturatoInput.value = rawValue === 0 ? '' : String(rawValue).replace('.', ',');
         fatturatoInput.select();
     });
-
     fatturatoInput.addEventListener('blur', () => {
         const finalValue = parseNumberInput(fatturatoInput.value);
         fatturatoInput.value = formatEuro(finalValue);
     });
 }
 
-// Funzione per il reset del fatturato manuale
 function resetManualFatturato() {
     showConfirmModal('Azzera Fatturato Manuale?', 'Verrà usato il valore calcolato da Virtualstation. Confermi?', () => {
         Storage.remove(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE);
@@ -404,223 +220,128 @@ function resetManualFatturato() {
 
 /* ===== SISTEMA IMPORT/EXPORT UNIFICATO ===== */
 const COMPLETE_EXPORT_MAPPING = {
-    [Storage.KEYS.THEME]: 'theme',
-    [Storage.KEYS.NOTES]: 'notes', 
-    [Storage.KEYS.TODO_LIST]: 'todo',
-    [Storage.KEYS.CURRENT_TURNO]: 'turno',
-    [Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE]: 'corrispettiviFatturatoManuale',
-    [Storage.KEYS.DISPENSERS]: 'erogatori',
-    [Storage.KEYS.REGISTRO_DATA]: 'registro',
-    [Storage.KEYS.MONETARIO_DATA]: 'monetario',
-    [Storage.KEYS.VERSAMENTO_DATA]: 'versamento',
-    [Storage.KEYS.ORDER_HISTORY]: 'ordini',
-    [Storage.KEYS.CREDITO_DATA]: 'credito',
-    [Storage.KEYS.CARICO_TOTALS]: 'caricoTotals',
-    [Storage.KEYS.CARICO_HISTORY]: 'caricoHistory',
-    [Storage.KEYS.CARICO_RIMANENZE]: 'caricoRimanenze',
-    [Storage.KEYS.VENDITE_HISTORY]: 'venditeHistory',
-    [Storage.KEYS.HISTORY_COLLAPSED]: 'historyCollapsed',
-    [Storage.KEYS.VIRTUALSTATION_DATA]: 'virtualstationData'
+    [Storage.KEYS.THEME]: 'theme', [Storage.KEYS.NOTES]: 'notes', [Storage.KEYS.TODO_LIST]: 'todo',
+    [Storage.KEYS.CURRENT_TURNO]: 'turno', [Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE]: 'corrispettiviFatturatoManuale',
+    [Storage.KEYS.DISPENSERS]: 'erogatori', [Storage.KEYS.REGISTRO_DATA]: 'registro', [Storage.KEYS.MONETARIO_DATA]: 'monetario',
+    [Storage.KEYS.VERSAMENTO_DATA]: 'versamento', [Storage.KEYS.ORDER_HISTORY]: 'ordini', [Storage.KEYS.CREDITO_DATA]: 'credito',
+    [Storage.KEYS.CARICO_TOTALS]: 'caricoTotals', [Storage.KEYS.CARICO_HISTORY]: 'caricoHistory',
+    [Storage.KEYS.CARICO_RIMANENZE]: 'caricoRimanenze', [Storage.KEYS.VENDITE_HISTORY]: 'venditeHistory',
+    [Storage.KEYS.HISTORY_COLLAPSED]: 'historyCollapsed', [Storage.KEYS.VIRTUALSTATION_DATA]: 'virtualstationData'
 };
 
 function importaDatiCompleti() {
-    showConfirmModal(
-        'Importare Tutti i Dati?',
-        'Questo sovrascriverà TUTTI i dati di tutte le pagine. Procedere?',
-        () => {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.json';
-            input.onchange = function(e) {
-                const file = e.target.files[0];
-                if (!file) return;
-                
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    try {
-                        const importedData = JSON.parse(e.target.result);
-                        let importedCount = 0;
-                        
-                        Object.entries(COMPLETE_EXPORT_MAPPING).forEach(([storageKey, exportKey]) => {
-                            if (importedData.hasOwnProperty(exportKey)) {
-                                Storage.save(storageKey, importedData[exportKey]);
-                                importedCount++;
-                            }
-                        });
-                        
-                        if (importedCount === 0) {
-                            showMessage('Nessun dato valido trovato nel file.', 'warning');
-                            return;
-                        }
-                        
-                        showMessage(`${importedCount} sezioni importate! Ricarico...`, 'info');
-                        setTimeout(() => window.location.reload(), 1500);
-                        
-                    } catch (error) {
-                        showMessage('Errore: file non valido o corrotto', 'error');
-                    }
-                };
-                reader.readAsText(file);
+    showConfirmModal('Importare Tutti i Dati?', 'Questo sovrascriverà TUTTI i dati di tutte le pagine. Procedere?', () => {
+        const input = document.createElement('input');
+        input.type = 'file'; input.accept = '.json';
+        input.onchange = function(e) {
+            const file = e.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    let importedCount = 0;
+                    Object.entries(COMPLETE_EXPORT_MAPPING).forEach(([storageKey, exportKey]) => {
+                        if (importedData.hasOwnProperty(exportKey)) { Storage.save(storageKey, importedData[exportKey]); importedCount++; }
+                    });
+                    if (importedCount === 0) { showMessage('Nessun dato valido trovato nel file.', 'warning'); return; }
+                    showMessage(`${importedCount} sezioni importate! Ricarico...`, 'info');
+                    setTimeout(() => window.location.reload(), 1500);
+                } catch (error) { showMessage('Errore: file non valido o corrotto', 'error'); }
             };
-            input.click();
-        }
-    );
+            reader.readAsText(file);
+        };
+        input.click();
+    });
 }
 
 function esportaTuttiIDati() {
-    showConfirmModal(
-        'Esportare Tutti i Dati?',
-        'Verrà creato un backup completo di TUTTE le pagine. Continuare?',
-        () => {
-            try {
-                const dataToExport = {
-                    exportDate: new Date().toISOString(),
-                    exportVersion: '2.0',
-                    systemName: 'CERBERO',
-                    exportType: 'COMPLETE_SYSTEM_BACKUP'
-                };
-                
-                Object.entries(COMPLETE_EXPORT_MAPPING).forEach(([storageKey, exportKey]) => {
-                    const data = Storage.load(storageKey);
-                    if (data !== null) dataToExport[exportKey] = data;
-                });
-                
-                const dataStr = JSON.stringify(dataToExport, null, 2);
-                const dataBlob = new Blob([dataStr], {type: 'application/json'});
-                const url = URL.createObjectURL(dataBlob);
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = `cerbero_backup_completo_${new Date().toISOString().split('T')[0]}.json`;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                URL.revokeObjectURL(url);
-                
-                showMessage('Backup completo esportato!', 'info');
-
-            } catch (error) {
-                showMessage('Errore durante l\'esportazione completa', 'error');
-            }
-        }
-    );
+    showConfirmModal('Esportare Tutti i Dati?', 'Verrà creato un backup completo di TUTTE le pagine. Continuare?', () => {
+        try {
+            const dataToExport = { exportDate: new Date().toISOString(), exportVersion: '2.0', systemName: 'CERBERO', exportType: 'COMPLETE_SYSTEM_BACKUP' };
+            Object.entries(COMPLETE_EXPORT_MAPPING).forEach(([storageKey, exportKey]) => {
+                const data = Storage.load(storageKey);
+                if (data !== null) dataToExport[exportKey] = data;
+            });
+            const dataStr = JSON.stringify(dataToExport, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            const timestamp = getFormattedTimestamp();
+            link.download = `backup-completo_${timestamp}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            showMessage('Backup completo esportato!', 'info');
+        } catch (error) { showMessage('Errore durante l\'esportazione completa', 'error'); }
+    });
 }
 
-function resetRegistroData() {
-    Storage.remove(Storage.KEYS.REGISTRO_DATA);
-}
-
+function resetRegistroData() { Storage.remove(Storage.KEYS.REGISTRO_DATA); }
 function resetVirtualstationData() {
      const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
      const clearedData = { globalTotals: virtualstationData.globalTotals || {} };
      Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, clearedData);
 }
-
-// FUNZIONE MODIFICATA: Azzera anche il fatturato totale manuale
-function resetFatturatoManuale() {
-    Storage.remove(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE);
-}
+function resetFatturatoManuale() { Storage.remove(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE); }
 
 function esportaTuttiIDatiConfirmBypass() {
     try {
-        const dataToExport = {
-            exportDate: new Date().toISOString(),
-            exportVersion: '2.0',
-            systemName: 'CERBERO',
-            exportType: 'COMPLETE_SYSTEM_BACKUP_NEW_DAY'
-        };
-        
+        const dataToExport = { exportDate: new Date().toISOString(), exportVersion: '2.0', systemName: 'CERBERO', exportType: 'COMPLETE_SYSTEM_BACKUP_NEW_DAY' };
         Object.entries(COMPLETE_EXPORT_MAPPING).forEach(([storageKey, exportKey]) => {
             const data = Storage.load(storageKey);
             if (data !== null) dataToExport[exportKey] = data;
         });
-        
         const dataStr = JSON.stringify(dataToExport, null, 2);
         const dataBlob = new Blob([dataStr], {type: 'application/json'});
         const url = URL.createObjectURL(dataBlob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `cerbero_backup_giornata_${new Date().toISOString().split('T')[0]}.json`;
+        const timestamp = getFormattedTimestamp();
+        link.download = `backup-giornata_${timestamp}.json`;
         document.body.appendChild(link);
         link.click();
         document.body.removeChild(link);
         URL.revokeObjectURL(url);
-
-    } catch (error) {
-        throw error;
-    }
+    } catch (error) { throw error; }
 }
 
-// FUNZIONE MODIFICATA: Ora azzera anche il fatturato totale
 function confirmNewDay() {
-    showConfirmModal(
-        'Avvia Nuova Giornata?',
-        'Salverà un backup completo, azzererà il Registro, resetterà i turni di Virtualstation e azzererà il fatturato totale. Procedere?',
-        async () => {
-            try {
-                esportaTuttiIDatiConfirmBypass();
-                showMessage('Backup completo eseguito!', 'success');
-                
-                resetRegistroData();
-                showMessage('Registro azzerato!', 'info');
-
-                resetVirtualstationData();
-                showMessage('Virtualstation resettata!', 'info');
-                
-                resetFatturatoManuale();
-                showMessage('Fatturato totale azzerato!', 'info');
-                
-                showMessage('Operazione completata. Ricarico la pagina...', 'info');
-                setTimeout(() => window.location.reload(), 1500);
-            } catch(e) {
-                showMessage("Errore nell'esportazione. La giornata NON è stata azzerata.", 'error');
-            }
-        }
-    );
+    showConfirmModal('Avvia Nuova Giornata?', 'Salverà un backup completo, azzererà il Registro, resetterà i turni di Virtualstation e azzererà il fatturato totale. Procedere?', async () => {
+        try {
+            esportaTuttiIDatiConfirmBypass();
+            showMessage('Backup completo eseguito!', 'success');
+            resetRegistroData();
+            showMessage('Registro azzerato!', 'info');
+            resetVirtualstationData();
+            showMessage('Virtualstation resettata!', 'info');
+            resetFatturatoManuale();
+            showMessage('Fatturato totale azzerato!', 'info');
+            showMessage('Operazione completata. Ricarico la pagina...', 'info');
+            setTimeout(() => window.location.reload(), 1500);
+        } catch(e) { showMessage("Errore nell'esportazione. La giornata NON è stata azzerata.", 'error'); }
+    });
 }
 
 /* ===== GESTIONE ERRORI GLOBALI ===== */
-window.addEventListener('error', function(event) {
-    console.error('Errore JavaScript globale:', event.error);
-    showMessage('Si è verificato un errore imprevisto', 'error');
-});
-
-window.addEventListener('unhandledrejection', function(event) {
-    console.error('Promise rifiutata non gestita:', event.reason);
-    showMessage('Errore operazione asincrona', 'error');
-});
+window.addEventListener('error', function(event) { console.error('Errore JavaScript globale:', event.error); showMessage('Si è verificato un errore imprevisto', 'error'); });
+window.addEventListener('unhandledrejection', function(event) { console.error('Promise rifiutata non gestita:', event.reason); showMessage('Errore operazione asincrona', 'error'); });
 
 /* ===== INIZIALIZZAZIONE PAGINA ===== */
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        if (typeof Storage === 'undefined' || !Storage.KEYS) {
-            console.error("Storage o Storage.KEYS non definiti.");
-            return;
-        }
-
-        initializeThemeSwitcher();
+        if (typeof Storage === 'undefined' || !Storage.KEYS) { console.error("Storage o Storage.KEYS non definiti."); return; }
+        
+        ThemeManager.init(); // Chiamata al gestore centralizzato
         
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
-
         if (infoBtn && infoModal) {
             const closeBtn = infoModal.querySelector('.modal-close-btn');
-            
-            infoBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                infoModal.classList.add('active');
-            });
-
-            if(closeBtn) {
-                closeBtn.addEventListener('click', () => {
-                    infoModal.classList.remove('active');
-                });
-            }
-
-            infoModal.addEventListener('click', (e) => {
-                if(e.target === infoModal) {
-                    infoModal.classList.remove('active');
-                }
-            });
+            infoBtn.addEventListener('click', (e) => { e.preventDefault(); infoModal.classList.add('active'); });
+            if(closeBtn) { closeBtn.addEventListener('click', () => { infoModal.classList.remove('active'); }); }
+            infoModal.addEventListener('click', (e) => { if(e.target === infoModal) { infoModal.classList.remove('active'); } });
         }
         
         calendarWidget = new CalendarWidget();
@@ -631,37 +352,28 @@ document.addEventListener('DOMContentLoaded', function() {
             turnoInput.value = Storage.load(Storage.KEYS.CURRENT_TURNO, '');
             turnoInput.addEventListener('change', (e) => Storage.save(Storage.KEYS.CURRENT_TURNO, e.target.value));
         }
-
         const notesArea = document.getElementById('notesArea');
         if (notesArea) {
             notesArea.value = Storage.load(Storage.KEYS.NOTES, '');
             notesArea.addEventListener('input', debounce(() => Storage.save(Storage.KEYS.NOTES, notesArea.value), 500));
         }
-        
         function updateDateTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
             const dateString = now.toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
             const dateInputString = now.toLocaleDateString('it-IT');
-
             const currentTimeEl = document.getElementById('currentTime');
             const currentDateDisplayEl = document.getElementById('currentDateDisplay');
             const controlDateInput = document.getElementById('controlDate');
-            
             if (currentTimeEl) currentTimeEl.textContent = timeString;
             if (currentDateDisplayEl) currentDateDisplayEl.textContent = dateString.charAt(0).toUpperCase() + dateString.slice(1);
             if (controlDateInput) controlDateInput.value = dateInputString;
         }
-
         updateDateTime();
         setInterval(updateDateTime, 60000);
         
         initializeIncassoBox();
         updateSalesSummaryWidget();
         updateMarginBox();
-
-    } catch (error) {
-        console.error('❌ Errore nell\'inizializzazione:', error);
-        showMessage('Errore critico nell\'inizializzazione del sistema', 'error');
-    }
+    } catch (error) { console.error('❌ Errore nell\'inizializzazione:', error); showMessage('Errore critico nell\'inizializzazione del sistema', 'error'); }
 });

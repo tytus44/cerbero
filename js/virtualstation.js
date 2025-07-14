@@ -3,7 +3,7 @@
 /* ===== GESTIONE TEMA (Copia da monetario.js) ===== */
 function applyTheme(theme) {
     try {
-        document.body.classList.toggle('dark-theme', theme === 'dark');
+        document.documentElement.classList.toggle('dark-theme', theme === 'dark');
         const lightIcon = document.getElementById('theme-icon-light');
         const darkIcon = document.getElementById('theme-icon-dark');
         if (lightIcon && darkIcon) {
@@ -22,12 +22,10 @@ function initializeThemeSwitcher() {
         if (themeSwitcher) {
             themeSwitcher.addEventListener('click', (e) => {
                 e.preventDefault();
-                const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
+                const newTheme = document.documentElement.classList.contains('dark-theme') ? 'light' : 'dark';
                 applyTheme(newTheme);
             });
         }
-        const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
-        applyTheme(savedTheme);
     } catch (error) {
         console.error('Errore inizializzazione theme switcher:', error);
     }
@@ -38,7 +36,6 @@ function initializeInfoButton() {
     try {
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
-        // Seleziona il bottone di chiusura del modale, ora con l'icona Font Awesome
         const modalCloseBtn = infoModal ? infoModal.querySelector('.modal-close-btn') : null;
         
         if (infoBtn && infoModal) {
@@ -87,8 +84,8 @@ function showMessage(message, type = 'info') {
             position: fixed; top: 20px; right: 20px;
             background: ${colors[type] || colors.info};
             color: ${type === 'warning' ? '#333' : 'white'};
-            padding: 15px 20px; z-index: 1001; border-radius: 20px;
-            font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 14px;
+            padding: 15px 20px; z-index: 1001;
+            font-weight: 600; font-size: 14px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.2); max-width: 350px; word-wrap: break-word;
             animation: slideIn 0.3s ease-out;
         `;
@@ -123,6 +120,7 @@ function showConfirmModal(title, text, onConfirm) {
         const modalText = document.getElementById('confirm-modal-text');
         const btnOk = document.getElementById('confirm-modal-ok');
         const btnCancel = document.getElementById('confirm-modal-cancel');
+        const btnClose = modal.querySelector('.modal-close-btn');
 
         if (modalTitle) modalTitle.textContent = title;
         if (modalText) modalText.textContent = text;
@@ -144,6 +142,12 @@ function showConfirmModal(title, text, onConfirm) {
             newBtnCancel.addEventListener('click', hideModal, { once: true });
         }
         
+        if (btnClose) {
+            const newBtnClose = btnClose.cloneNode(true);
+            btnClose.parentNode.replaceChild(newBtnClose, btnClose);
+            newBtnClose.addEventListener('click', hideModal, { once: true });
+        }
+        
         modal.classList.add('active');
     } catch (error) {
         console.error('Errore modal:', error);
@@ -152,6 +156,7 @@ function showConfirmModal(title, text, onConfirm) {
         }
     }
 }
+
 
 const formatter = {
     liters: new Intl.NumberFormat('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
@@ -281,19 +286,12 @@ class VirtualstationManager {
             element.id = element.id.replace(/-\d+$/, `-${turnIndex}`);
         });
 
-        const deleteBtnContainer = newTurnBlock.querySelector('.turn-actions');
-        if (deleteBtnContainer) {
-            if (turnIndex === 0) {
-                deleteBtnContainer.style.display = 'none';
-            } else {
-                deleteBtnContainer.style.display = 'flex';
-                // Assicurati che il selettore sia corretto per l'icona Font Awesome
-                const deleteBtn = deleteBtnContainer.querySelector('.delete-turn-btn'); 
-                if (deleteBtn) {
-                    deleteBtn.dataset.turnIndex = turnIndex;
-                    deleteBtn.onclick = () => this.confirmDeleteTurn(turnIndex);
-                }
-            }
+        const deleteBtn = newTurnBlock.querySelector('.delete-turn-btn');
+        if (deleteBtn) {
+            const isOnlyOneTurn = this.turnManagers.length < 1 && isInitialLoad;
+            deleteBtn.style.display = isOnlyOneTurn ? 'none' : 'flex';
+            deleteBtn.dataset.turnIndex = turnIndex;
+            deleteBtn.onclick = () => this.confirmDeleteTurn(turnIndex);
         }
         
         document.getElementById('turns-container').appendChild(newTurnBlock);
@@ -319,6 +317,11 @@ class VirtualstationManager {
             Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, this.data);
             this.updateGlobalTotals();
             this.updateAllTurnsInStorage();
+
+            if(this.turnManagers.length > 1) {
+                const firstTurnDeleteBtn = document.querySelector('#turn-block-0 .delete-turn-btn');
+                if (firstTurnDeleteBtn) firstTurnDeleteBtn.style.display = 'flex';
+            }
         });
     }
 
@@ -331,10 +334,13 @@ class VirtualstationManager {
         const turnElement = document.getElementById(`turn-block-${turnIndex}`);
         if (turnElement) turnElement.remove();
         this.turnManagers = this.turnManagers.filter(manager => manager.turnIndex !== turnIndex.toString());
+        
         let reindexedData = { globalTotals: this.data.globalTotals || {} };
         let reindexedManagers = [];
         let currentNewIndex = 0;
+        
         const sortedTurnKeys = Object.keys(this.data).filter(key => key.startsWith('turn-')).sort((a,b) => parseInt(a.split('-')[1]) - parseInt(b.split('-')[1]));
+        
         sortedTurnKeys.forEach(oldKey => {
             const oldIndex = parseInt(oldKey.split('-')[1]);
             const newKey = `turn-${currentNewIndex}`;
@@ -345,19 +351,12 @@ class VirtualstationManager {
                 oldTurnBlockElement.querySelectorAll('[id]').forEach(element => {
                     element.id = element.id.replace(/-\d+$/, `-${currentNewIndex}`);
                 });
-                const reindexedDeleteBtnContainer = oldTurnBlockElement.querySelector('.turn-actions');
-                if(reindexedDeleteBtnContainer) {
-                    if (currentNewIndex === 0) {
-                        reindexedDeleteBtnContainer.style.display = 'none';
-                    } else {
-                        reindexedDeleteBtnContainer.style.display = 'flex';
-                        // Aggiorna il selettore per l'icona Font Awesome
-                        const reindexedDeleteBtn = reindexedDeleteBtnContainer.querySelector('.delete-turn-btn'); 
-                        if(reindexedDeleteBtn) {
-                            reindexedDeleteBtn.dataset.turnIndex = currentNewIndex;
-                            reindexedDeleteBtn.onclick = () => this.confirmDeleteTurn(currentNewIndex);
-                        }
-                    }
+
+                const reindexedDeleteBtn = oldTurnBlockElement.querySelector('.delete-turn-btn'); 
+                if(reindexedDeleteBtn) {
+                    reindexedDeleteBtn.dataset.turnIndex = currentNewIndex;
+                    reindexedDeleteBtn.onclick = () => this.confirmDeleteTurn(currentNewIndex);
+                    reindexedDeleteBtn.style.display = (sortedTurnKeys.length > 1) ? 'flex' : 'none';
                 }
             }
             const managerToReindex = this.turnManagers.find(mgr => mgr.turnIndex === oldKey.split('-')[1]);
@@ -369,15 +368,25 @@ class VirtualstationManager {
             }
             currentNewIndex++;
         });
+
         this.data = reindexedData;
         this.turnManagers = reindexedManagers;
         this.nextTurnIndex = currentNewIndex;
+        
         Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, this.data);
         showMessage(`Turno eliminato!`, 'info');
-        if (this.turnManagers.length === 0) this.addTurnBlockInternal(0, true);
+        
+        if (this.turnManagers.length === 0) {
+            this.addTurnBlockInternal(0, true);
+        } else if (this.turnManagers.length === 1) {
+            const onlyTurnDeleteBtn = document.querySelector('#turn-block-0 .delete-turn-btn');
+            if (onlyTurnDeleteBtn) onlyTurnDeleteBtn.style.display = 'none';
+        }
+
         this.updateGlobalTotals();
         this.updateAllTurnsInStorage();
     }
+
 
     confirmResetTurns() {
         showConfirmModal('Reset Tutti i Turni', 'Sei sicuro di voler cancellare tutti i turni? L\'operazione è irreversibile.', () => this.resetAllTurns());
@@ -498,13 +507,13 @@ class VirtualstationManager {
         };
         Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, this.data);
 
-        document.getElementById('global-iperself-liters').textContent = formatter.liters.format(totalGlobalIperselfLiters);
+        document.getElementById('global-iperself-liters').textContent = formatter.liters.format(totalGlobalIperselfLiters) + ' L';
         document.getElementById('global-iperself-amount').textContent = formatter.currency.format(totalGlobalIperselfAmount);
-        document.getElementById('global-servito-liters').textContent = formatter.liters.format(totalGlobalServitoLiters);
+        document.getElementById('global-servito-liters').textContent = formatter.liters.format(totalGlobalServitoLiters) + ' L';
         document.getElementById('global-servito-amount').textContent = formatter.currency.format(totalGlobalServitoAmount);
-        document.getElementById('global-self-service-liters').textContent = formatter.liters.format(totalGlobalSelfServiceLiters);
+        document.getElementById('global-self-service-liters').textContent = formatter.liters.format(totalGlobalSelfServiceLiters) + ' L';
         document.getElementById('global-self-service-amount').textContent = formatter.currency.format(totalGlobalSelfServiceAmount);
-        document.getElementById('global-total-liters').textContent = formatter.liters.format(totalGlobalLiters);
+        document.getElementById('global-total-liters').textContent = formatter.liters.format(totalGlobalLiters) + ' L';
         document.getElementById('global-total-amount').textContent = formatter.currency.format(totalGlobalAmount);
     }
 }
@@ -682,28 +691,27 @@ document.addEventListener('DOMContentLoaded', () => {
             hamburgerBtn.addEventListener('click', () => {
                 mainNav.classList.toggle('active');
                 mobileOverlay.classList.toggle('active');
-                document.body.classList.toggle('no-scroll'); // Optional: prevent scrolling background
+                document.body.classList.toggle('no-scroll');
             });
 
             mobileOverlay.addEventListener('click', () => {
                 mainNav.classList.remove('active');
                 mobileOverlay.classList.remove('active');
-                document.body.classList.remove('no-scroll'); // Optional
+                document.body.classList.remove('no-scroll');
             });
 
-            // Close menu if a nav link is clicked
             mainNav.querySelectorAll('a').forEach(link => {
                 link.addEventListener('click', () => {
                     mainNav.classList.remove('active');
                     mobileOverlay.classList.remove('active');
-                    document.body.classList.remove('no-scroll'); // Optional
+                    document.body.classList.remove('no-scroll');
                 });
             });
         }
         // MOBILE MENU LOGIC (END)
 
         initializeThemeSwitcher();
-        initializeInfoButton(); // AGGIUNTA CHIAMATA
+        initializeInfoButton();
         window.virtualstationManager = new VirtualstationManager();
         console.log("Sistema Virtualstation inizializzato.");
     } catch (error) {

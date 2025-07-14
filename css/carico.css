@@ -97,11 +97,20 @@ body {
 /* ===== LAYOUT GRIGLIA CARICO ===== */
 .main-container {
     display: grid;
-    grid-template-columns: 1fr 400px;
+    grid-template-columns: 1fr; /* Modificato da '1fr 400px' a '1fr' per una singola colonna a tutta larghezza */
     gap: 20px;
     margin-bottom: 25px;
-    margin-top: 0; /* Rimuove il margin top dato che non c'è più il titolo */
+    margin-top: 0;
 }
+
+/* Nuovo stile per la riga dei grafici */
+.chart-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); /* Due colonne per i grafici, flessibili */
+    gap: 20px;
+    margin-bottom: 25px; /* Margine sotto la riga dei grafici */
+}
+
 
 /* ===== GRIGLIA CARICHI ===== */
 .carico-grid {
@@ -123,19 +132,19 @@ body {
 .product-label {
     font-weight: 600;
     font-size: var(--font-size-standard);
-    color: var(--text-primary); /* Cambiato da white a text-primary */
-    text-align: left; /* Cambiato da center a left per rientro */
-    padding: 10px 8px 10px 15px; /* Aggiunto rientro a sinistra */
+    color: var(--text-primary);
+    text-align: left;
+    padding: 10px 8px 10px 15px;
     border-radius: var(--radius-squadrato);
     text-transform: uppercase;
-    background: var(--bg-display); /* Sfondo neutro invece di colorato */
-    border-left: 5px solid var(--primary-blue); /* Accento di default */
+    background: var(--bg-display);
+    border-left: 5px solid var(--primary-blue);
 }
 
 .product-label.product-benzina {
-    border-left: 5px solid var(--product-benzina); /* Solo accento colorato */
-    background: var(--bg-display); /* Sfondo neutro */
-    color: var(--text-primary); /* Testo normale */
+    border-left: 5px solid var(--product-benzina);
+    background: var(--bg-display);
+    color: var(--text-primary);
 }
 .product-label.product-gasolio {
     border-left: 5px solid var(--product-gasolio);
@@ -160,28 +169,26 @@ body {
     font-weight: 700;
 }
 
-/* Stili specifici per i campi totali - con priorità massima */
+/* Stili specifici per i campi totali - ora come normali campi read-only */
 #box-sinistro #totali-litri,
 #box-sinistro #totali-piu,
 #box-sinistro #totali-meno,
 #box-sinistro #totali-diff,
 #box-sinistro #totali-rimanenza,
 #box-sinistro #totali-totale {
-    background: var(--primary-blue-light) !important;
-    font-weight: 700 !important;
-    color: var(--primary-blue) !important;
-    border: 2px solid var(--primary-blue) !important;
+    /* Rimossi gli override di background e border, userà quelli di .grid-input[readonly] o .display-field */
+    font-weight: 700 !important; /* Mantenuto per il grassetto */
+    /* Il colore del testo e lo sfondo saranno ora gestiti dalle regole generali per .grid-input[readonly] e .display-field in style.css */
 }
 
-body.dark-theme #box-sinistro #totali-litri,
-body.dark-theme #box-sinistro #totali-piu,
-body.dark-theme #box-sinistro #totali-meno,
-body.dark-theme #box-sinistro #totali-diff,
-body.dark-theme #box-sinistro #totali-rimanenza,
-body.dark-theme #box-sinistro #totali-totale {
-    background: var(--bg-display) !important;
-    color: var(--text-primary) !important;
-    border-color: var(--primary-blue) !important;
+/* Regola per il tema scuro, si applica solo se il tema scuro è attivo */
+html.dark-theme #box-sinistro #totali-litri,
+html.dark-theme #box-sinistro #totali-piu,
+html.dark-theme #box-sinistro #totali-meno,
+html.dark-theme #box-sinistro #totali-diff,
+html.dark-theme #box-sinistro #totali-rimanenza,
+html.dark-theme #box-sinistro #totali-totale {
+    /* Anche qui, le proprietà rimosse si baseranno sui valori di tema scuro di .grid-input[readonly] e .display-field */
 }
 
 /* ===== GRAFICO CONTAINER ===== */
@@ -189,7 +196,7 @@ body.dark-theme #box-sinistro #totali-totale {
     position: relative;
     width: 100%;
     height: 100%;
-    min-height: 280px;
+    min-height: 280px; /* Altezza minima per entrambi i grafici */
 }
 
 /* ===== TABELLA STORICO CON ALLINEAMENTO COLONNE ===== */
@@ -205,47 +212,46 @@ body.dark-theme #box-sinistro #totali-totale {
     width: 100%;
     border-collapse: collapse;
     font-size: var(--font-size-standard);
-    table-layout: fixed; /* Layout fisso per allineamento colonne */
+    table-layout: fixed;
 }
 
-/* ===== LARGHEZZE COLONNE FISSE PER ALLINEAMENTO ===== */
 .history-table th:nth-child(1),
-.history-table td:nth-child(1) { width: 80px; } /* Data */
+.history-table td:nth-child(1) { width: 80px; }
 
 .history-table th:nth-child(2),
-.history-table td:nth-child(2) { width: 70px; } /* Benzina */
+.history-table td:nth-child(2) { width: 70px; }
 
 .history-table th:nth-child(3),
-.history-table td:nth-child(3) { width: 50px; } /* Benzina +/- */
+.history-table td:nth-child(3) { width: 50px; }
 
 .history-table th:nth-child(4),
-.history-table td:nth-child(4) { width: 70px; } /* Gasolio */
+.history-table td:nth-child(4) { width: 70px; }
 
 .history-table th:nth-child(5),
-.history-table td:nth-child(5) { width: 50px; } /* Gasolio +/- */
+.history-table td:nth-child(5) { width: 50px; }
 
 .history-table th:nth-child(6),
-.history-table td:nth-child(6) { width: 70px; } /* Diesel+ */
+.history-table td:nth-child(6) { width: 70px; }
 
 .history-table th:nth-child(7),
-.history-table td:nth-child(7) { width: 50px; } /* Diesel+ +/- */
+.history-table td:nth-child(7) { width: 50px; }
 
 .history-table th:nth-child(8),
-.history-table td:nth-child(8) { width: 80px; } /* HVOlution */
+.history-table td:nth-child(8) { width: 80px; }
 
 .history-table th:nth-child(9),
-.history-table td:nth-child(9) { width: 50px; } /* HVOlution +/- */
+.history-table td:nth-child(9) { width: 50px; }
 
 .history-table th:nth-child(10),
 .history-table td:nth-child(10) { 
-    width: 130px; /* Allargata da 100px a 130px */
-    text-align: left !important; /* Allineamento a sinistra */
-    padding-left: 8px !important; /* Rientro per i nomi */
+    width: 130px;
+    text-align: left !important;
+    padding-left: 8px !important;
 }
 
 .history-table th:nth-child(11),
 .history-table td:nth-child(11) { 
-    width: 40px; /* Ristretta da 60px a 40px */
+    width: 40px;
     text-align: center !important;
 }
 
@@ -258,7 +264,6 @@ body.dark-theme #box-sinistro #totali-totale {
     text-overflow: ellipsis;
 }
 
-/* Header fisso con larghezze precise */
 .history-table thead {
     display: table-header-group;
 }
@@ -275,23 +280,21 @@ body.dark-theme #box-sinistro #totali-totale {
     font-weight: 700 !important;
     vertical-align: middle;
     position: relative;
-    padding: 2px 4px !important; /* Padding ridotto per header */
+    padding: 2px 4px !important;
 }
 
-/* Rimuovi il bordo destro dall'ultima colonna dell'header */
 .history-table thead th:last-child {
     border-right: none;
 }
 
-/* Corpo tabella con stesse larghezze */
 .history-table tbody {
     display: table-row-group;
 }
 
 .history-table tbody td {
     border-bottom: 1px solid var(--primary-blue-light);
-    padding: 4px 2px; /* Padding ridotto per allineamento */
-    font-size: 12px; /* Font leggermente ridotto per far stare tutto */
+    padding: 4px 2px;
+    font-size: 12px;
 }
 
 .history-table tbody tr:hover {
@@ -302,7 +305,7 @@ body.dark-theme #box-sinistro #totali-totale {
 .table-header-fixed {
     background: var(--primary-blue);
     border-radius: var(--radius-squadrato) var(--radius-squadrato) 0 0;
-    overflow: hidden; /* Previene overflow */
+    overflow: hidden;
 }
 
 .table-header-fixed .history-table {
@@ -350,57 +353,10 @@ body.dark-theme #box-sinistro #totali-totale {
     transform: rotate(-180deg);
 }
 
-.edit-history-btn {
-    width: 28px; /* Ridotto per allineamento con colonna */
-    height: 28px; /* Ridotto per allineamento con colonna */
-    border-radius: 50%;
-    background: var(--bg-display);
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    margin: 0 auto;
-    display: flex; /* Sempre visibile */
-    align-items: center;
-    justify-content: center;
-}
-
-.edit-history-btn i {
-    font-size: 14px; /* Ridotto per allineamento */
-    color: var(--text-primary);
-    transition: all 0.3s ease;
-}
-
-.edit-history-btn:hover {
-    background-color: var(--primary-blue-light);
-    transform: scale(1.1);
-}
-
-.edit-history-btn:hover i {
-    color: var(--primary-blue);
-}
-
-.edit-history-btn.editing {
-    background-color: var(--success);
-}
-
-.edit-history-btn.editing i {
-    color: white;
-}
-
-.edit-history-btn.editing:hover {
-    background-color: var(--success-hover);
-}
-
-/* ===== HEADER AZIONI NELLA TABELLA ===== */
-.actions-header {
-    width: 40px !important; /* Larghezza ridotta per header azioni */
-    text-align: center;
-}
-
 .edit-btn {
-    width: 28px; /* Ridotto da 32px a 28px */
-    height: 28px; /* Ridotto da 32px a 28px */
-    display: none;
+    width: 28px;
+    height: 28px;
+    display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 50%;
@@ -408,7 +364,7 @@ body.dark-theme #box-sinistro #totali-totale {
     border: none;
     cursor: pointer;
     transition: all 0.3s ease;
-    margin: 0 auto; /* Centra il pulsante */
+    margin: 0 auto;
 }
 
 .edit-btn:hover {
@@ -417,13 +373,8 @@ body.dark-theme #box-sinistro #totali-totale {
 }
 
 .edit-btn i {
-    font-size: 14px; /* Ridotto da 16px a 14px */
+    font-size: 14px;
     color: var(--text-primary);
-}
-
-.history-table.editing .edit-btn {
-    display: flex;
-    margin: 0 auto;
 }
 
 /* ===== CONTENUTO COLLASSABILE - OTTIMIZZATO ===== */
@@ -432,14 +383,14 @@ body.dark-theme #box-sinistro #totali-totale {
     transition: max-height 0.4s ease-in-out, padding 0.4s ease-in-out, opacity 0.3s ease-in-out;
     max-height: 1000px;
     opacity: 1;
-    padding: 15px; /* Padding normale quando espanso */
+    padding: 15px;
 }
 
 .collapsible-content.collapsed {
     max-height: 0;
     opacity: 0;
-    padding: 0; /* Rimuove completamente il padding quando collassato */
-    margin: 0; /* Rimuove anche eventuali margini */
+    padding: 0;
+    margin: 0;
 }
 
 /* ===== BOX STORICO OTTIMIZZATO ===== */
@@ -448,10 +399,9 @@ body.dark-theme #box-sinistro #totali-totale {
 }
 
 #box-inferiore .box-header {
-    padding: 15px 25px; /* Padding fisso per l'header */
+    padding: 15px 25px;
 }
 
-/* Quando il contenuto è collassato, riduci il min-height del box */
 #box-inferiore:has(.collapsible-content.collapsed) {
     min-height: auto;
 }
@@ -505,19 +455,16 @@ body.dark-theme #box-sinistro #totali-totale {
     outline: none;
 }
 
-/* CORREZIONE: Centra testo campo data */
 #load-date, #edit-load-date {
     text-align: center;
 }
 
-/* ===== MODAL CARICO PIÙ AMPIO ===== */
 #newLoadModal .modal,
 #edit-cargo-modal .modal {
-    max-width: 700px !important; /* Ridotto da 900px a 700px */
-    width: 90% !important; /* Ridotto da 95% a 90% */
+    max-width: 700px !important;
+    width: 90% !important;
 }
 
-/* ===== GRUPPI INPUT PRODOTTI RESPONSIVE ===== */
 .product-inputs {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -531,13 +478,12 @@ body.dark-theme #box-sinistro #totali-totale {
     gap: 8px;
     text-align: center;
     background: var(--bg-primary);
-    padding: 15px; /* Ripristinato padding normale */
+    padding: 15px;
     border-radius: var(--radius-medium);
     border: 1px solid var(--primary-blue-light);
-    min-width: 0; /* Permette la riduzione */
+    min-width: 0;
 }
 
-/* CORREZIONE: Altezza etichette prodotto */
 .product-input-label {
     font-size: 11px;
     color: var(--text-primary);
@@ -546,7 +492,6 @@ body.dark-theme #box-sinistro #totali-totale {
     text-transform: uppercase;
     font-weight: 600;
     text-align: center;
-    /* Stili aggiunti per altezza e allineamento */
     min-height: 44px;
     display: flex;
     align-items: center;
@@ -561,267 +506,83 @@ body.dark-theme #box-sinistro #totali-totale {
 
 .product-diff-input {
     margin-top: 5px;
-    font-size: var(--font-size-standard) !important; /* Ripristinato font standard */
     background: var(--bg-white);
     border: 1px solid #ddd;
-    padding: 10px 15px !important; /* Ripristinato padding standard */
-    min-height: 44px !important; /* Ripristinata altezza standard */
 }
 
 .product-input-group .form-input,
 .product-input-group .product-diff-input {
     text-align: center;
-    padding: 10px 15px !important; /* Ripristinato padding standard */
-    min-height: 44px !important; /* Ripristinata altezza standard */
-    font-size: var(--font-size-standard) !important; /* Ripristinato font standard */
 }
 
-/* ===== RIMOZIONE SPINNER NUMERO ===== */
-.modal-form input[type=number]::-webkit-inner-spin-button,
-.modal-form input[type=number]::-webkit-outer-spin-button {
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.modal-form input[type=number] {
+input[type=number] {
     -moz-appearance: textfield;
 }
 
-/* ===== NASCONDERE SU MOBILE ===== */
 .hide-mobile {
     display: block;
 }
 
-/* ===== RESPONSIVE TABELLA ===== */
 @media (max-width: 1200px) {
-    /* Su schermi più piccoli, riduci leggermente le larghezze */
-    .history-table th:nth-child(1),
-    .history-table td:nth-child(1) { width: 70px; } /* Data */
-    
-    .history-table th:nth-child(2),
-    .history-table td:nth-child(2) { width: 60px; } /* Benzina */
-    
-    .history-table th:nth-child(4),
-    .history-table td:nth-child(4) { width: 60px; } /* Gasolio */
-    
-    .history-table th:nth-child(6),
-    .history-table td:nth-child(6) { width: 60px; } /* Diesel+ */
-    
-    .history-table th:nth-child(8),
-    .history-table td:nth-child(8) { width: 70px; } /* HVOlution */
-    
-    .history-table th:nth-child(10),
-    .history-table td:nth-child(10) { width: 80px; } /* Autista */
+    .history-table th:nth-child(1), .history-table td:nth-child(1) { width: 70px; }
+    .history-table th:nth-child(2), .history-table td:nth-child(2) { width: 60px; }
+    .history-table th:nth-child(4), .history-table td:nth-child(4) { width: 60px; }
+    .history-table th:nth-child(6), .history-table td:nth-child(6) { width: 60px; }
+    .history-table th:nth-child(8), .history-table td:nth-child(8) { width: 70px; }
+    .history-table th:nth-child(10), .history-table td:nth-child(10) { width: 80px; }
 }
 @media (max-width: 992px) {
-    .main-container {
-        grid-template-columns: 1fr;
-    }
+    .main-container { grid-template-columns: 1fr; }
+    .hide-mobile { display: none; }
+    .carico-grid { grid-template-columns: 100px 1fr; }
+    .product-inputs { grid-template-columns: repeat(2, 1fr); }
+    .summary-grid { grid-template-columns: 1fr; gap: 15px; }
+    #newLoadModal .modal, #edit-cargo-modal .modal { max-width: 600px !important; width: 85% !important; }
+    .summary-grid .summary-box .stat-value, .summary-grid .summary-box .summary-value { font-size: 2rem !important; }
+    .summary-grid .summary-box .summary-title { font-size: 0.9rem !important; }
+    .summary-grid .summary-box .summary-details { font-size: 13px !important; }
+    .summary-grid .summary-box { padding: 12px !important; }
 
-    .hide-mobile {
-        display: none;
-    }
-
-    .carico-grid {
-        grid-template-columns: 100px 1fr;
-    }
-
-    .product-inputs {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .summary-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-
-    /* Modal più piccolo su tablet */
-    #newLoadModal .modal,
-    #edit-cargo-modal .modal {
-        max-width: 600px !important; /* Ridotto da 700px */
-        width: 85% !important; /* Ridotto da larghezza precedente */
-    }
-
-    /* Font responsivi per mobile */
-    .summary-grid .summary-box .stat-value,
-    .summary-grid .summary-box .summary-value {
-        font-size: 2rem !important;
-    }
-
-    .summary-grid .summary-box .summary-title {
-        font-size: 0.9rem !important;
-    }
-
-    .summary-grid .summary-box .summary-details {
-        font-size: 13px !important;
-    }
-
-    .summary-grid .summary-box {
-        padding: 12px !important;
+    /* Responsive per la nuova riga di grafici */
+    .chart-row {
+        grid-template-columns: 1fr; /* Una colonna su schermi piccoli */
     }
 }
 
 @media (max-width: 768px) {
-    .product-inputs {
-        grid-template-columns: 1fr;
-        gap: 10px; /* Gap ridotto su mobile */
-    }
-
-    .form-row {
-        grid-template-columns: 1fr;
-    }
-
-    /* Modal a schermo intero su mobile */
-    #newLoadModal .modal,
-    #edit-cargo-modal .modal {
-        max-width: 95% !important;
-        margin: 10px !important;
-        max-height: 90vh !important;
-        overflow-y: auto !important;
-    }
-
-    .product-input-group {
-        padding: 10px !important; /* Padding ancora più ridotto su mobile */
-    }
-
-    .product-input-label {
-        font-size: 13px !important; /* Leggermente ridotto su mobile ma non troppo */
-        padding: 8px 12px !important; /* Padding ridotto su mobile */
-        min-height: 40px !important; /* Altezza leggermente ridotta su mobile */
-    }
+    .product-inputs { grid-template-columns: 1fr; gap: 10px; }
+    .form-row { grid-template-columns: 1fr; }
+    #newLoadModal .modal, #edit-cargo-modal .modal { max-width: 95% !important; margin: 10px !important; max-height: 90vh !important; overflow-y: auto !important; }
+    .product-input-group { padding: 10px !important; }
+    .product-input-label { font-size: 13px !important; padding: 8px 12px !important; min-height: 40px !important; }
 }
 
-/* ===== TEMA SCURO - ETICHETTE PRODOTTI ===== */
-body.dark-theme .product-label {
-    background: var(--bg-display);
-    color: var(--text-primary);
-}
+html.dark-theme .product-label, html.dark-theme .product-input-label { background: var(--bg-display); color: var(--text-primary); }
+html.dark-theme .product-label.product-benzina { border-left: 5px solid var(--product-benzina); }
+html.dark-theme .product-label.product-gasolio { border-left: 5px solid var(--product-gasolio); }
+html.dark-theme .product-label.product-diesel { border-left: 5px solid var(--product-diesel); }
+html.dark-theme .product-label.product-hvolution { border-left: 5px solid var(--product-hvolution); }
+html.dark-theme .product-input-label.benzina { border-left: 4px solid var(--product-benzina); }
+html.dark-theme .product-input-label.gasolio { border-left: 4px solid var(--product-gasolio); }
+html.dark-theme .product-input-label.diesel { border-left: 4px solid var(--product-diesel); }
+html.dark-theme .product-input-label.hvolution { border-left: 4px solid var(--product-hvolution); }
+html.dark-theme .form-input { background: var(--bg-primary); border-color: var(--bg-display); color: var(--text-primary); }
+html.dark-theme .product-diff-input { background: var(--bg-primary); border-color: var(--bg-display); }
+html.dark-theme .collapse-btn i { color: var(--text-secondary); }
+html.dark-theme .collapse-btn:hover i { color: var(--text-primary); }
+html.dark-theme .edit-btn i { color: var(--text-primary); }
+html.dark-theme .edit-btn:hover i { color: var(--text-primary); }
 
-body.dark-theme .product-input-label {
-    background: var(--bg-display);
-    color: var(--text-primary);
-}
-
-/* Mantieni gli accenti colorati anche nel tema scuro */
-body.dark-theme .product-label.product-benzina {
-    border-left: 5px solid var(--product-benzina);
-}
-body.dark-theme .product-label.product-gasolio {
-    border-left: 5px solid var(--product-gasolio);
-}
-body.dark-theme .product-label.product-diesel {
-    border-left: 5px solid var(--product-diesel);
-}
-body.dark-theme .product-label.product-hvolution {
-    border-left: 5px solid var(--product-hvolution);
-}
-
-body.dark-theme .product-input-label.benzina {
-    border-left: 4px solid var(--product-benzina);
-}
-body.dark-theme .product-input-label.gasolio {
-    border-left: 4px solid var(--product-gasolio);
-}
-body.dark-theme .product-input-label.diesel {
-    border-left: 4px solid var(--product-diesel);
-}
-body.dark-theme .product-input-label.hvolution {
-    border-left: 4px solid var(--product-hvolution);
-}
-
-body.dark-theme .form-input {
-    background: var(--bg-primary);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
-body.dark-theme .product-diff-input {
-    background: var(--bg-primary);
-    border-color: var(--bg-display);
-}
-
-body.dark-theme .edit-history-btn {
-    background: var(--bg-display);
-}
-
-body.dark-theme .edit-history-btn i {
-    color: var(--text-primary);
-}
-
-body.dark-theme .edit-history-btn:hover {
-    background-color: var(--primary-blue-light);
-}
-
-body.dark-theme .collapse-btn i {
-    color: var(--text-secondary);
-}
-
-body.dark-theme .collapse-btn:hover i {
-    color: var(--text-primary);
-}
-
-body.dark-theme .edit-btn i {
-    color: var(--text-primary);
-}
-
-body.dark-theme .edit-btn:hover i {
-    color: var(--text-primary);
-}
-
-/* ===== NUOVI STILI PER FILTRI ===== */
-.filter-container {
-    background-color: var(--bg-white);
-    padding: 15px;
-    border-radius: var(--radius-squadrato);
-    box-shadow: var(--shadow-medium);
-    margin-bottom: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    flex-wrap: wrap;
-}
-
-body.dark-theme .filter-container {
-    background-color: var(--bg-white);
-    border: 1px solid var(--bg-display);
-}
-
-.filter-label {
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    font-size: 14px;
-}
-
-.filter-select {
-    padding: 10px 15px !important;
-    height: 44px !important;
-    width: auto;
-    border: 1px solid var(--primary-blue-light) !important;
-    background-color: var(--bg-white);
-    color: var(--text-secondary);
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
-    background-repeat: no-repeat;
-    background-position: right 0.75rem center;
-    background-size: 16px 12px;
-}
-
-body.dark-theme .filter-select {
-    background-color: var(--bg-primary);
-    border-color: var(--bg-display) !important;
-    color: var(--text-primary);
-}
-
-/* Stili per la vista filtrata (nasconde le colonne non pertinenti) */
 #box-sinistro.period-filtered .hide-on-filter {
     display: none !important;
 }
 
-/* CORREZIONE: Adatta la griglia quando un filtro è attivo, riducendo il numero di colonne */
 #box-sinistro.period-filtered .carico-grid {
     grid-template-columns: 120px repeat(4, 1fr);
 }

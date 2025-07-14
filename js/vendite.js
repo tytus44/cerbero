@@ -1,31 +1,6 @@
 /* ===== CERBERO VENDITE ===== */
 
-/* ===== GESTIONE TEMA ===== */
-function applyTheme(theme) {
-    const lightIcon = document.getElementById('theme-icon-light');
-    const darkIcon = document.getElementById('theme-icon-dark');
-    document.body.classList.toggle('dark-theme', theme === 'dark');
-    if (lightIcon && darkIcon) {
-        lightIcon.classList.toggle('theme-icon-hidden', theme === 'dark');
-        darkIcon.classList.toggle('theme-icon-hidden', theme !== 'dark');
-    }
-    Storage.save(Storage.KEYS.THEME, theme);
-}
-
-function initializeThemeSwitcher() {
-    const themeSwitcher = document.getElementById('theme-switcher');
-    if (themeSwitcher) {
-        themeSwitcher.addEventListener('click', (e) => {
-            e.preventDefault();
-            const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
-            applyTheme(newTheme);
-        });
-    }
-    const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
-    applyTheme(savedTheme);
-}
-
-/* ===== GESTIONE MODALE INFO ===== */
+/* ===== UTILITY E FUNZIONI HELPER (Le funzioni del tema sono rimosse) ===== */
 function initializeInfoButton() {
     try {
         const infoBtn = document.getElementById('info-btn');
@@ -55,7 +30,6 @@ function initializeInfoButton() {
     }
 }
 
-/* ===== GESTIONE MOBILE MENU ===== */
 function initializeMobileMenu() {
     try {
         const sidebar = document.querySelector('.sidebar');
@@ -98,7 +72,6 @@ function initializeMobileMenu() {
     }
 }
 
-/* ===== UTILITY ===== */
 function showMessage(message, type = 'info') {
     try {
         const allowedTypes = ['error', 'warning', 'info'];
@@ -120,7 +93,7 @@ function showMessage(message, type = 'info') {
             position: fixed; top: 20px; right: 20px;
             background: ${colors[type] || colors.info};
             color: ${type === 'warning' ? '#333' : 'white'};
-            padding: 15px 20px; z-index: 1001; font-family: 'Montserrat', sans-serif;
+            padding: 15px 20px; z-index: 1001; 
             font-weight: 600; font-size: 14px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
             border-radius: 4px; max-width: 350px; word-wrap: break-word;
             animation: slideIn 0.3s ease-out;
@@ -137,6 +110,36 @@ function showMessage(message, type = 'info') {
         alert(message);
     }
 }
+
+function showConfirmModal(title, text, onConfirm) {
+    const modal = document.getElementById('confirm-modal');
+    const modalTitle = document.getElementById('confirm-modal-title');
+    const modalText = document.getElementById('confirm-modal-text');
+    const btnOk = document.getElementById('confirm-modal-ok');
+    const btnCancel = document.getElementById('confirm-modal-cancel');
+    const btnClose = modal.querySelector('.modal-close-btn');
+
+    modalTitle.textContent = title;
+    modalText.textContent = text;
+    const hideModal = () => modal.classList.remove('active');
+
+    const newBtnOk = btnOk.cloneNode(true);
+    btnOk.parentNode.replaceChild(newBtnOk, btnOk);
+    newBtnOk.addEventListener('click', () => { onConfirm(); hideModal(); }, { once: true });
+    
+    const newBtnCancel = btnCancel.cloneNode(true);
+    btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
+    newBtnCancel.addEventListener('click', hideModal, { once: true });
+    
+    if (btnClose) {
+        const newBtnClose = btnClose.cloneNode(true);
+        btnClose.parentNode.replaceChild(newBtnClose, btnClose);
+        newBtnClose.addEventListener('click', hideModal, { once: true });
+    }
+    
+    modal.classList.add('active');
+}
+
 
 const formatNumber = (num) => new Intl.NumberFormat('it-IT').format(num);
 const formatEuro = (num) => new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }).format(num);
@@ -155,7 +158,7 @@ const VenditeManager = {
 
     init: function() {
         this.updateFilterValueOptions();
-        this.resetPeriodFilter(); // Carica i dati live all'avvio
+        this.resetPeriodFilter();
         this.bindEvents();
     },
 
@@ -164,6 +167,72 @@ const VenditeManager = {
         document.getElementById('btn-apply-filter')?.addEventListener('click', () => this.applyPeriodFilter());
         document.getElementById('btn-reset-filter')?.addEventListener('click', () => this.resetPeriodFilter());
         document.getElementById('filter-type')?.addEventListener('change', () => this.updateFilterValueOptions());
+        document.getElementById('btn-importa')?.addEventListener('click', () => this.importData());
+        document.getElementById('btn-esporta')?.addEventListener('click', () => this.exportData());
+    },
+
+    importData: function() {
+        showConfirmModal(
+            'Importa Storico Vendite?',
+            'Questa azione sovrascriverà lo storico delle vendite esistente. Continuare?',
+            () => {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.json';
+                input.onchange = (event) => {
+                    const file = event.target.files[0];
+                    if (!file) return;
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        try {
+                            const importedFile = JSON.parse(e.target.result);
+                            const historyData = importedFile.venditeHistory || importedFile.history;
+                            if (historyData && Array.isArray(historyData)) {
+                                Storage.save(Storage.KEYS.VENDITE_HISTORY, historyData);
+                                showMessage('Storico vendite importato! Applica un filtro per visualizzare i dati.', 'success');
+                                this.resetPeriodFilter(); 
+                            } else {
+                                showMessage('File non valido o non contiene uno storico vendite.', 'error');
+                            }
+                        } catch (err) {
+                            showMessage('Errore nella lettura del file.', 'error');
+                            console.error("Import error:", err);
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            }
+        );
+    },
+
+    exportData: function() {
+        if (!this.currentData) {
+            showMessage('Nessun dato da esportare.', 'warning');
+            return;
+        }
+
+        const dataToExport = {
+            exportDate: new Date().toISOString(),
+            exportType: 'vendite_snapshot',
+            periodo: this.currentPeriodText,
+            dati: this.currentData
+        };
+
+        const dataStr = JSON.stringify(dataToExport, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
+        const link = document.createElement('a');
+        link.href = url;
+        
+        const dateString = new Date().toISOString().split('T')[0].replace(/-/g, '');
+        link.download = `backup-vendite-${dateString}.json`;
+        
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        showMessage('Dati vendite esportati!', 'info');
     },
 
     updateFilterValueOptions() {
@@ -338,6 +407,11 @@ const VenditeManager = {
     },
 
     renderCharts: function(data) {
+        const isDarkMode = document.documentElement.classList.contains('dark-theme');
+        const axisTextColor = isDarkMode ? '#94a3b8' : '#64748b';
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const legendTextColor = isDarkMode ? '#e2e8f0' : '#334155';
+        
         this.renderChart('productChart', 'bar', {
             labels: Object.keys(data.productTotals).map(p => formatProductName(p)),
             datasets: [{
@@ -348,9 +422,12 @@ const VenditeManager = {
             }]
         }, {
             responsive: true,
-            maintainAspectRatio: false, // MODIFICATO: Permette al grafico di riempire il contenitore
+            maintainAspectRatio: false,
             plugins: { legend: { display: false }, tooltip: { callbacks: { label: c => `${c.label}: ${formatNumber(Math.round(c.parsed.y))} L` }}},
-            scales: { y: { beginAtZero: true, ticks: { callback: v => formatNumber(v) + ' L' }, grid: { color: 'rgba(0,0,0,0.1)' } }, x: { grid: { display: false } } }
+            scales: { 
+                y: { beginAtZero: true, ticks: { callback: v => formatNumber(v) + ' L', color: axisTextColor }, grid: { color: gridColor } }, 
+                x: { grid: { display: false }, ticks: { color: axisTextColor } } 
+            }
         });
         
         this.renderRevenueCompositionChart(data);
@@ -361,7 +438,7 @@ const VenditeManager = {
                 data: [data.modalityTotals.servito, data.modalityTotals.iperself, data.modalityTotals.selfservice],
                 backgroundColor: ['#2196F3', '#FF4444', '#00BCD4'],
                 borderWidth: 3, 
-                borderColor: document.body.classList.contains('dark-theme') ? '#1e293b' : '#ffffff'
+                borderColor: isDarkMode ? '#1e293b' : '#ffffff'
             }]
         }, {
             responsive: true,
@@ -376,7 +453,7 @@ const VenditeManager = {
                         pointStyle: 'circle', 
                         padding: 15,
                         font: { size: 11, weight: 'bold' },
-                        color: document.body.classList.contains('dark-theme') ? '#e2e8f0' : '#334155' 
+                        color: legendTextColor 
                     }
                 },
                 tooltip: { 
@@ -407,6 +484,11 @@ const VenditeManager = {
     },
     
     renderRevenueCompositionChart: function(data) {
+        const isDarkMode = document.documentElement.classList.contains('dark-theme');
+        const axisTextColor = isDarkMode ? '#94a3b8' : '#64748b';
+        const gridColor = isDarkMode ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        const legendTextColor = isDarkMode ? '#e2e8f0' : '#334155';
+
         const products = Object.keys(data.revenueByProductAndModality);
         this.renderChart('islandChart', 'bar', {
             labels: products.map(p => formatProductName(p)),
@@ -417,14 +499,14 @@ const VenditeManager = {
             ]
         }, {
             responsive: true,
-            maintainAspectRatio: false, // MODIFICATO: Permette al grafico di riempire il contenitore
+            maintainAspectRatio: false,
             plugins: {
-                legend: { display: true, position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', padding: 15, font: { size: 12, weight: 'bold' }, color: document.body.classList.contains('dark-theme') ? '#e2e8f0' : '#334155' }},
+                legend: { display: true, position: 'bottom', labels: { usePointStyle: true, pointStyle: 'circle', padding: 15, font: { size: 12, weight: 'bold' }, color: legendTextColor }},
                 tooltip: { callbacks: { label: c => `${c.dataset.label}: ${formatEuro(c.parsed.y)}` }}
             },
             scales: {
-                x: { stacked: true, grid: { display: false }, ticks: { color: document.body.classList.contains('dark-theme') ? '#94a3b8' : '#64748b' }},
-                y: { stacked: true, beginAtZero: true, ticks: { callback: v => formatEuro(v), color: document.body.classList.contains('dark-theme') ? '#94a3b8' : '#64748b' }, grid: { color: document.body.classList.contains('dark-theme') ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)' }}
+                x: { stacked: true, grid: { display: false }, ticks: { color: axisTextColor }},
+                y: { stacked: true, beginAtZero: true, ticks: { callback: v => formatEuro(v), color: axisTextColor }, grid: { color: gridColor }}
             }
         });
     },
@@ -515,10 +597,17 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
         
-        initializeThemeSwitcher();
+        ThemeManager.init();
         initializeInfoButton();
         initializeMobileMenu();
+        window.VenditeManager = VenditeManager;
         VenditeManager.init();
+        
+        window.addEventListener('theme-changed', () => {
+             if (window.VenditeManager && window.VenditeManager.currentData) {
+                window.VenditeManager.renderCharts(window.VenditeManager.currentData);
+            }
+        });
         
     } catch (error) {
         console.error('Errore critico durante l\'inizializzazione di Vendite:', error);

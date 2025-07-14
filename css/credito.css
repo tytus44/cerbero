@@ -121,15 +121,20 @@
     transform: translateY(-2px);
 }
 
-.clients-grid .client-name {
-    font-size: 16px;
+.clients-grid .box .client-name {
+    font-size: 14px !important; /* Sovrascritto con !important per avere la precedenza */
     font-weight: 700;
     color: var(--primary-blue);
     text-align: center;
 }
 
-body.dark-theme .clients-grid .client-name {
+body.dark-theme .clients-grid .box .client-name {
     color: var(--text-primary);
+}
+
+/* Regola per il font del nome cliente nel box "ULTIMA OPERAZIONE" */
+#last-op-client {
+    font-size: 18px !important; /* Forza la dimensione a 18px */
 }
 
 /* ===== SEARCH WRAPPER CREDITO ===== */
@@ -382,33 +387,6 @@ body.dark-theme .client-name-input {
     color: white;
 }
 
-/* ===== ACTION BAR FLOATING CREDITO ===== */
-.action-bar-floating {
-    display: flex;
-    gap: 8px; /* Gap ridotto */
-    align-items: center;
-    justify-content: center;
-    padding: 10px 20px; /* Padding ridotto */
-    flex-wrap: nowrap; /* Impedisce il wrap su più righe */
-    max-width: calc(100vw - var(--sidebar-width) - 80px); /* Larghezza massima ridotta */
-    overflow-x: auto; /* Scroll orizzontale se necessario */
-}
-
-.action-bar-floating .action-btn {
-    padding: 8px 12px; /* Padding molto più ridotto */
-    font-size: 13px; 
-    min-width: 80px; /* Larghezza minima ridotta */
-    white-space: nowrap;
-    flex-shrink: 0; /* Non si riducono */
-    gap: 6px; /* Gap icona-testo ridotto */
-}
-
-.action-bar-floating .search-wrapper {
-    flex-shrink: 0; /* La barra di ricerca non si riduce */
-    min-width: 200px; /* Larghezza minima ridotta per la ricerca */
-    max-width: 220px; /* Larghezza massima */
-}
-
 /* ===== TRANSACTION FORM GRID ===== */
 .transaction-form-grid {
     display: grid;
@@ -618,25 +596,6 @@ body.dark-theme .acconto-form input {
 
     .search-wrapper {
         max-width: 100%;
-    }
-
-    /* Action bar responsive */
-    .action-bar-floating {
-        flex-wrap: wrap; /* Solo su mobile può andare su più righe */
-        gap: 8px;
-        padding: 10px 15px;
-        min-width: auto;
-        overflow-x: visible;
-    }
-
-    .action-bar-floating .action-btn {
-        font-size: 14px;
-        padding: 12px 16px;
-        min-width: 110px;
-    }
-
-    .action-bar-floating .search-wrapper {
-        min-width: 200px;
     }
 
     /* Transaction items responsive */

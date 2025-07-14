@@ -53,7 +53,7 @@
 }
 
 /* ===== TEMA SCURO STANDARDIZZATO ===== */
-body.dark-theme {
+html.dark-theme {
     --primary-blue: #2196F3;
     --text-primary: #e2e8f0;
     --text-secondary: #94a3b8;
@@ -66,83 +66,77 @@ body.dark-theme {
 }
 
 /* Tema scuro - Navigazione */
-body.dark-theme .nav a { 
+html.dark-theme .nav a { 
     color: var(--text-secondary) !important; 
 }
-body.dark-theme .nav a:hover {
+html.dark-theme .nav a:hover {
     color: var(--text-primary) !important;
     background-color: var(--primary-blue-light);
 }
-body.dark-theme .nav a.active {
+html.dark-theme .nav a.active {
     background: var(--primary-blue);
     color: #ffffff !important;
 }
-body.dark-theme .nav a::before {
+html.dark-theme .nav a::before {
     background: var(--text-primary);
 }
-body.dark-theme .nav a i {
+html.dark-theme .nav a i {
     color: var(--text-secondary);
 }
-body.dark-theme .nav a:hover i {
+html.dark-theme .nav a:hover i {
     color: var(--text-primary) !important;
 }
-body.dark-theme .nav a.active i {
+html.dark-theme .nav a.active i {
     color: #ffffff !important;
 }
 
 /* Tema scuro - Campi input e display */
-body.dark-theme .grid-input {
+html.dark-theme .grid-input {
     background: var(--bg-primary);
     border-color: var(--bg-display);
     color: var(--text-primary);
 }
-body.dark-theme .display-field,
-body.dark-theme .grid-input[readonly] {
+html.dark-theme .display-field,
+html.dark-theme .grid-input[readonly] {
     background-color: var(--bg-display);
     color: var(--text-primary);
+    border-color: var(--bg-display);
 }
 
 /* Tema scuro - Elementi specifici */
-body.dark-theme #notes-card textarea {
+html.dark-theme #notes-card textarea {
     background-color: var(--bg-primary);
     border-color: var(--bg-display);
     color: var(--text-primary);
 }
 
-body.dark-theme .todo-input-group input {
+html.dark-theme .todo-input-group input {
     background-color: var(--bg-primary);
     border-color: var(--bg-display);
     color: var(--text-primary);
 }
 
-body.dark-theme .corrispettivi-value,
-body.dark-theme .corrispettivi-input {
-    background-color: var(--bg-display);
-    border-color: var(--bg-display);
-    color: var(--text-primary);
-}
-
-body.dark-theme .corrispettivi-input:focus {
+html.dark-theme .corrispettivi-input:focus {
     background-color: var(--bg-white);
 }
 
 /* Tema scuro - Scrollbar */
-body.dark-theme ::-webkit-scrollbar-track {
+html.dark-theme ::-webkit-scrollbar-track {
     background: transparent;
 }
-body.dark-theme ::-webkit-scrollbar-thumb {
+html.dark-theme ::-webkit-scrollbar-thumb {
     background-color: rgba(255, 255, 255, 0.2);
     border: none;
 }
-body.dark-theme ::-webkit-scrollbar-thumb:hover {
+html.dark-theme ::-webkit-scrollbar-thumb:hover {
     background-color: var(--primary-blue);
 }
 
 /* Tema scuro - Spinner e altri elementi */
-body.dark-theme .spinner-btn {
+html.dark-theme .spinner-btn {
     color: var(--text-primary);
 }
-body.dark-theme .spinner-btn:hover {
+html.dark-theme .spinner-btn:hover {
     color: var(--primary-blue);
     background-color: var(--primary-blue-light);
 }
@@ -183,6 +177,12 @@ body {
     overflow-x: hidden;
     padding-left: var(--sidebar-width);
 }
+
+html.dark-theme body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
 
 ::-webkit-scrollbar {
     width: 8px;
@@ -241,7 +241,7 @@ body {
     border-right: 1px solid var(--primary-blue-light);
 }
 
-body.dark-theme .sidebar {
+html.dark-theme .sidebar {
     background: var(--bg-white);
     border-right: 1px solid var(--bg-display);
 }
@@ -343,20 +343,22 @@ body.dark-theme .sidebar {
     left: 50%;
     transform: translateX(-50%);
     margin-left: calc(var(--sidebar-width) / 2); 
-    max-width: calc(100% - var(--sidebar-width) - 50px);
+    width: calc(100% - var(--sidebar-width) - 50px); /* Larga quanto lo spazio concesso ai box */
     background: rgba(255, 255, 255, 0.7); 
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
-    border-radius: var(--radius-pill);
-    padding: 10px 15px;
+    border-radius: var(--radius-squadrato); /* Squadrata */
+    padding: 10px; /* Padding uniforme */
     display: flex;
     gap: 10px;
     box-shadow: var(--shadow-medium);
     z-index: 99; 
     border: 1px solid var(--primary-blue-light);
+    justify-content: space-around; /* Distribuisce uniformemente i pulsanti */
+    flex-wrap: nowrap; /* Impedisce il wrap di default */
 }
 
-body.dark-theme .action-bar-floating {
+html.dark-theme .action-bar-floating {
     background: var(--action-bar-bg-translucent);
     border: 1px solid var(--bg-display);
 }
@@ -367,6 +369,7 @@ body.dark-theme .action-bar-floating {
     height: 40px;
     gap: 8px;
     white-space: nowrap; 
+    flex-shrink: 0; /* Non si riduce */
 }
 
 .action-bar-floating .action-btn:hover {
@@ -415,6 +418,12 @@ body.dark-theme .action-bar-floating {
     font-size: var(--font-size-standard) !important;
 }
 
+/* Regola specifica per il testo principale dei summary box */
+.summary-box .stat-value,
+.summary-box .summary-value {
+    font-size: 2.2rem !important; /* Diminuito da 2.5rem a 2.2rem */
+}
+
 .summary-box::before {
     display: none;
 }
@@ -450,6 +459,7 @@ body.dark-theme .action-bar-floating {
     justify-content: center;
     gap: 10px;
     box-shadow: none;
+    text-transform: uppercase;
 }
 
 .action-btn:not(.action-bar-floating .action-btn)::before,
@@ -473,20 +483,20 @@ body.dark-theme .action-bar-floating {
 }
 
 /* Tema scuro per pulsanti */
-body.dark-theme .action-btn,
-body.dark-theme .modal-actions .action-btn,
-body.dark-theme .calendar-header button {
+html.dark-theme .action-btn,
+html.dark-theme .modal-actions .action-btn,
+html.dark-theme .calendar-header button {
     color: var(--text-secondary);
 }
-body.dark-theme .action-btn:hover,
-body.dark-theme .modal-actions .action-btn:hover,
-body.dark-theme .calendar-header button:hover {
+html.dark-theme .action-btn:hover,
+html.dark-theme .modal-actions .action-btn:hover,
+html.dark-theme .calendar-header button:hover {
     color: var(--text-primary);
     background-color: var(--primary-blue-light);
 }
-body.dark-theme .action-btn:not(.action-bar-floating .action-btn)::before,
-body.dark-theme .modal-actions .action-btn::before,
-body.dark-theme .calendar-header button::before {
+html.dark-theme .action-btn:not(.action-bar-floating .action-btn)::before,
+html.dark-theme .modal-actions .action-btn::before,
+html.dark-theme .calendar-header button::before {
     background: var(--text-primary);
 }
 
@@ -541,12 +551,12 @@ body.dark-theme .calendar-header button::before {
 }
 
 /* Tema scuro per pulsanti circolari */
-body.dark-theme .reset-fatturato-btn,
-body.dark-theme .todo-input-group button {
+html.dark-theme .reset-fatturato-btn,
+html.dark-theme .todo-input-group button {
     color: var(--text-secondary);
 }
-body.dark-theme .reset-fatturato-btn:hover,
-body.dark-theme .todo-input-group button:hover {
+html.dark-theme .reset-fatturato-btn:hover,
+html.dark-theme .todo-input-group button:hover {
     color: var(--text-primary);
     background-color: var(--primary-blue-light);
 }
@@ -574,10 +584,10 @@ body.dark-theme .todo-input-group button:hover {
 .reset-fatturato-btn:hover {
     color: var(--primary-blue);
 }
-body.dark-theme .reset-fatturato-btn { 
+html.dark-theme .reset-fatturato-btn { 
     color: var(--text-primary); 
 }
-body.dark-theme .reset-fatturato-btn:hover { 
+html.dark-theme .reset-fatturato-btn:hover { 
     color: var(--text-primary); 
 }
 
@@ -590,11 +600,11 @@ body.dark-theme .reset-fatturato-btn:hover {
 .todo-input-group button:hover {
     color: var(--primary-blue);
 }
-body.dark-theme .todo-input-group button { 
+html.dark-theme .todo-input-group button { 
     color: var(--text-primary); 
 }
-body.dark-theme .todo-input-group button:hover { 
-    color: var(--text-primary); 
+html.dark-theme .todo-input-group button:hover { 
+    color: var(--primary-blue); 
 }
 
 .modal-close-btn {
@@ -610,10 +620,10 @@ body.dark-theme .todo-input-group button:hover {
     color: white;
     transform: none;
 }
-body.dark-theme .modal-close-btn {
+html.dark-theme .modal-close-btn {
     color: var(--text-secondary);
 }
-body.dark-theme .modal-close-btn:hover {
+html.dark-theme .modal-close-btn:hover {
     background-color: var(--danger);
     color: white;
 }
@@ -693,37 +703,37 @@ body.dark-theme .modal-close-btn:hover {
 }
 
 /* Tema scuro per todo-delete */
-body.dark-theme .todo-delete {
+html.dark-theme .todo-delete {
     background-color: transparent;
     color: var(--text-secondary);
 }
 
-body.dark-theme .todo-delete:hover {
+html.dark-theme .todo-delete:hover {
     background-color: var(--danger);
     color: white;
 }
 
-body.dark-theme .todo-delete i {
+html.dark-theme .todo-delete i {
     color: var(--text-secondary) !important;
 }
 
-body.dark-theme .todo-delete .fa-xmark {
+html.dark-theme .todo-delete .fa-xmark {
     color: var(--text-secondary) !important;
 }
 
-body.dark-theme .todo-delete:hover i {
+html.dark-theme .todo-delete:hover i {
     color: white !important;
 }
 
-body.dark-theme .todo-delete:hover .fa-xmark {
+html.dark-theme .todo-delete:hover .fa-xmark {
     color: white !important;
 }
 
-body.dark-theme .todo-delete:empty::after {
+html.dark-theme .todo-delete:empty::after {
     color: var(--text-secondary);
 }
 
-body.dark-theme .todo-delete:hover::after {
+html.dark-theme .todo-delete:hover::after {
     color: white;
 }
 
@@ -735,7 +745,7 @@ body.dark-theme .todo-delete:hover::after {
     border-top: 1px solid var(--primary-blue-light);
 }
 
-body.dark-theme .sidebar-footer {
+html.dark-theme .sidebar-footer {
     border-top: 1px solid var(--bg-display);
 }
 
@@ -774,19 +784,79 @@ body.dark-theme .sidebar-footer {
     color: var(--primary-blue); 
 }
 
-body.dark-theme .sidebar-footer a {
+html.dark-theme .sidebar-footer a {
     color: var(--text-secondary) !important;
 }
-body.dark-theme .sidebar-footer a:hover {
+html.dark-theme .sidebar-footer a:hover {
     color: var(--text-primary) !important;
     background-color: var(--primary-blue-light);
 }
 
-body.dark-theme .sidebar-footer a i {
+html.dark-theme .sidebar-footer a i {
     color: var(--text-secondary);
 }
-body.dark-theme .sidebar-footer a:hover i {
+html.dark-theme .sidebar-footer a:hover i {
     color: var(--text-primary) !important;
+}
+
+/* ===== FILTRI E MENU A DISCESA ===== */
+.filter-container {
+    background-color: var(--bg-white);
+    padding: 15px;
+    border-radius: var(--radius-squadrato);
+    box-shadow: var(--shadow-medium);
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+html.dark-theme .filter-container {
+    background-color: var(--bg-white);
+    border: 1px solid var(--bg-display);
+}
+
+.filter-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.filter-select {
+    padding: 10px 15px !important;
+    height: 44px !important;
+    width: auto;
+    border: 2px solid var(--primary-blue-light) !important;
+    background-color: var(--bg-white);
+    color: var(--text-secondary);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    transition: all 0.3s ease;
+}
+
+html.dark-theme .filter-select {
+    background-color: var(--bg-primary);
+    border-color: var(--bg-display) !important;
+    color: var(--text-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e2e8f0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.filter-select:hover {
+    border-color: var(--primary-blue) !important;
+}
+
+.filter-select:focus {
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
 }
 
 /* ===== CAMPI INPUT E DISPLAY STANDARDIZZATI ===== */
@@ -809,7 +879,7 @@ body.dark-theme .sidebar-footer a:hover i {
 .display-field, .grid-input[readonly] {
     width: 100%;
     padding: 10px 14px;
-    border: none;
+    border: 2px solid var(--primary-blue-light);
     border-radius: var(--radius-squadrato);
     font-family: 'Montserrat', sans-serif;
     font-weight: 600;
@@ -848,8 +918,8 @@ body.dark-theme .sidebar-footer a:hover i {
     border: 2px solid var(--primary-blue-light);
     border-radius: var(--radius-squadrato);
     font-weight: 500;
-    text-align: left; /* Allineamento a sinistra */
-    padding-left: 15px; /* Rientro ridotto a 15px */
+    text-align: left;
+    padding-left: 15px;
     background: var(--bg-display);
     font-size: var(--font-size-standard) !important;
     min-height: 44px;
@@ -859,496 +929,35 @@ body.dark-theme .sidebar-footer a:hover i {
     color: var(--text-primary);
 }
 
-/* Accenti colorati specifici per prodotto */
-.product-field.product-benzina {
-    border-left: 5px solid var(--product-benzina);
-}
+.product-field.product-benzina { border-left: 5px solid var(--product-benzina); }
+.product-field.product-gasolio { border-left: 5px solid var(--product-gasolio); }
+.product-field.product-diesel { border-left: 5px solid var(--product-diesel); }
+.product-field.product-hvolution { border-left: 5px solid var(--product-hvolution); }
+.product-field.product-adblue { border-left: 5px solid var(--product-adblue); }
 
-.product-field.product-gasolio {
-    border-left: 5px solid var(--product-gasolio);
-}
-
-.product-field.product-diesel {
-    border-left: 5px solid var(--product-diesel);
-}
-
-.product-field.product-hvolution {
-    border-left: 5px solid var(--product-hvolution);
-}
-
-.product-field.product-adblue {
-    border-left: 5px solid var(--product-adblue);
-}
-
-/* Tema scuro per i campi prodotto */
-body.dark-theme .product-field {
+html.dark-theme .product-field {
     color: var(--text-primary);
     background: var(--bg-display);
     border-color: var(--primary-blue-light);
 }
-
-/* Mantieni gli accenti colorati anche nel tema scuro */
-body.dark-theme .product-field.product-benzina {
-    border-left: 5px solid var(--product-benzina);
-}
-
-body.dark-theme .product-field.product-gasolio {
-    border-left: 5px solid var(--product-gasolio);
-}
-
-body.dark-theme .product-field.product-diesel {
-    border-left: 5px solid var(--product-diesel);
-}
-
-body.dark-theme .product-field.product-hvolution {
-    border-left: 5px solid var(--product-hvolution);
-}
-
-body.dark-theme .product-field.product-adblue {
-    border-left: 5px solid var(--product-adblue);
-}
-
-/* ===== LAYOUT GRIGLIA DASHBOARD ===== */
-.dashboard-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: auto auto;
-    gap: 25px;
-    grid-template-areas: 
-        "giornata-box box-libero-1 vendite-summary"
-        "note calendario todo";
-    align-items: stretch;
-    margin-top: 110px;
-}
-
-.giornata-box { grid-area: giornata-box; }
-.box-libero-1 { grid-area: box-libero-1; }
-.vendite-summary-box { grid-area: vendite-summary; }
-.note-box { grid-area: note; }
-.calendario-box { grid-area: calendario; }
-.todo-box { grid-area: todo; }
-
-.note-box, .calendario-box, .todo-box {
-    display: flex;
-    flex-direction: column;
-}
-
-/* ===== BOX GIORNATA ===== */
-.giornata-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    height: 100%;
-    padding: 15px;
-}
-
-.time-date {
-    text-align: center;
-    margin-bottom: 15px;
-}
-
-#currentTime {
-    font-size: 42px;
-    font-weight: 800;
-    color: var(--primary-blue);
-    line-height: 1;
-    margin-bottom: 8px;
-}
-
-#currentDateDisplay {
-    font-size: 16px;
-    color: var(--text-secondary);
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.form-fields {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    width: 100%;
-    max-width: 250px;
-}
-
-.form-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.form-group label {
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    text-align: center;
-    font-size: var(--font-size-standard);
-}
-
-/* ===== BOX CORRISPETTIVI ===== */
-.corrispettivi-content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    height: 100%;
-    justify-content: center;
-    align-items: center;
-}
-
-.corrispettivi-group {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 5px;
-    width: 100%;
-    max-width: 250px;
-}
-
-.corrispettivi-label-group {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-    gap: 10px;
-}
-
-.corrispettivi-label-group .corrispettivi-label {
-    flex-grow: 1;
-}
-
-.corrispettivi-label {
-    font-weight: 700;
-    color: var(--primary-blue);
-    font-size: 15px;
-    text-align: center;
-    width: 100%;
-}
-
-.corrispettivi-value {
-    background-color: var(--bg-display);
-    border-radius: var(--radius-squadrato);
-    padding: 8px 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    text-align: center;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: none;
-    font-size: 16px;
-    width: 100%;
-}
-
-.corrispettivi-input {
-    background-color: var(--bg-display);
-    border-radius: var(--radius-squadrato);
-    padding: 8px 12px;
-    font-weight: 600;
-    color: var(--text-primary);
-    text-align: center;
-    min-height: 44px;
-    border: none;
-    font-size: 16px;
-    width: 100%;
-    font-family: 'Montserrat', sans-serif;
-    transition: all 0.2s ease-in-out;
-}
-
-.corrispettivi-input:focus {
-    box-shadow: 0 0 0 3px var(--primary-blue-light);
-    background-color: var(--bg-white);
-}
-
-/* ===== NOTE ===== */
-#notes-card .box-content { 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-}
-
-#notes-card textarea {
-    width: 100%;
-    height: 100%;
-    min-height: 250px;
-    border: 2px solid var(--primary-blue-light);
-    border-radius: var(--radius-medium);
-    padding: 12px;
-    font-family: 'Montserrat', sans-serif;
-    resize: none;
-    background-color: var(--bg-white);
-    color: var(--text-primary);
-    transition: border-color 0.3s;
-    font-size: var(--font-size-standard) !important;
-}
-
-#notes-card textarea:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px var(--primary-blue-light);
-}
-
-/* ===== CALENDARIO ===== */
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-}
-
-.calendar-header h4 {
-    font-weight: 600;
-    color: var(--text-primary);
-    font-size: 16px;
-}
-
-.calendar-grid {
-    display: grid;
-    grid-template-columns: repeat(7, 1fr);
-    gap: 5px;
-    text-align: center;
-}
-
-.calendar-grid > div { 
-    font-weight: 600; 
-    padding: 2px 0; 
-}
-
-.weekday { 
-    color: var(--text-secondary); 
-    font-size: var(--font-size-standard); 
-}
-
-.day {
-    cursor: pointer;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px; 
-    height: 32px;
-    margin: auto;
-    font-size: var(--font-size-standard);
-}
-
-.day:hover { 
-    background-color: var(--primary-blue-light); 
-}
-.day.current-day { 
-    background-color: var(--primary-blue); 
-    color: white; 
-    font-weight: 700; 
-}
-.day.other-month { 
-    color: var(--text-secondary); 
-    opacity: 0.5; 
-}
-.day.holiday { 
-    color: var(--danger); 
-    font-weight: 700; 
-}
-.day.holiday.current-day { 
-    color: white; 
-}
-
-/* ===== TODO ===== */
-#todo-card .box-content { 
-    display: flex; 
-    flex-direction: column; 
-    height: 100%; 
-}
-
-.todo-input-group {
-    display: flex;
-    gap: 10px;
-    margin-bottom: 15px;
-    flex-shrink: 0;
-}
-
-.todo-input-group input {
-    flex-grow: 1;
-    padding: 10px 14px;
-    border: 2px solid var(--primary-blue-light);
-    border-radius: var(--radius-squadrato);
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 500;
-    background-color: var(--bg-white);
-    color: var(--text-primary);
-    font-size: var(--font-size-standard);
-}
-
-.todo-input-group input:focus {
-    outline: none;
-    border-color: var(--primary-blue);
-    box-shadow: 0 0 0 3px var(--primary-blue-light);
-}
-
-#todo-list {
-    list-style: none;
-    overflow-y: auto;
-    flex-grow: 1;
-    min-height: 200px;
-}
-
-#todo-list li {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 6px 10px;
-    margin-bottom: 5px;
-    border-radius: var(--radius-medium);
-    gap: 12px;
-    transition: background-color 0.2s;
-}
-
-#todo-list li:hover { 
-    background: var(--primary-blue-light); 
-}
-
-#todo-list label {
-    flex: 1;
-    word-break: break-word;
-    color: var(--text-primary);
-    line-height: 1.4;
-    font-size: var(--font-size-standard);
-    font-weight: 500;
-}
-
-/* ===== RIEPILOGO VENDITE ===== */
-.vendite-summary-box .box-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    height: 100%;
-}
-
-#product-liters-summary {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 15px 0;
-    flex-grow: 1;
-}
-
-#product-liters-summary li {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 15px;
-    margin-bottom: 8px;
-    background-color: var(--bg-display);
-    border-radius: var(--radius-pill);
-    font-size: var(--font-size-standard);
-    box-shadow: var(--shadow-light);
-}
-
-#product-liters-summary li:last-child {
-    border-bottom: none;
-}
-
-#product-liters-summary li span:first-child {
-    font-weight: 600;
-    color: var(--text-primary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-#product-liters-summary li span:first-child::before {
-    content: '';
-    display: inline-block;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-#product-liters-summary li .value {
-    font-weight: 700;
-    color: var(--text-primary);
-    background-color: transparent;
-    padding: 0;
-    border-radius: 0;
-    font-size: var(--font-size-standard);
-}
-
-#product-liters-summary .product-gasolio span:first-child::before { 
-    background-color: var(--product-gasolio); 
-}
-#product-liters-summary .product-diesel span:first-child::before { 
-    background-color: var(--product-diesel); 
-}
-#product-liters-summary .product-adblue span:first-child::before { 
-    background-color: var(--product-adblue); 
-}
-#product-liters-summary .product-benzina span:first-child::before { 
-    background-color: var(--product-benzina); 
-}
-#product-liters-summary .product-hvolution span:first-child::before { 
-    background-color: var(--product-hvolution); 
-}
-
-.servito-percentage-summary {
-    text-align: center;
-    padding-top: 15px;
-    border-top: 2px solid var(--primary-blue-light);
-}
-
-.servito-percentage-summary .label {
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--text-secondary);
-    text-transform: uppercase;
-    margin-bottom: 8px;
-}
-
-.servito-percentage-summary .value {
-    font-size: 24px;
-    font-weight: 800;
-    color: var(--primary-blue);
-    margin-bottom: 10px;
-}
-
-.progress-bar-container {
-    width: 100%;
-    height: 10px;
-    background-color: var(--primary-blue-light);
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background-color: var(--product-hvolution);
-    border-radius: 5px;
-    transition: width 0.5s ease-in-out;
-}
+html.dark-theme .product-field.product-benzina { border-left: 5px solid var(--product-benzina); }
+html.dark-theme .product-field.product-gasolio { border-left: 5px solid var(--product-gasolio); }
+html.dark-theme .product-field.product-diesel { border-left: 5px solid var(--product-diesel); }
+html.dark-theme .product-field.product-hvolution { border-left: 5px solid var(--product-hvolution); }
+html.dark-theme .product-field.product-adblue { border-left: 5px solid var(--product-adblue); }
 
 /* ===== MODAL STANDARDIZZATI ===== */
 @keyframes bounceIn {
-  0% {
-    opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
-  }
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
 }
 
 .modal-overlay {
     position: fixed;
-    top: 0; 
-    left: 0;
-    width: 100%; 
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(0,0,0,0.5);
     backdrop-filter: blur(5px);
     -webkit-backdrop-filter: blur(5px);
@@ -1479,40 +1088,18 @@ body.dark-theme .product-field.product-adblue {
     animation: slideIn 0.3s ease-out;
 }
 
-.toast.error { 
-    background: var(--danger); 
-    box-shadow: 0 4px 20px rgba(255, 53, 71, 0.3); 
-}
-.toast.warning { 
-    background: var(--warning); 
-    color: #333; 
-    box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3); 
-}
-.toast.info { 
-    background: var(--info); 
-    box-shadow: 0 4px 20px rgba(10, 186, 181, 0.3); 
-}
+.toast.error { background: var(--danger); box-shadow: 0 4px 20px rgba(255, 53, 71, 0.3); }
+.toast.warning { background: var(--warning); color: #333; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3); }
+.toast.info { background: var(--info); box-shadow: 0 4px 20px rgba(10, 186, 181, 0.3); }
 
 @keyframes slideIn {
-    from { 
-        opacity: 0; 
-        transform: translateX(100px); 
-    }
-    to { 
-        opacity: 1; 
-        transform: translateX(0); 
-    }
+    from { opacity: 0; transform: translateX(100px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 @keyframes slideOut {
-    from { 
-        opacity: 1; 
-        transform: translateX(0); 
-    }
-    to { 
-        opacity: 0; 
-        transform: translateX(100px); 
-    }
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(100px); }
 }
 
 /* ===== RESPONSIVE STANDARDIZZATO ===== */
@@ -1563,11 +1150,7 @@ body.no-scroll {
         max-width: 600px;
         flex-wrap: wrap;
         justify-content: center;
-        padding: 10px 15px;
-    }
-
-    .dashboard-grid {
-        margin-top: 110px;
+        padding: 10px;
     }
 }
 

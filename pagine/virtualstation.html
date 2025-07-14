@@ -3,6 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem('cerbero_theme') || 'light';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch (e) {
+                console.error('Errore applicazione tema iniziale:', e);
+            }
+        })();
+    </script>
+    
     <title>CeRBERO - Virtualstation</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -26,7 +40,6 @@
             </ul>
         </nav>
         
-        <!-- Footer della sidebar -->
         <div class="sidebar-footer">
             <a href="#" id="theme-switcher" title="Cambia Tema">
                 <i id="theme-icon-light" class="fa-solid fa-sun"></i>
@@ -39,8 +52,8 @@
     </aside>
 
     <div class="action-bar-floating">
-        <button class="action-btn success" id="add-turn-btn"><i class="fa-solid fa-plus"></i>AGGIUNGI TURNO</button>
-        <button class="action-btn danger" id="reset-turns-btn"><i class="fa-solid fa-rotate"></i>RESET TURNI</button>
+        <button class="action-btn" id="add-turn-btn"><i class="fa-solid fa-plus"></i>AGGIUNGI TURNO</button>
+        <button class="action-btn" id="reset-turns-btn"><i class="fa-solid fa-rotate"></i>RESET TURNI</button>
         <button class="action-btn" onclick="importData()"><i class="fa-solid fa-download"></i>IMPORTA</button>
         <button class="action-btn" onclick="exportData()"><i class="fa-solid fa-upload"></i>ESPORTA</button>
     </div>
@@ -48,34 +61,27 @@
     <div class="container main-content">
         <div class="global-summary-grid">
             <div class="box summary-box">
-                <h3 class="box-header">IPERSELF</h3>
-                <div class="box-content summary-content-grid">
-                    <div class="display-field" id="global-iperself-liters">0,00</div>
-                    <div class="display-field" id="global-iperself-amount">€ 0,00</div>
-                </div>
+                <div class="stat-value" id="global-iperself-liters">0,00 L</div>
+                <div class="stat-details" id="global-iperself-amount">€ 0,00</div>
+                <div class="stat-label">Iperself</div>
             </div>
             <div class="box summary-box">
-                <h3 class="box-header">SERVITO</h3>
-                <div class="box-content summary-content-grid">
-                    <div class="display-field" id="global-servito-liters">0,00</div>
-                    <div class="display-field" id="global-servito-amount">€ 0,00</div>
-                </div>
+                <div class="stat-value" id="global-servito-liters">0,00 L</div>
+                <div class="stat-details" id="global-servito-amount">€ 0,00</div>
+                <div class="stat-label">Servito</div>
             </div>
             <div class="box summary-box">
-                <h3 class="box-header">SELF-SERVICE</h3>
-                <div class="box-content summary-content-grid">
-                    <div class="display-field" id="global-self-service-liters">0,00</div>
-                    <div class="display-field" id="global-self-service-amount">€ 0,00</div>
-                </div>
+                <div class="stat-value" id="global-self-service-liters">0,00 L</div>
+                <div class="stat-details" id="global-self-service-amount">€ 0,00</div>
+                <div class="stat-label">Self-Service</div>
             </div>
-            <div class="box summary-box total-overall-box">
-                <h3 class="box-header">GENERALE</h3>
-                <div class="box-content summary-content-grid">
-                    <div class="display-field" id="global-total-liters">0,00</div>
-                    <div class="display-field" id="global-total-amount">€ 0,00</div>
-                </div>
+            <div class="box summary-box">
+                <div class="stat-value" id="global-total-liters">0,00 L</div>
+                <div class="stat-details" id="global-total-amount">€ 0,00</div>
+                <div class="stat-label">Generale</div>
             </div>
         </div>
+
 
         <div id="turns-container">
             <div class="turn-block" id="turn-block-0" style="display:none;"> 
@@ -90,29 +96,29 @@
                                 <div class="grid-header">SELF-SERVICE</div>
                                 
                                 <div class="product-field product-gasolio">GASOLIO</div>
-                                <input type="text" class="grid-input" data-product="gasolio" data-type="iperself" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="gasolio" data-type="servito" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="gasolio" data-type="self-service" placeholder="0.000,00">
+                                <input type="text" class="grid-input" data-product="gasolio" data-type="iperself">
+                                <input type="text" class="grid-input" data-product="gasolio" data-type="servito">
+                                <input type="text" class="grid-input" data-product="gasolio" data-type="self-service">
                                 
                                 <div class="product-field product-diesel">DIESEL+</div>
-                                <input type="text" class="grid-input" data-product="diesel" data-type="iperself" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="diesel" data-type="servito" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="diesel" data-type="self-service" placeholder="0.000,00">
+                                <input type="text" class="grid-input" data-product="diesel" data-type="iperself">
+                                <input type="text" class="grid-input" data-product="diesel" data-type="servito">
+                                <input type="text" class="grid-input" data-product="diesel" data-type="self-service">
 
                                 <div class="product-field product-adblue">ADBLUE</div>
-                                <input type="text" class="grid-input" data-product="adblue" data-type="iperself" placeholder="0.000,00" style="visibility: hidden;" tabindex="-1">
-                                <input type="text" class="grid-input" data-product="adblue" data-type="servito" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="adblue" data-type="self-service" placeholder="0.000,00" style="visibility: hidden;" tabindex="-1">
+                                <input type="text" class="grid-input" data-product="adblue" data-type="iperself" style="visibility: hidden;" tabindex="-1">
+                                <input type="text" class="grid-input" data-product="adblue" data-type="servito">
+                                <input type="text" class="grid-input" data-product="adblue" data-type="self-service" style="visibility: hidden;" tabindex="-1">
 
                                 <div class="product-field product-benzina">BENZINA</div>
-                                <input type="text" class="grid-input" data-product="benzina" data-type="iperself" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="benzina" data-type="servito" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="benzina" data-type="self-service" placeholder="0.000,00">
+                                <input type="text" class="grid-input" data-product="benzina" data-type="iperself">
+                                <input type="text" class="grid-input" data-product="benzina" data-type="servito">
+                                <input type="text" class="grid-input" data-product="benzina" data-type="self-service">
                                 
                                 <div class="product-field product-hvolution">HVOLUTION</div>
-                                <input type="text" class="grid-input" data-product="hvolution" data-type="iperself" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="hvolution" data-type="servito" placeholder="0.000,00">
-                                <input type="text" class="grid-input" data-product="hvolution" data-type="self-service" placeholder="0.000,00">
+                                <input type="text" class="grid-input" data-product="hvolution" data-type="iperself">
+                                <input type="text" class="grid-input" data-product="hvolution" data-type="servito">
+                                <input type="text" class="grid-input" data-product="hvolution" data-type="self-service">
 
                                 <div class="grid-header total-row-header">TOTALE</div>
                                 <div class="display-field total-row-cell total-row-iperself" id="total-iperself-0">0,00</div>
@@ -123,9 +129,14 @@
                     </div>
 
                     <div class="box summary-box bottom-box-small">
-                        <div class="box-header total-turn-header-flex">
-                            <h2 class="box-header-title">TURNO</h2>
-                            <input type="number" id="turn-number-input-0" class="turn-number-input" placeholder="0000" min="0" max="9999">
+                        <div class="total-turn-header-flex">
+                            <h2 class="box-header">TURNO</h2>
+                            <div class="turn-controls">
+                                <input type="number" id="turn-number-input-0" class="turn-number-input" min="0" max="9999">
+                                <button class="delete-turn-btn" data-turn-index="0" title="Elimina Turno">
+                                    <i class="fa-solid fa-trash"></i>
+                                </button>
+                            </div>
                         </div>
                         <div class="box-content">
                             <div class="total-turn-grid">
@@ -153,17 +164,11 @@
                                 <div class="display-field" id="total-turn-hvolution-liters-0">0,00</div>
                                 <div class="display-field" id="total-turn-hvolution-amount-0">€ 0,00</div>
 
-                                <div class="grid-divider total-divider-line"></div> 
                                 <div class="display-field total-general-liters" id="total-general-liters-0">0,00</div>
                                 <div class="display-field total-general-amount" id="total-general-amount-0">€ 0,00</div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="turn-actions" id="turn-actions-0">
-                    <button class="delete-turn-btn danger" data-turn-index="0">
-                        <i class="fa-solid fa-trash"></i>
-                    </button>
                 </div>
             </div>
         </div>
@@ -185,7 +190,6 @@
         </div>
     </div>
 
-    <!-- Modal Info Standardizzato -->
     <div class="modal-overlay" id="info-modal">
         <div class="modal">
             <div class="modal-header">
@@ -193,7 +197,7 @@
                 <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="modal-content info-modal-content">
-                <i class="fa-solid fa-circle-info modal-info-icon"></i>
+                <i class="fa-solid fa-brain modal-info-icon"></i>
                 <div class="info-modal-brand">CeRBERO</div>
                 <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
                 <div class="programmer-info">

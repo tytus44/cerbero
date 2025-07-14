@@ -43,7 +43,6 @@
     margin-bottom: 15px;
 }
 
-/* ===== ORARIO E DATA GRANDI COME I BOX RIEPILOGO ===== */
 #currentTime {
     font-size: 2.5rem !important;
     font-weight: 800;
@@ -82,7 +81,7 @@
     font-size: var(--font-size-standard);
 }
 
-/* ===== BOX CORRISPETTIVI - SPECIFICO DASHBOARD ===== */
+/* ===== BOX CORRISPETTIVI - SPECIFICO DASHBOARD (REGOLE SPOSTATE QUI) ===== */
 .corrispettivi-content {
     display: flex;
     flex-direction: column;
@@ -132,20 +131,20 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    border: none;
+    border: 2px solid var(--primary-blue-light);
     font-size: 16px;
     width: 100%;
 }
 
 .corrispettivi-input {
-    background-color: var(--bg-display);
+    background-color: var(--bg-white);
     border-radius: var(--radius-squadrato);
     padding: 8px 12px;
     font-weight: 600;
     color: var(--text-primary);
     text-align: center;
     min-height: 44px;
-    border: none;
+    border: 2px solid var(--primary-blue-light);
     font-size: 16px;
     width: 100%;
     font-family: 'Montserrat', sans-serif;
@@ -349,7 +348,6 @@
             "todo";
     }
 
-    /* Font responsivi per mobile */
     #currentTime {
         font-size: 2rem !important;
     }
@@ -357,4 +355,10 @@
     #currentDateDisplay {
         font-size: 0.9rem !important;
     }
+}
+
+/* ===== TEMA SCURO SPECIFICO INDEX ===== */
+body.dark-theme .corrispettivi-input {
+    background-color: var(--bg-primary);
+    border-color: var(--bg-display);
 }

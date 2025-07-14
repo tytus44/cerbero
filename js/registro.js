@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    /* ===== 1. FUNZIONI HELPER E UTILITY GLOBALI ===== */
+    /* ===== 1. FUNZIONI HELPER E UTILITY GLOBALI (Le funzioni del tema sono rimosse) ===== */
 
     function parseNumber(value) {
         if (typeof value !== 'string' || value.trim() === '') return 0;
@@ -34,34 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
         input.addEventListener('blur', formatDate);
         input.addEventListener('keydown', e => { if (e.key === 'Enter') formatDate(); });
-    }
-
-    function applyTheme(theme) {
-        document.body.classList.toggle('dark-theme', theme === 'dark');
-        const lightIcon = document.getElementById('theme-icon-light');
-        const darkIcon = document.getElementById('theme-icon-dark');
-        if (lightIcon && darkIcon) {
-            lightIcon.classList.toggle('theme-icon-hidden', theme === 'dark');
-            darkIcon.classList.toggle('theme-icon-hidden', theme !== 'dark');
-        }
-        if (window.Storage && Storage.KEYS) {
-            Storage.save(Storage.KEYS.THEME, theme);
-        }
-    }
-
-    function initializeThemeSwitcher() {
-        const themeSwitcher = document.getElementById('theme-switcher');
-        if (themeSwitcher) {
-            themeSwitcher.addEventListener('click', (e) => {
-                e.preventDefault();
-                const newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
-                applyTheme(newTheme);
-            });
-        }
-        if (window.Storage && Storage.KEYS) {
-            const savedTheme = Storage.load(Storage.KEYS.THEME, 'light');
-            applyTheme(savedTheme);
-        }
     }
 
     function initializeInfoButton() {
@@ -346,8 +318,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 showMessage("Errore: Impossibile caricare lo storage. L'app non funzionerà.", "error");
                 return;
             }
-            initializeThemeSwitcher();
-            initializeInfoButton();
+            
+            ThemeManager.init(); // Chiamata al gestore centralizzato
+            
+            const infoBtn = document.getElementById('info-btn');
+            const infoModal = document.getElementById('info-modal');
+            if (infoBtn && infoModal) {
+                const closeBtn = infoModal.querySelector('.modal-close-btn');
+                infoBtn.addEventListener('click', (e) => { e.preventDefault(); infoModal.classList.add('active'); });
+                if(closeBtn) { closeBtn.addEventListener('click', () => infoModal.classList.remove('active')); }
+                infoModal.addEventListener('click', (e) => { if (e.target === infoModal) infoModal.classList.remove('active'); });
+            }
+
             loadData();
             
             const entrateManager = createSectionHandler('entrate');
@@ -383,7 +365,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Avvio dell'applicazione
     initializePage();
 
 });

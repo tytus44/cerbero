@@ -1,29 +1,6 @@
 /* ===== CERBERO CREDITO - VERSIONE CORRETTA E COMPLETA ===== */
 
-/* ===== GESTIONE TEMA ===== */
-function applyTheme(theme) {
-    document.body.classList.toggle('dark-theme', theme === 'dark');
-    var lightIcon = document.getElementById('theme-icon-light');
-    var darkIcon = document.getElementById('theme-icon-dark');
-    if (lightIcon && darkIcon) {
-        lightIcon.classList.toggle('theme-icon-hidden', theme === 'dark');
-        darkIcon.classList.toggle('theme-icon-hidden', theme !== 'dark');
-    }
-    Storage.save(Storage.KEYS.THEME, theme);
-}
-
-function initializeThemeSwitcher() {
-    var themeSwitcher = document.getElementById('theme-switcher');
-    if (themeSwitcher) {
-        themeSwitcher.addEventListener('click', function(e) {
-            e.preventDefault();
-            var newTheme = document.body.classList.contains('dark-theme') ? 'light' : 'dark';
-            applyTheme(newTheme);
-        });
-    }
-    applyTheme(Storage.load(Storage.KEYS.THEME, 'light'));
-}
-
+/* ===== UTILITY (Le funzioni del tema sono rimosse) ===== */
 function initializeInfoButton() {
     try {
         var infoBtn = document.getElementById('info-btn');
@@ -53,7 +30,6 @@ function initializeInfoButton() {
     }
 }
 
-/* ===== UTILITY ===== */
 function showMessage(message, type) {
     type = type || 'info';
     var toast = document.createElement('div');
@@ -175,7 +151,7 @@ function initializeSearchBar() {
     }
 }
 
-/* ===== CREDIT MANAGER ===== */
+/* ===== CREDIT MANAGER (Tutta la logica è stata mantenuta com'era) ===== */
 function CreditManager() {
     this.clients = Storage.load(Storage.KEYS.CREDITO_DATA, {});
     this.searchTerm = '';
@@ -667,7 +643,6 @@ CreditManager.prototype.updateSummary = function() {
     }
 };
 
-// FUNZIONE CLEARBALANCE CORRETTA - Cancella tutte le transazioni invece di aggiungere un pagamento
 CreditManager.prototype.clearBalance = function(clientId) {
     var self = this;
     var balance = this.getClientBalance(clientId);
@@ -677,7 +652,6 @@ CreditManager.prototype.clearBalance = function(clientId) {
     var transactionCount = this.clients[clientId].transactions.length;
     
     showConfirmModal('Saldare Debito?', 'Eliminare tutte le ' + transactionCount + ' transazioni di "' + clientName + '" e azzerare il debito?', function() {
-        // CANCELLA tutte le transazioni invece di aggiungere un pagamento
         self.clients[clientId].transactions = [];
         self.save();
         self.showClientModal(clientId);
@@ -933,36 +907,17 @@ document.addEventListener('DOMContentLoaded', function() {
             throw new Error('Storage non disponibile');
         }
         
-        // MOBILE MENU LOGIC
-        var hamburgerBtn = document.getElementById('hamburger-menu-btn');
-        var mainNav = document.getElementById('main-nav');
-        var mobileOverlay = document.getElementById('mobile-menu-overlay');
-
-        if (hamburgerBtn && mainNav && mobileOverlay) {
-            hamburgerBtn.addEventListener('click', function() {
-                mainNav.classList.toggle('active');
-                mobileOverlay.classList.toggle('active');
-                document.body.classList.toggle('no-scroll');
-            });
-
-            mobileOverlay.addEventListener('click', function() {
-                mainNav.classList.remove('active');
-                mobileOverlay.classList.remove('active');
-                document.body.classList.remove('no-scroll');
-            });
-
-            var navLinks = mainNav.querySelectorAll('a');
-            for (var i = 0; i < navLinks.length; i++) {
-                navLinks[i].addEventListener('click', function() {
-                    mainNav.classList.remove('active');
-                    mobileOverlay.classList.remove('active');
-                    document.body.classList.remove('no-scroll');
-                });
-            }
+        ThemeManager.init();
+        
+        const infoBtn = document.getElementById('info-btn');
+        const infoModal = document.getElementById('info-modal');
+        if (infoBtn && infoModal) {
+            const closeBtn = infoModal.querySelector('.modal-close-btn');
+            infoBtn.addEventListener('click', (e) => { e.preventDefault(); infoModal.classList.add('active'); });
+            if(closeBtn) { closeBtn.addEventListener('click', () => { infoModal.classList.remove('active'); }); }
+            infoModal.addEventListener('click', (e) => { if(e.target === infoModal) { infoModal.classList.remove('active'); } });
         }
 
-        initializeThemeSwitcher();
-        initializeInfoButton();
         initializeSearchBar();
         window.creditManager = new CreditManager();
         
