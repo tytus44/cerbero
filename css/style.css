@@ -343,7 +343,7 @@ html.dark-theme .sidebar {
     left: 50%;
     transform: translateX(-50%);
     margin-left: calc(var(--sidebar-width) / 2); 
-    width: calc(100% - var(--sidebar-width) - 50px); /* Larga quanto lo spazio concesso ai box */
+    width: calc(100% - var(--sidebar-width) - 50px); /* Larga quanto lo space concesso ai box */
     background: rgba(255, 255, 255, 0.7); 
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
@@ -779,7 +779,6 @@ html.dark-theme .sidebar-footer {
     color: var(--text-secondary); 
     transition: color 0.2s ease;
 }
-
 .sidebar-footer a:hover i {
     color: var(--primary-blue); 
 }
@@ -850,8 +849,18 @@ html.dark-theme .filter-select {
 }
 
 .filter-select:hover {
-    border-color: var(--primary-blue) !important;
+    /* Rimuovi l'effetto hover indesiderato: imposta i colori ai valori normali */
+    border-color: var(--primary-blue-light) !important; /* Torna al colore del bordo non-hover */
+    background-color: var(--bg-white) !important; /* Torna al colore di sfondo normale */
+    color: var(--text-secondary) !important; /* Torna al colore del testo normale */
 }
+
+html.dark-theme .filter-select:hover {
+    border-color: var(--bg-display) !important; /* Per tema scuro */
+    background-color: var(--bg-primary) !important; /* Per tema scuro */
+    color: var(--text-primary) !important; /* Per tema scuro */
+}
+
 
 .filter-select:focus {
     border-color: var(--primary-blue) !important;
@@ -899,6 +908,7 @@ html.dark-theme .filter-select {
     outline: none;
     border-color: var(--primary-blue);
     box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
 }
 
 .display-field:hover {
