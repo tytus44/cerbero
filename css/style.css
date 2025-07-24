@@ -1,0 +1,1206 @@
+/* ===== STYLE.CSS - STILI COMUNI STANDARDIZZATI ===== */
+/* Questo file contiene tutti gli stili base richiamati da tutte le pagine */
+
+/* ===== FOCUS STYLES UNIVERSALI ===== */
+*:focus {
+    outline: none;
+}
+
+*:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+}
+
+/* ===== DESIGN SYSTEM CERBERO ===== */
+:root {
+    --primary-blue: #093fb4;
+    --primary-blue-hover: #0730a3;
+    --primary-blue-light: rgba(9, 63, 180, 0.1);
+    --text-primary: #334155;
+    --text-secondary: #64748b;
+    --bg-primary: #f4f4f9;
+    --bg-white: #ffffff;
+    --bg-display: #e5eef7;
+    --success: #00C851;
+    --success-hover: #00A142;
+    --danger: #ff1189; /* Modificato */
+    --info: #0ABAB5;
+    --warning: #FFD700;
+    --purple: #6f42c1;
+    --orange: #ff9f00;
+    
+    /* STANDARDIZZAZIONE SQUADRATURE */
+    --radius-squadrato: 4px;
+    --radius-medium: 12px;
+    --radius-pill: 50px;
+    
+    --shadow-light: none; /* Ombreggiatura rimossa */
+    --shadow-medium: none; /* Ombreggiatura rimossa */
+    --shadow-heavy: none; /* Ombreggiatura rimossa */
+    
+    /* Prodotti */
+    --product-benzina: #00C851;
+    --product-gasolio: #FFD700;
+    --product-diesel: #FF4444;
+    --product-hvolution: #2196F3;
+    --product-adblue: #0ABAB5;
+
+    /* Layout */
+    --sidebar-width: 220px;
+    
+    /* STANDARDIZZAZIONE FONT SIZE - 14px in tutti i box */
+    --font-size-standard: 14px;
+}
+
+/* ===== TEMA SCURO STANDARDIZZATO ===== */
+html.dark-theme {
+    --primary-blue: #2196F3;
+    --text-primary: #e2e8f0;
+    --text-secondary: #94a3b8;
+    --bg-primary: #0f172a;
+    --bg-white: #1e293b;
+    --bg-display: #334155;
+    --primary-blue-light: rgba(59, 130, 246, 0.2);
+    --header-bg-translucent: rgba(30, 41, 59, 0.7);
+    --action-bar-bg-translucent: rgba(51, 65, 85, 0.5);
+}
+
+/* Tema scuro - Navigazione */
+html.dark-theme .nav a { 
+    color: var(--text-secondary) !important; 
+}
+html.dark-theme .nav a:hover {
+    color: var(--text-primary) !important;
+    background-color: var(--primary-blue-light);
+}
+html.dark-theme .nav a.active {
+    background: var(--primary-blue);
+    color: #ffffff !important;
+}
+html.dark-theme .nav a::before {
+    background: var(--text-primary);
+}
+html.dark-theme .nav a i {
+    color: var(--text-secondary);
+}
+html.dark-theme .nav a:hover i {
+    color: var(--text-primary) !important;
+}
+html.dark-theme .nav a.active i {
+    color: #ffffff !important;
+}
+
+/* Tema scuro - Campi input e display */
+html.dark-theme .grid-input {
+    background: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+html.dark-theme .display-field,
+html.dark-theme .grid-input[readonly] {
+    background-color: var(--bg-display);
+    color: var(--text-primary);
+    border-color: var(--bg-display);
+}
+
+/* Tema scuro - Elementi specifici */
+html.dark-theme #notes-card textarea {
+    background-color: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+
+html.dark-theme .todo-input-group input {
+    background-color: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+
+html.dark-theme .corrispettivi-input:focus {
+    background-color: var(--bg-white);
+}
+
+/* Tema scuro - Scrollbar */
+html.dark-theme ::-webkit-scrollbar-track {
+    background: transparent;
+}
+html.dark-theme ::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: none;
+}
+html.dark-theme ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-blue);
+}
+
+/* Tema scuro - Spinner e altri elementi */
+html.dark-theme .spinner-btn {
+    color: var(--text-primary);
+}
+html.dark-theme .spinner-btn:hover {
+    color: var(--primary-blue);
+    background-color: var(--primary-blue-light);
+}
+
+/* ===== RIMOZIONE SPINNER VERTICALI INPUT NUMBER - REGOLA GENERALE ===== */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+/* ===== GRID HEADERS CENTRATI - REGOLA GENERALE ===== */
+.grid-header {
+    font-weight: 700;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    text-align: center;
+    padding-bottom: 5px;
+}
+
+/* ===== BASE ===== */
+* { 
+    margin: 0; 
+    padding: 0; 
+    box-sizing: border-box; 
+}
+
+body {
+    font-family: 'Montserrat', sans-serif;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: 16px;
+    line-height: 1.5;
+    overflow-x: hidden;
+    padding-left: var(--sidebar-width);
+}
+
+html.dark-theme body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    border: none;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background-color: var(--primary-blue);
+}
+
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px 25px;
+    min-width: 0;
+    overflow-x: hidden;
+}
+
+.main-content {
+    margin-top: 110px;
+}
+
+.page-title {
+    text-align: center;
+    color: var(--primary-blue);
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 25px;
+    margin-top: 180px;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+    width: var(--sidebar-width);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    background: var(--bg-white);
+    box-shadow: none; /* Ombreggiatura rimossa */
+    display: flex;
+    flex-direction: column;
+    padding: 20px 0;
+    z-index: 100;
+    border-right: 1px solid var(--primary-blue-light);
+}
+
+html.dark-theme .sidebar {
+    background: var(--bg-white);
+    border-right: 1px solid var(--bg-display);
+}
+
+.sidebar-header {
+    font-size: 28px;
+    font-weight: 800;
+    background: linear-gradient(45deg, var(--primary-blue), #42D7F4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+    margin-bottom: 30px;
+    padding: 0 20px;
+}
+
+/* ===== MENU NAVIGAZIONE ===== */
+.nav { 
+    flex-grow: 1;
+    width: 100%;
+}
+
+.nav ul { 
+    list-style: none; 
+    display: flex; 
+    flex-direction: column;
+    gap: 0;
+    margin: 0;
+    padding: 0;
+    align-items: flex-start;
+}
+
+.nav li {
+    width: 100%;
+}
+
+.nav a { 
+    text-decoration: none; 
+    color: var(--text-secondary); 
+    font-weight: 600; 
+    padding: 12px 20px;
+    border-radius: 0;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    position: relative;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    font-size: 15px; 
+    height: 48px; 
+    box-sizing: border-box;
+    gap: 12px; 
+    width: 100%;
+    text-transform: uppercase;
+}
+
+.nav a:hover {
+    transform: translateX(5px);
+}
+
+.nav a i {
+    font-size: 18px; 
+    color: var(--text-secondary); 
+    transition: color 0.2s ease;
+}
+.nav a:hover i {
+    color: var(--primary-blue); 
+}
+.nav a.active i {
+    color: var(--bg-white) !important; 
+}
+
+.nav a::before {
+    display: none;
+}
+
+.nav a:hover { 
+    color: var(--primary-blue); 
+    background-color: var(--primary-blue-light); 
+}
+
+.nav a.active { 
+    background: var(--primary-blue); 
+    color: var(--bg-white) !important; 
+    box-shadow: none;
+}
+
+.theme-icon-hidden { 
+    display: none !important; 
+}
+
+.header-placeholder {
+    height: 0;
+}
+
+/* ===== FLOATING ACTION BAR ===== */
+.action-bar-floating {
+    position: fixed;
+    top: 25px; 
+    left: 50%;
+    transform: translateX(-50%);
+    margin-left: calc(var(--sidebar-width) / 2); 
+    width: calc(100% - var(--sidebar-width) - 50px); /* Larga quanto lo space concesso ai box */
+    background: rgba(255, 255, 255, 0.7); 
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border-radius: var(--radius-squadrato); /* Squadrata */
+    padding: 10px; /* Padding uniforme */
+    display: flex;
+    gap: 10px;
+    box-shadow: none; /* Ombreggiatura rimossa */
+    z-index: 99; 
+    border: 1px solid var(--primary-blue-light);
+    justify-content: space-around; /* Distribuisce uniformemente i pulsanti */
+    flex-wrap: nowrap; /* Impedisce il wrap di default */
+}
+
+html.dark-theme .action-bar-floating {
+    background: var(--action-bar-bg-translucent);
+    border: 1px solid var(--bg-display);
+}
+
+.action-bar-floating .action-btn {
+    font-size: var(--font-size-standard);
+    padding: 10px 18px; 
+    height: 40px;
+    gap: 8px;
+    white-space: nowrap; 
+    flex-shrink: 0; /* Non si riduce */
+}
+
+.action-bar-floating .action-btn:hover {
+    background-color: var(--primary-blue-light);
+}
+
+/* ===== BOX/CARD STANDARDIZZATI ===== */
+.box {
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
+    border: 1px solid var(--primary-blue-light);
+    box-shadow: none; /* Ombreggiatura rimossa */
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 250px;
+    transition: all 0.3s ease;
+}
+
+.box-header {
+    color: var(--primary-blue);
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 15px;
+    text-align: center;
+    border-bottom: 2px solid var(--primary-blue-light);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.box-header > span {
+    flex-grow: 1;
+}
+
+.box-content {
+    padding: 15px;
+    flex-grow: 1;
+}
+
+/* STANDARDIZZAZIONE FONT SIZE NEI BOX - Tutti i contenuti 14px tranne header */
+.box *:not(.box-header),
+.box *:not(.box-header) .fa-solid {
+    font-size: var(--font-size-standard) !important;
+}
+
+/* Regola specifica per il testo principale dei summary box */
+.summary-box .stat-value,
+.summary-box .summary-value {
+    font-size: 2.2rem !important; /* Diminuito da 2.5rem a 2.2rem */
+}
+
+.summary-box::before {
+    display: none;
+}
+
+.summary-box:hover::before {
+    transform: none;
+}
+
+.summary-box.box:hover { 
+    box-shadow: none; /* Ombreggiatura rimossa */
+}
+
+/* ===== PULSANTI STANDARDIZZATI ===== */
+.action-btn,
+.modal-actions .action-btn,
+.calendar-header button {
+    font-size: var(--font-size-standard);
+    padding: 12px 25px;
+    height: 44px;
+    text-decoration: none;
+    color: var(--text-secondary);
+    background: none;
+    font-weight: 600;
+    border: none;
+    border-radius: var(--radius-pill);
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    box-shadow: none;
+    text-transform: uppercase;
+}
+
+.action-btn:not(.action-bar-floating .action-btn)::before,
+.modal-actions .action-btn::before,
+.calendar-header button::before {
+    display: none;
+}
+
+.action-btn:not(.action-bar-floating .action-btn):hover,
+.modal-actions .action-btn:hover,
+.calendar-header button:hover {
+    color: var(--primary-blue);
+    background-color: var(--primary-blue-light);
+    box-shadow: none;
+}
+
+.action-btn:not(.action-bar-floating .action-btn):hover::before,
+.modal-actions .action-btn:hover::before,
+.calendar-header button:hover::before {
+    width: 60%;
+}
+
+/* Tema scuro per pulsanti */
+html.dark-theme .action-btn,
+html.dark-theme .modal-actions .action-btn,
+html.dark-theme .calendar-header button {
+    color: var(--text-secondary);
+}
+html.dark-theme .action-btn:hover,
+html.dark-theme .modal-actions .action-btn:hover,
+html.dark-theme .calendar-header button:hover {
+    color: var(--text-primary);
+    background-color: var(--primary-blue-light);
+}
+html.dark-theme .action-btn:not(.action-bar-floating .action-btn)::before,
+html.dark-theme .modal-actions .action-btn::before,
+html.dark-theme .calendar-header button::before {
+    background: var(--text-primary);
+}
+
+.action-btn:disabled {
+    background: #adb5bd;
+    color: white;
+    cursor: not-allowed;
+    opacity: 0.6;
+    transform: none;
+    box-shadow: none;
+}
+.action-btn:disabled:hover {
+    background: #adb5bd;
+    color: white;
+}
+.action-btn:disabled::before {
+    display: none;
+}
+
+
+/* ===== PULSANTI SPECIALI (SUCCESS/DANGER) - REGOLE CORRETTE ===== */
+.action-btn.btn-success:hover {
+    background-color: var(--primary-blue) !important; /* Aggiunto !important */
+    color: white !important;
+}
+.action-btn.btn-success:hover i {
+    color: white !important;
+}
+
+.action-btn.btn-danger:hover {
+    background-color: var(--danger) !important; /* Aggiunto !important */
+    color: white !important;
+}
+.action-btn.btn-danger:hover i {
+    color: white !important;
+}
+
+/* Stile hover specifico per il pulsante AGGIUNGI della To-Do list */
+.todo-input-group button.btn-success:hover {
+    background-color: var(--primary-blue) !important;
+    color: white !important;
+}
+.todo-input-group button.btn-success:hover i {
+    color: white !important;
+}
+
+
+/* Pulsanti circolari standardizzati */
+.reset-fatturato-btn,
+.todo-input-group button,
+.modal-close-btn,
+.calendar-header button,
+.transaction-delete-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.reset-fatturato-btn::before,
+.todo-input-group button::before,
+.modal-close-btn::before,
+.calendar-header button::before,
+.transaction-delete-btn::before {
+    display: none;
+}
+
+.reset-fatturato-btn:hover,
+.todo-input-group button:hover {
+    background-color: var(--primary-blue-light);
+}
+
+/* Tema scuro per pulsanti circolari */
+html.dark-theme .reset-fatturato-btn,
+html.dark-theme .todo-input-group button {
+    color: var(--text-secondary);
+}
+html.dark-theme .reset-fatturato-btn:hover,
+html.dark-theme .todo-input-group button:hover {
+    color: var(--text-primary);
+    background-color: var(--primary-blue-light);
+}
+
+.calendar-header button {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    color: var(--text-primary);
+    border-radius: var(--radius-pill);
+}
+
+.calendar-header button:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+    border-radius: var(--radius-pill);
+}
+
+.reset-fatturato-btn {
+    width: 32px;
+    height: 32px;
+    font-size: var(--font-size-standard);
+    color: var(--text-primary);
+}
+.reset-fatturato-btn:hover {
+    color: var(--primary-blue);
+}
+html.dark-theme .reset-fatturato-btn { 
+    color: var(--text-primary); 
+}
+html.dark-theme .reset-fatturato-btn:hover { 
+    color: var(--text-primary); 
+}
+
+.todo-input-group button {
+    width: 44px;
+    height: 44px;
+    font-size: 16px;
+    color: var(--text-primary);
+}
+.todo-input-group button:hover {
+    color: var(--primary-blue);
+}
+html.dark-theme .todo-input-group button { 
+    color: var(--text-primary); 
+}
+html.dark-theme .todo-input-group button:hover { 
+    color: var(--primary-blue); 
+}
+
+.modal-close-btn {
+    width: 32px;
+    height: 32px;
+    font-size: 18px;
+    font-weight: bold;
+    color: var(--text-secondary);
+    background-color: transparent;
+}
+.modal-close-btn:hover {
+    background-color: var(--danger);
+    color: white;
+    transform: none;
+}
+html.dark-theme .modal-close-btn {
+    color: var(--text-secondary);
+}
+html.dark-theme .modal-close-btn:hover {
+    background-color: var(--danger);
+    color: white;
+}
+
+/* Pulsante delete TODO */
+.todo-delete {
+    width: 28px;
+    height: 28px;
+    background-color: transparent;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: none;
+    line-height: 1;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: Arial, sans-serif;
+}
+
+.todo-delete::before {
+    display: none;
+}
+
+.todo-delete i {
+    font-weight: bold;
+    font-size: var(--font-size-standard);
+    color: var(--text-secondary) !important;
+    transition: color 0.3s ease;
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+.todo-delete .fa-xmark {
+    font-size: var(--font-size-standard);
+    color: var(--text-secondary) !important;
+    font-weight: 900;
+}
+
+.todo-delete:not(:has(i)) {
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--text-secondary);
+    font-family: Arial, sans-serif;
+}
+
+.todo-delete:empty::after {
+    content: "×";
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--text-secondary);
+    display: block;
+    line-height: 1;
+}
+
+.todo-delete:hover {
+    background-color: var(--danger);
+    transform: scale(1.05);
+    color: white;
+}
+
+.todo-delete:hover i {
+    color: white !important;
+}
+
+.todo-delete:hover .fa-xmark {
+    color: white !important;
+}
+
+.todo-delete:hover::after {
+    color: white;
+}
+
+/* Tema scuro per todo-delete */
+html.dark-theme .todo-delete {
+    background-color: transparent;
+    color: var(--text-secondary);
+}
+
+html.dark-theme .todo-delete:hover {
+    background-color: var(--danger);
+    color: white;
+}
+
+html.dark-theme .todo-delete i {
+    color: var(--text-secondary) !important;
+}
+
+html.dark-theme .todo-delete .fa-xmark {
+    color: var(--text-secondary) !important;
+}
+
+html.dark-theme .todo-delete:hover i {
+    color: white !important;
+}
+
+html.dark-theme .todo-delete:hover .fa-xmark {
+    color: white !important;
+}
+
+html.dark-theme .todo-delete:empty::after {
+    color: var(--text-secondary);
+}
+
+html.dark-theme .todo-delete:hover::after {
+    color: white;
+}
+
+/* ===== SIDEBAR FOOTER COMUNE ===== */
+.sidebar-footer {
+    width: 100%;
+    padding: 0;
+    margin-top: auto;
+    border-top: 1px solid var(--primary-blue-light);
+}
+
+html.dark-theme .sidebar-footer {
+    border-top: 1px solid var(--bg-display);
+}
+
+.sidebar-footer a {
+    text-decoration: none; 
+    color: var(--text-secondary); 
+    font-weight: 600; 
+    padding: 12px 20px;
+    border-radius: 0;
+    transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    position: relative;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    font-size: 15px; 
+    height: 48px; 
+    box-sizing: border-box;
+    gap: 12px; 
+    width: 100%;
+    text-transform: uppercase;
+}
+
+.sidebar-footer a:hover {
+    transform: translateX(5px);
+    color: var(--primary-blue); 
+    background-color: var(--primary-blue-light); 
+}
+
+.sidebar-footer a i {
+    font-size: 18px; 
+    color: var(--text-secondary); 
+    transition: color 0.2s ease;
+}
+.sidebar-footer a:hover i {
+    color: var(--primary-blue); 
+}
+
+html.dark-theme .sidebar-footer a {
+    color: var(--text-secondary) !important;
+}
+html.dark-theme .sidebar-footer a:hover {
+    color: var(--text-primary) !important;
+    background-color: var(--primary-blue-light);
+}
+
+html.dark-theme .sidebar-footer a i {
+    color: var(--text-secondary);
+}
+html.dark-theme .sidebar-footer a:hover i {
+    color: var(--text-primary) !important;
+}
+
+/* ===== FILTRI E MENU A DISCESA ===== */
+.filter-container {
+    background-color: var(--bg-white);
+    padding: 15px;
+    border-radius: var(--radius-squadrato);
+    box-shadow: none; /* Ombreggiatura rimossa */
+    margin-bottom: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+html.dark-theme .filter-container {
+    background-color: var(--bg-white);
+    border: 1px solid var(--bg-display);
+}
+
+.filter-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    font-size: 14px;
+}
+
+.filter-select {
+    padding: 10px 15px !important;
+    height: 44px !important;
+    width: auto;
+    border: 2px solid var(--primary-blue-light) !important;
+    background-color: var(--bg-white);
+    color: var(--text-secondary);
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 16px 12px;
+    transition: all 0.3s ease;
+}
+
+html.dark-theme .filter-select {
+    background-color: var(--bg-primary);
+    border-color: var(--bg-display) !important;
+    color: var(--text-primary);
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23e2e8f0' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.filter-select:hover {
+    /* Rimuovi l'effetto hover indesiderato: imposta i colori ai valori normali */
+    border-color: var(--primary-blue-light) !important; /* Torna al colore del bordo non-hover */
+    background-color: var(--bg-white) !important; /* Torna al colore di sfondo normale */
+    color: var(--text-secondary) !important; /* Torna al colore del testo normale */
+}
+
+html.dark-theme .filter-select:hover {
+    border-color: var(--bg-display) !important; /* Per tema scuro */
+    background-color: var(--bg-primary) !important; /* Per tema scuro */
+    color: var(--text-primary) !important; /* Per tema scuro */
+}
+
+
+.filter-select:focus {
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
+}
+
+/* ===== CAMPI INPUT E DISPLAY STANDARDIZZATI ===== */
+.grid-input {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    background: var(--bg-white);
+    color: var(--text-primary);
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: var(--font-size-standard) !important;
+    min-height: 44px;
+    box-sizing: border-box;
+}
+
+.display-field, .grid-input[readonly] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    background-color: var(--bg-display);
+    color: var(--text-primary);
+    text-align: center;
+    transition: all 0.3s ease;
+    font-size: var(--font-size-standard) !important;
+    min-height: 44px;
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.grid-input:focus {
+    outline: none;
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
+}
+
+.display-field:hover {
+    box-shadow: 0 4px 12px rgba(9, 63, 180, 0.1);
+}
+
+.grid-input[readonly] {
+    cursor: default;
+    pointer-events: auto;
+}
+
+/* ===== CAMPI PRODOTTO COMUNI ===== */
+.product-field {
+    position: relative;
+    width: 100%;
+    padding: 10px 15px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    font-weight: 500;
+    text-align: left;
+    padding-left: 15px;
+    background: var(--bg-display);
+    font-size: var(--font-size-standard) !important;
+    min-height: 44px;
+    font-family: 'Montserrat', sans-serif;
+    border-left: 5px solid var(--primary-blue);
+    cursor: default;
+    color: var(--text-primary);
+}
+
+.product-field.product-benzina { border-left: 5px solid var(--product-benzina); }
+.product-field.product-gasolio { border-left: 5px solid var(--product-gasolio); }
+.product-field.product-diesel { border-left: 5px solid var(--product-diesel); }
+.product-field.product-hvolution { border-left: 5px solid var(--product-hvolution); }
+.product-field.product-adblue { border-left: 5px solid var(--product-adblue); }
+
+html.dark-theme .product-field {
+    color: var(--text-primary);
+    background: var(--bg-display);
+    border-color: var(--primary-blue-light);
+}
+html.dark-theme .product-field.product-benzina { border-left: 5px solid var(--product-benzina); }
+html.dark-theme .product-field.product-gasolio { border-left: 5px solid var(--product-gasolio); }
+html.dark-theme .product-field.product-diesel { border-left: 5px solid var(--product-diesel); }
+html.dark-theme .product-field.product-hvolution { border-left: 5px solid var(--product-hvolution); }
+html.dark-theme .product-field.product-adblue { border-left: 5px solid var(--product-adblue); }
+
+/* ===== MODAL STANDARDIZZATI ===== */
+@keyframes bounceIn {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-overlay.active { 
+    opacity: 1; 
+    visibility: visible; 
+}
+
+.modal {
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
+    box-shadow: 0 44px 20px rgba(0,0,0,0.2);
+    width: 100%;
+    max-width: 500px;
+    margin: 20px;
+    opacity: 0;
+    transform: scale(0.3);
+}
+
+.modal-overlay.active .modal {
+    animation: bounceIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--primary-blue-light);
+}
+
+.modal-title {
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--primary-blue);
+}
+
+.modal-content { 
+    padding: 20px; 
+    text-align: center; 
+}
+
+.modal-content p { 
+    font-size: 16px; 
+    line-height: 1.6; 
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    padding: 20px;
+    border-top: 1px solid var(--primary-blue-light);
+}
+
+/* ===== MODAL INFO STANDARDIZZATO ===== */
+.modal-info-icon {
+    font-size: 60px;
+    color: var(--primary-blue);
+    margin: 0 auto 20px;
+    display: block;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.modal-info-icon:hover {
+    color: var(--info);
+    transform: scale(1.1);
+}
+
+.info-modal-content .info-modal-brand {
+    font-size: 38px;
+    font-weight: 800;
+    margin-bottom: 15px;
+    background: linear-gradient(45deg, var(--primary-blue), #42D7F4);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.info-modal-content p {
+    margin-bottom: 15px;
+    color: var(--text-secondary);
+}
+
+.info-modal-content .programmer-info {
+    font-size: var(--font-size-standard);
+    border-top: 1px solid var(--primary-blue-light);
+    padding-top: 15px;
+    line-height: 1.8;
+}
+
+.info-link {
+    color: var(--text-primary);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.info-link:hover {
+    text-decoration: underline;
+    color: var(--primary-blue);
+}
+
+/* ===== TOAST STANDARDIZZATI ===== */
+.toast {
+    position: fixed;
+    top: 20px; 
+    right: 20px;
+    background: var(--success);
+    color: white;
+    padding: 15px 20px;
+    border-radius: var(--radius-squadrato);
+    box-shadow: 0 4px 20px rgba(0, 200, 81, 0.3);
+    font-weight: 600;
+    font-size: var(--font-size-standard);
+    z-index: 1001;
+    max-width: 350px;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast.error { background: var(--danger); box-shadow: 0 4px 20px rgba(255, 53, 71, 0.3); }
+.toast.warning { background: var(--warning); color: #333; box-shadow: 0 4px 20px rgba(255, 215, 0, 0.3); }
+.toast.info { background: var(--info); box-shadow: 0 4px 20px rgba(10, 186, 181, 0.3); }
+
+@keyframes slideIn {
+    from { opacity: 0; transform: translateX(100px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to { opacity: 0; transform: translateX(100px); }
+}
+
+/* ===== RESPONSIVE STANDARDIZZATO ===== */
+.hamburger-menu-btn {
+    display: none;
+}
+
+.mobile-menu-overlay {
+    display: none;
+}
+
+body.no-scroll {
+    overflow: hidden;
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        left: -250px;
+        box-shadow: none;
+        transition: left 0.3s ease;
+    }
+
+    .sidebar.active {
+        left: 0;
+        box-shadow: none; /* Ombreggiatura rimossa */
+    }
+
+    body {
+        padding-left: 0;
+    }
+
+    .container {
+        padding: 15px;
+    }
+
+    .page-title {
+        font-size: 22px;
+        padding-top: 80px;
+    }
+
+    .action-bar-floating {
+        left: 50%;
+        transform: translateX(-50%);
+        margin-left: 0;
+        top: 15px;
+        width: calc(100% - 30px);
+        max-width: 600px;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .toast {
+        max-width: calc(100% - 40px);
+        left: 20px;
+        right: 20px;
+        text-align: center;
+    }
+
+    .action-bar-floating .action-btn {
+        width: 100%;
+        max-width: 250px;
+    }
+}

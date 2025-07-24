@@ -1,0 +1,334 @@
+/* ===== MONETARIO.CSS - SOLO SPECIFICITÀ ===== */
+/* Questo file contiene SOLO gli stili specifici per la pagina monetario */
+/* Gli stili comuni sono in style.css */
+
+/* ===== LAYOUT SPECIFICO MONETARIO ===== */
+.main-content {
+    margin-top: 110px;
+}
+
+/* Griglie specifiche per monetario */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+.second-row-grid {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr; /* Modificata per dare più spazio al primo box */
+    gap: 25px;
+    margin-bottom: 25px;
+}
+
+/* ===== GRIGLIE SPECIFICHE MONETARIO ===== */
+.pricing-grid, .fuel-order-grid {
+    display: grid;
+    gap: 10px;
+    align-items: center;
+}
+
+.pricing-grid {
+    grid-template-columns: 140px repeat(3, 1fr); /* Aumentata da 120px a 140px */
+}
+
+.fuel-order-grid {
+    grid-template-columns: 140px 1.5fr 1fr 1fr; /* Aumentata da 120px a 140px */
+}
+
+.fuel-order-totals {
+    display: grid;
+    grid-template-columns: 140px 1.5fr 1fr 1fr; /* Aumentata da 120px a 140px */
+    gap: 10px;
+    align-items: center;
+    margin-top: 10px;
+    padding-top: 10px;
+    /* Rimossa la riga: border-top: 2px solid var(--primary-blue-light); */
+}
+
+.fuel-order-totals > .display-field:first-of-type {
+    grid-column: 2 / 3;
+}
+
+.fuel-order-totals > .display-field:last-of-type {
+    grid-column: 4 / 5;
+}
+
+#total-quantity, #total-amount {
+    font-weight: 700;
+}
+
+.grid-divider {
+    display: none; /* Nasconde completamente i divisori */
+}
+
+/* ===== SPINNER INPUT - SPECIFICO MONETARIO ===== */
+.spinner-input-group {
+    display: flex;
+    align-items: center;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    overflow: hidden;
+}
+
+.spinner-btn {
+    background: var(--bg-display);
+    border: none;
+    width: 40px;
+    height: 42px;
+    font-size: 20px !important;
+    cursor: pointer;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.spinner-btn:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+.spinner-value {
+    flex-grow: 1;
+    border: none !important;
+    box-shadow: none !important;
+    background: var(--bg-white);
+}
+
+/* Tema scuro per spinner */
+body.dark-theme .spinner-btn {
+    color: var(--text-primary);
+    background: var(--bg-display);
+}
+
+body.dark-theme .spinner-btn:hover {
+    color: var(--text-primary);
+    background-color: var(--primary-blue-light);
+}
+
+body.dark-theme .spinner-value {
+    background: var(--bg-primary);
+    color: var(--text-primary);
+}
+
+/* ===== CALCOLO IVA - SPECIFICO MONETARIO ===== */
+.vat-calculator {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.vat-rates {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.vat-rates label {
+    padding: 10px 15px;
+    border-radius: var(--radius-squadrato);
+    border: 2px solid var(--primary-blue-light);
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.vat-rates label:hover {
+    background-color: var(--primary-blue-light);
+}
+
+.vat-rates input[type="radio"] {
+    accent-color: var(--primary-blue);
+    box-shadow: none;
+}
+
+.vat-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+}
+
+.vat-results {
+    background: var(--primary-blue-light);
+    padding: 15px;
+    border-radius: var(--radius-squadrato);
+}
+
+.vat-results div {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.vat-results div:last-child {
+    /* Rimossa la riga: border-top: 2px solid var(--primary-blue); */
+    font-weight: bold;
+    padding-top: 5px;
+}
+
+/* Tema scuro per IVA */
+body.dark-theme .vat-rates label {
+    background: var(--bg-white);
+    color: var(--text-primary);
+    border-color: var(--bg-display);
+}
+
+body.dark-theme .vat-rates label:hover {
+    background-color: var(--primary-blue-light);
+}
+
+body.dark-theme .vat-results {
+    background: var(--bg-display);
+    color: var(--text-primary);
+}
+
+/* ===== VERSAMENTO - SPECIFICO MONETARIO ===== */
+.versamento-grid {
+    display: grid;
+    grid-template-columns: 50px 1fr 1fr;
+    gap: 10px;
+    align-items: center;
+}
+
+.versamento-banconota {
+    border-radius: var(--radius-squadrato);
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+}
+
+.total-separator {
+    display: none; /* Nasconde i separatori del versamento */
+}
+
+#versamento-total-banconote, #versamento-total-importo {
+    font-weight: 700;
+}
+
+/* Colori banconote */
+.euro-500 { background: var(--purple); }
+.euro-200 { background: var(--warning); color: #333; }
+.euro-100 { background: var(--success); }
+.euro-50 { background: var(--orange); }
+.euro-20 { background: var(--primary-blue); }
+.euro-10 { background: var(--danger); }
+
+/* ===== CALCOLATRICE - SPECIFICO MONETARIO ===== */
+.calculator-display {
+    font-size: 2.5rem;
+    padding: 20px 15px;
+    text-align: right;
+    background: var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.calculator-keys {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-top: 15px;
+}
+
+.key {
+    padding: 18px 15px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    font-weight: 600;
+    font-size: 1.5rem;
+    cursor: pointer;
+    background: var(--bg-white);
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+}
+
+.key:hover {
+    background-color: var(--primary-blue-light);
+    transform: translateY(-2px);
+}
+
+.key-operator {
+    background: var(--text-secondary);
+    color: white;
+}
+
+.key-operator:hover {
+    background: var(--primary-blue);
+}
+
+.key-clear {
+    background: var(--danger);
+    color: white;
+}
+
+.key-clear:hover {
+    background: var(--primary-blue-hover);
+}
+
+.key-equals {
+    background: var(--success);
+    color: white;
+    grid-row: span 2;
+}
+
+.key-equals:hover {
+    background: var(--success-hover);
+}
+
+.key-zero {
+    grid-column: span 2;
+}
+
+/* Tema scuro per calcolatrice */
+body.dark-theme .calculator-display {
+    background: var(--bg-display);
+    color: var(--text-primary);
+}
+
+body.dark-theme .key {
+    background: var(--bg-white);
+    color: var(--text-primary);
+    border-color: var(--bg-display);
+}
+
+body.dark-theme .key:hover {
+    background-color: var(--primary-blue-light);
+}
+
+/* ===== RESPONSIVE MONETARIO ===== */
+@media (max-width: 768px) {
+    .content-grid,
+    .second-row-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .pricing-grid {
+        grid-template-columns: 120px 1fr 1fr; /* Mantenuta larghezza mobile ottimale */
+    }
+    
+    .fuel-order-grid,
+    .fuel-order-totals {
+        grid-template-columns: 120px 1fr 1fr; /* Mantenuta larghezza mobile ottimale */
+    }
+    
+    .fuel-order-totals > .display-field:last-of-type {
+        grid-column: 3 / 4;
+    }
+    
+    .versamento-grid {
+        grid-template-columns: 40px 1fr 1fr;
+    }
+    
+    .versamento-banconota {
+        width: 40px;
+        height: 40px;
+        font-size: 12px;
+    }
+}

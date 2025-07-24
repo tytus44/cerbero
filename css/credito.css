@@ -1,0 +1,635 @@
+/* ===== CREDITO.CSS - STILI SPECIFICI PAGINA CREDITO ===== */
+/* Questo file contiene solo gli stili univoci per la gestione credito */
+
+/* ===== Z-INDEX MODALI ===== */
+#client-detail-modal {
+    z-index: 1000;
+}
+
+#confirm-modal {
+    z-index: 1100; /* Più alto del modal cliente */
+}
+
+#add-client-modal,
+#acconto-modal,
+#info-modal {
+    z-index: 1050;
+}
+
+/* ===== SUMMARY GRID CREDITO ===== */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.summary-grid .summary-box {
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    padding: 15px !important; /* Ridotto da 20px a 15px */
+    min-height: auto !important; /* Sovrascrive il min-height globale */
+}
+
+.summary-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-blue), var(--info), var(--success));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease-out;
+}
+
+.summary-box:hover::before {
+    transform: scaleX(1);
+}
+
+.summary-title {
+    font-weight: 600 !important;
+    color: var(--text-secondary) !important;
+    margin-bottom: 8px !important; /* Ridotto da 10px a 8px */
+    font-size: 14px !important;
+    text-transform: uppercase !important;
+    text-align: center !important;
+}
+
+.summary-value {
+    font-size: 28px !important;
+    font-weight: 800 !important;
+    color: var(--primary-blue) !important;
+    text-align: center !important;
+    margin-bottom: 3px !important; /* Ridotto da 5px a 3px */
+}
+
+/* ===== FONT PIÙ GRANDI PER I BOX RIEPILOGO CREDITO - COME VENDITE ===== */
+/* Sovrascriviamo la regola globale con selettori più specifici */
+.summary-grid .summary-box .stat-value,
+.summary-grid .summary-box .summary-value {
+    font-size: 2.5rem !important;
+    font-weight: 800 !important;
+    color: var(--primary-blue) !important;
+    margin-bottom: 5px !important; /* Ridotto da 8px a 5px */
+    line-height: 1.1 !important; /* Ridotto da 1.2 a 1.1 */
+    text-align: center !important;
+}
+
+.summary-grid .summary-box .summary-title {
+    font-size: 1rem !important;
+    color: var(--text-secondary) !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.5px !important;
+    margin-bottom: 8px !important; /* Ridotto da 10px a 8px */
+    text-align: center !important;
+}
+
+.summary-grid .summary-box .summary-details {
+    font-size: 14px !important; /* Aumentato da 12px a 14px */
+    color: var(--text-secondary) !important;
+    text-align: center !important;
+    line-height: 1.3 !important;
+    margin-bottom: 0 !important;
+}
+
+/* ===== CLIENTS GRID CREDITO ===== */
+.clients-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.clients-grid .box {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    min-height: 80px;
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    position: relative;
+    padding: 20px;
+    border-left: 5px solid var(--primary-blue);
+}
+
+.clients-grid .box:hover {
+    box-shadow: var(--shadow-heavy);
+    transform: translateY(-2px);
+}
+
+.clients-grid .box .client-name {
+    font-size: 14px !important; /* Sovrascritto con !important per avere la precedenza */
+    font-weight: 700;
+    color: var(--primary-blue);
+    text-align: center;
+}
+
+body.dark-theme .clients-grid .box .client-name {
+    color: var(--text-primary);
+}
+
+/* Regola per il font del nome cliente nel box "ULTIMA OPERAZIONE" */
+#last-op-client {
+    font-size: 18px !important; /* Forza la dimensione a 18px */
+}
+
+/* ===== SEARCH WRAPPER CREDITO ===== */
+.search-wrapper {
+    position: relative;
+    width: 100%;
+    max-width: 300px;
+}
+
+.search-wrapper #searchInput {
+    width: 100%;
+    padding: 10px 15px 10px 40px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-pill);
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    min-height: 44px;
+    background: var(--bg-white);
+    color: var(--text-primary);
+}
+
+.search-wrapper #searchInput:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
+}
+
+.search-wrapper .search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-secondary);
+    font-size: 14px;
+    pointer-events: none;
+}
+
+.search-wrapper #clearSearchBtn {
+    display: none;
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    color: var(--text-secondary);
+    padding: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+}
+
+.search-wrapper #clearSearchBtn:hover {
+    background: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+body.dark-theme .search-wrapper #searchInput {
+    background: var(--bg-primary);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+
+/* ===== PULSANTI SPECIFICI CREDITO ===== */
+.action-btn.secondary {
+    background-color: var(--bg-display);
+    color: var(--text-secondary);
+}
+
+.action-btn.secondary:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+.action-btn.success {
+    background-color: var(--success);
+    color: white;
+}
+
+.action-btn.success:hover {
+    background-color: var(--success-hover);
+    color: white;
+}
+
+/* ===== MODAL DETTAGLI CLIENTE ===== */
+.modal-content-wrapper {
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
+    box-shadow: var(--shadow-heavy);
+    border: 1px solid var(--primary-blue-light);
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9) translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content-wrapper {
+    transform: scale(1) translateY(0);
+}
+
+.modal-inner-content {
+    padding: 20px;
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== CLIENT HEADER NEL MODAL ===== */
+.client-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid var(--primary-blue-light);
+}
+
+.client-name-input {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--primary-blue);
+    border: 2px solid transparent;
+    background: transparent;
+    padding: 8px 12px;
+    flex-grow: 1;
+    margin-right: 15px;
+    font-family: 'Montserrat', sans-serif;
+    border-radius: var(--radius-squadrato);
+    transition: all 0.2s ease;
+    text-align: left;
+}
+
+.client-name-input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
+}
+
+body.dark-theme .client-name-input {
+    color: var(--text-primary);
+}
+
+/* ===== ACTIONS WRAPPER ===== */
+.client-actions-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.client-actions {
+    display: flex;
+    gap: 8px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    transition: all 0.3s ease;
+}
+
+.client-actions.is-open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
+
+.client-more-options-btn {
+    background: var(--bg-display);
+    border: none;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.client-more-options-btn:hover {
+    background: var(--primary-blue);
+    transform: rotate(90deg);
+}
+
+.client-more-options-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: var(--text-secondary);
+    transition: fill 0.3s ease;
+}
+
+.client-more-options-btn:hover svg {
+    fill: white;
+}
+
+/* ===== PULSANTI AZIONI CLIENTE ===== */
+.client-acconto-btn,
+.client-salda-btn,
+.client-print-btn,
+.client-delete-btn {
+    width: 32px;
+    height: 32px;
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    background: var(--bg-display);
+}
+
+.client-salda-btn:disabled {
+    background: var(--text-secondary);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.client-acconto-btn:hover,
+.client-salda-btn:hover:not(:disabled),
+.client-print-btn:hover,
+.client-delete-btn:hover {
+    background: var(--primary-blue);
+    transform: scale(1.1);
+}
+
+.client-acconto-btn i,
+.client-salda-btn i,
+.client-print-btn i,
+.client-delete-btn i {
+    font-size: var(--font-size-standard);
+    color: var(--text-secondary);
+    transition: color 0.3s ease;
+}
+
+.client-acconto-btn:hover i,
+.client-salda-btn:hover:not(:disabled) i,
+.client-print-btn:hover i,
+.client-delete-btn:hover i {
+    color: white;
+}
+
+.client-salda-btn:disabled i {
+    color: white;
+}
+
+/* ===== TRANSACTION FORM GRID ===== */
+.transaction-form-grid {
+    display: grid;
+    grid-template-columns: 120px 1fr 140px;
+    gap: 12px;
+    margin: 15px 0;
+    align-items: center;
+}
+
+.transaction-form-grid .grid-input {
+    text-align: left; /* Tutti i campi del form allineati a sinistra */
+}
+
+.transaction-form-grid .amount-input {
+    text-align: right; /* Solo il campo importo allineato a destra */
+}
+
+/* ===== HISTORY TOGGLE ===== */
+.history-toggle {
+    text-align: center;
+    cursor: pointer;
+    font-size: var(--font-size-standard);
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: var(--radius-pill);
+    background-color: var(--bg-display);
+    margin: 10px auto;
+    transition: all 0.2s ease;
+    display: block;
+    width: fit-content;
+    color: var(--text-secondary);
+}
+
+.history-toggle:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+body.dark-theme .history-toggle {
+    color: var(--text-primary);
+    background-color: var(--bg-display);
+}
+
+body.dark-theme .history-toggle:hover {
+    background-color: var(--primary-blue-light);
+    color: var(--text-primary);
+}
+
+/* ===== TRANSACTIONS CONTAINER ===== */
+.transactions-container {
+    max-height: 0;
+    overflow-y: hidden;
+    opacity: 0;
+    padding-right: 15px;
+    margin-bottom: 10px;
+    transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+}
+
+.transactions-container.is-expanded {
+    max-height: 200px;
+    overflow-y: auto;
+    opacity: 1;
+}
+
+/* ===== TRANSACTION ITEMS ===== */
+.transaction-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start; /* Allineamento in alto per contenuto multilinea */
+    padding: 12px 0;
+    border-bottom: 1px solid var(--primary-blue-light);
+    gap: 15px; /* Spazio tra descrizione e importo */
+}
+
+.transaction-details {
+    flex: 1;
+    text-align: left; /* Descrizione allineata a sinistra */
+    min-width: 0; /* Permette il wrap del testo */
+}
+
+.transaction-details span {
+    display: block;
+    word-wrap: break-word;
+    line-height: 1.4;
+}
+
+.transaction-date {
+    font-size: 12px;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    font-style: italic;
+}
+
+.transaction-right-side {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0; /* Non si riduce */
+}
+
+.transaction-amount {
+    font-weight: 700;
+    font-size: var(--font-size-standard);
+    text-align: right; /* Importo allineato a destra */
+    min-width: 80px; /* Larghezza minima per allineamento */
+}
+
+.transaction-delete-btn {
+    background: var(--danger);
+    border: none;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.transaction-delete-btn:hover {
+    background: #e62e3e;
+    transform: scale(1.1);
+}
+
+.transaction-delete-btn i {
+    color: white;
+    font-size: 12px;
+}
+
+.no-transactions-message {
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    padding: 20px 0;
+    font-size: var(--font-size-standard);
+}
+
+/* ===== CLIENT TOTAL ===== */
+.client-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px 0;
+    border-top: 2px solid var(--primary-blue);
+    margin-top: 10px;
+}
+
+.total-value {
+    font-size: 18px;
+}
+
+/* ===== FORM INPUTS NEI MODAL ===== */
+.add-client-form input,
+.acconto-form input {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.add-client-form input:focus,
+.acconto-form input:focus {
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px var(--primary-blue-light);
+    outline: none;
+}
+
+body.dark-theme .add-client-form input,
+body.dark-theme .acconto-form input {
+    background: var(--bg-display);
+    border-color: var(--bg-display);
+    color: var(--text-primary);
+}
+
+/* ===== RESPONSIVE CREDITO ===== */
+@media (max-width: 768px) {
+    .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .clients-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .transaction-form-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    .client-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+    }
+
+    .client-actions-wrapper {
+        justify-content: center;
+    }
+
+    .search-wrapper {
+        max-width: 100%;
+    }
+
+    /* Transaction items responsive */
+    .transaction-item {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .transaction-right-side {
+        justify-content: space-between;
+        width: 100%;
+    }
+
+    .transaction-amount {
+        text-align: left;
+        min-width: auto;
+    }
+
+    /* Font responsivi per mobile */
+    .summary-grid .summary-box .stat-value,
+    .summary-grid .summary-box .summary-value {
+        font-size: 2rem !important;
+    }
+
+    .summary-grid .summary-box .summary-title {
+        font-size: 0.9rem !important;
+    }
+
+    .summary-grid .summary-box .summary-details {
+        font-size: 13px !important; /* Leggermente ridotto per mobile */
+    }
+
+    .summary-grid .summary-box {
+        padding: 12px !important; /* Padding ulteriormente ridotto su mobile */
+    }
+}
