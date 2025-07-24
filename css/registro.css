@@ -190,3 +190,314 @@ body.dark-theme .history-toggle:hover {
     background-color: var(--primary-blue-light);
     color: var(--primary-blue);
 }
+
+/* ===== MODIFICHE AI PULSANTI E LORO STATI (specifici per modali e top-action-bar) ===== */
+
+/* Stile base per tutti i .action-btn, senza toccare il border-radius predefinito (squadrato se non altrimenti specificato) */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: var(--radius-squadrato); /* Mantiene la forma quadrata se non diversamente specificato */
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Forzo la forma a pillola per i pulsanti nella top-action-bar (selettore più generico per coprire i diversi file HTML) */
+.top-action-bar .action-btn {
+    border-radius: var(--radius-pill) !important; /* Forza la forma a pillola per questi pulsanti specifici */
+}
+
+/* ===== PULSANTI SPECIALI - STILE NORMALE (trasparente) ===== */
+/* Pulsanti di conferma/importa/ok */
+#confirm-modal-ok,
+#import-modal-ok,
+#import-confirm-btn,
+.modal-actions .action-btn.btn-success,
+.top-action-bar .action-btn[onclick*="importaDatiCompleti"] {
+    background-color: transparent !important;
+    color: var(--text-secondary) !important;
+    border: none !important;
+}
+
+#confirm-modal-ok i,
+#import-modal-ok i,
+#import-confirm-btn i,
+.modal-actions .action-btn.btn-success i,
+.top-action-bar .action-btn[onclick*="importaDatiCompleti"] i {
+    color: var(--text-secondary) !important;
+}
+
+/* ===== PULSANTI SPECIALI - HOVER BLU ===== */
+#confirm-modal-ok:hover,
+#import-modal-ok:hover,
+#import-confirm-btn:hover,
+.modal-actions .action-btn.btn-success:hover,
+.top-action-bar .action-btn[onclick*="importaDatiCompleti"]:hover {
+    background-color: var(--primary-blue) !important; /* Blu in hover */
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+#confirm-modal-ok:hover i,
+#import-modal-ok:hover i,
+#import-confirm-btn:hover i,
+.modal-actions .action-btn.btn-success:hover i,
+.top-action-bar .action-btn[onclick*="importaDatiCompleti"]:hover i {
+    color: white !important;
+}
+
+/* ===== PULSANTI SECONDARI - STILE NORMALE (trasparente) ===== */
+/* Pulsanti di annulla/cancella */
+#confirm-modal-cancel,
+#import-modal-cancel,
+#import-cancel-btn,
+.modal-actions .action-btn.btn-danger,
+.action-btn.secondary {
+    background-color: transparent !important;
+    color: var(--text-secondary) !important;
+    border: none !important;
+}
+
+#confirm-modal-cancel i,
+#import-modal-cancel i,
+#import-cancel-btn i,
+.modal-actions .action-btn.btn-danger i,
+.action-btn.secondary i {
+    color: var(--text-secondary) !important;
+}
+
+/* ===== PULSANTI SECONDARI - HOVER ROSSO ===== */
+#confirm-modal-cancel:hover,
+#import-modal-cancel:hover,
+#import-cancel-btn:hover,
+.modal-actions .action-btn.btn-danger:hover,
+.action-btn.secondary:hover {
+    background-color: var(--danger) !important; /* Rosso in hover */
+    color: white !important;
+    transform: translateY(-1px);
+}
+
+#confirm-modal-cancel:hover i,
+#import-modal-cancel:hover i,
+#import-cancel-btn:hover i,
+.modal-actions .action-btn.btn-danger:hover i,
+.action-btn.secondary:hover i {
+    color: white !important;
+}
+
+/* Stile per il pulsante di chiusura del modale */
+.modal-close-btn {
+    background: transparent !important; /* Trasparente in stato normale */
+    border: none !important;
+    border-radius: 50%; /* Tondo */
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+    font-size: 16px;
+    color: var(--text-secondary) !important; /* Colore normale dell'icona */
+    line-height: 1; 
+}
+
+.modal-close-btn:hover {
+    background-color: var(--danger) !important; /* Sfondo rosso in hover */
+    color: white !important; /* Icona bianca in hover */
+    transform: rotate(90deg); 
+}
+
+.modal-close-btn:hover i {
+    color: white !important;
+}
+
+/* ===== MODAL DI IMPORTAZIONE (e altri modali se usano queste classi - layout non toccato) ===== */
+.modal-content-wrapper {
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
+    box-shadow: var(--shadow-heavy);
+    border: 1px solid var(--primary-blue-light);
+    max-width: 700px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    transform: scale(0.9) translateY(-20px);
+    transition: transform 0.3s ease;
+}
+
+.modal-overlay.active .modal-content-wrapper {
+    transform: scale(1) translateY(0);
+}
+
+.modal-inner-content {
+    padding: 20px;
+    background: var(--bg-white);
+    border-radius: var(--radius-squadrato);
+    display: flex;
+    flex-direction: column;
+}
+
+/* ===== INPUT FILE E DROPZONE (layout non toccato) ===== */
+.dropzone {
+    border: 2px dashed var(--primary-blue-light);
+    border-radius: var(--radius-squadrato);
+    padding: 30px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background-color: var(--bg-display);
+    color: var(--text-secondary);
+}
+
+.dropzone.hover {
+    border-color: var(--primary-blue);
+    background-color: var(--primary-blue-light);
+    color: var(--primary-blue);
+}
+
+.dropzone input[type="file"] {
+    display: none;
+}
+
+.dropzone p {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.dropzone i {
+    font-size: 30px;
+    margin-bottom: 10px;
+    display: block;
+    color: var(--primary-blue);
+}
+
+#file-name {
+    margin-top: 15px;
+    font-weight: 600;
+    color: var(--primary-blue);
+}
+
+/* ===== TABELLA DI ANTEPRIMA IMPORTAZIONE (layout non toccato) ===== */
+.import-preview-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.import-preview-table th,
+.import-preview-table td {
+    border: 1px solid var(--border-color);
+    padding: 8px;
+    text-align: left;
+}
+
+.import-preview-table th {
+    background-color: var(--bg-display);
+    color: var(--text-secondary);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.import-preview-table tbody tr:nth-child(even) {
+    background-color: var(--bg-light);
+}
+
+body.dark-theme .import-preview-table tbody tr:nth-child(even) {
+    background-color: var(--bg-primary);
+}
+
+/* ===== MESSAGGI DI STATO IMPORTAZIONE (layout non toccato) ===== */
+#import-status-message {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: var(--radius-squadrato);
+    font-weight: 600;
+    text-align: center;
+    display: none; /* Nascosto di default */
+}
+
+#import-status-message.success {
+    background-color: var(--success-light);
+    color: var(--success-dark);
+}
+
+#import-status-message.error {
+    background-color: var(--danger-light);
+    color: var(--danger-dark);
+}
+
+/* ===== RESPONSIVE REGISTRO (ORIGINALE - layout non toccato) ===== */
+@media (max-width: 992px) {
+    .top-row-grid,
+    .bottom-row-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .transaction-form-grid {
+        grid-template-columns: 1fr;
+    }
+    .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    /* Le seguenti regole responsive non sono state modificate in questo aggiornamento */
+    .import-preview-table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .import-preview-table thead,
+    .import-preview-table tbody,
+    .import-preview-table th,
+    .import-preview-table td,
+    .import-preview-table tr {
+        display: block;
+    }
+
+    .import-preview-table th,
+    .import-preview-table td {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .import-preview-table thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .import-preview-table tr {
+        border: 1px solid var(--border-color);
+        margin-bottom: 10px;
+    }
+
+    .import-preview-table td {
+        border: none;
+        border-bottom: 1px solid var(--border-color);
+        position: relative;
+        padding-left: 50%;
+        text-align: right;
+    }
+
+    .import-preview-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+    }
+}

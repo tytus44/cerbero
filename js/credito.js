@@ -444,7 +444,8 @@ CreditManager.prototype.showAddClientModal = function() {
     var nameInput = document.getElementById('new-client-name');
     var btnOk = document.getElementById('add-client-ok');
     var btnCancel = document.getElementById('add-client-cancel');
-    
+    var closeBtn = modal.querySelector('.modal-close-btn'); // Seleziona il pulsante di chiusura
+
     var hide = function() {
         modal.classList.remove('active');
         nameInput.value = '';
@@ -484,6 +485,7 @@ CreditManager.prototype.showAddClientModal = function() {
         hide();
     };
     
+    // Rimuovi vecchi listener e assegna nuovi per evitare duplicati
     var newBtnOk = btnOk.cloneNode(true);
     var newBtnCancel = btnCancel.cloneNode(true);
     btnOk.parentNode.replaceChild(newBtnOk, btnOk);
@@ -491,6 +493,16 @@ CreditManager.prototype.showAddClientModal = function() {
     
     newBtnOk.addEventListener('click', addClient);
     newBtnCancel.addEventListener('click', hide);
+
+    // Gestione del pulsante di chiusura del modale "Aggiungi Nuovo Cliente"
+    if (closeBtn) {
+        // Rimuovi il listener esistente per evitare duplicati
+        var oldCloseBtn = closeBtn;
+        var newCloseBtn = oldCloseBtn.cloneNode(true);
+        oldCloseBtn.parentNode.replaceChild(newCloseBtn, oldCloseBtn);
+        newCloseBtn.addEventListener('click', hide);
+    }
+    
     nameInput.addEventListener('keydown', function(e) {
         if (e.key === 'Enter') addClient();
         if (e.key === 'Escape') hide();
@@ -907,15 +919,23 @@ document.addEventListener('DOMContentLoaded', function() {
             throw new Error('Storage non disponibile');
         }
         
-        ThemeManager.init();
-        
+        // Assicurati che ThemeManager.init() sia definito o rimuovilo se non usato
+        if (typeof ThemeManager !== 'undefined' && ThemeManager.init) {
+             ThemeManager.init();
+        }
+       
+        // Inizializzazione del pulsante info e del suo modale
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
         if (infoBtn && infoModal) {
             const closeBtn = infoModal.querySelector('.modal-close-btn');
             infoBtn.addEventListener('click', (e) => { e.preventDefault(); infoModal.classList.add('active'); });
-            if(closeBtn) { closeBtn.addEventListener('click', () => { infoModal.classList.remove('active'); }); }
-            infoModal.addEventListener('click', (e) => { if(e.target === infoModal) { infoModal.classList.remove('active'); } });
+            if(closeBtn) { 
+                closeBtn.addEventListener('click', () => { infoModal.classList.remove('active'); }); 
+            }
+            infoModal.addEventListener('click', (e) => { 
+                if(e.target === infoModal) { infoModal.classList.remove('active'); } 
+            });
         }
 
         initializeSearchBar();

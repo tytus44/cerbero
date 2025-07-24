@@ -12,7 +12,8 @@
 
 #add-client-modal,
 #acconto-modal,
-#info-modal {
+#info-modal,
+#import-modal {
     z-index: 1050;
 }
 
@@ -66,15 +67,15 @@
     margin-bottom: 3px !important; /* Ridotto da 5px a 3px */
 }
 
-/* ===== FONT PIÙ GRANDI PER I BOX RIEPILOGO CREDITO - COME VENDITE ===== */
+/* ===== FONT PIÙ GRANDI PER I BOX RIEPILOGO CREDITO - COME VENDITE E CREDITO ===== */
 /* Sovrascriviamo la regola globale con selettori più specifici */
 .summary-grid .summary-box .stat-value,
 .summary-grid .summary-box .summary-value {
     font-size: 2.5rem !important;
     font-weight: 800 !important;
     color: var(--primary-blue) !important;
-    margin-bottom: 5px !important; /* Ridotto da 8px a 5px */
-    line-height: 1.1 !important; /* Ridotto da 1.2 a 1.1 */
+    margin-bottom: 5px !important;
+    line-height: 1.1 !important;
     text-align: center !important;
 }
 
@@ -84,12 +85,12 @@
     font-weight: 700 !important;
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
-    margin-bottom: 8px !important; /* Ridotto da 10px a 8px */
+    margin-bottom: 8px !important;
     text-align: center !important;
 }
 
 .summary-grid .summary-box .summary-details {
-    font-size: 14px !important; /* Aumentato da 12px a 14px */
+    font-size: 14px !important;
     color: var(--text-secondary) !important;
     text-align: center !important;
     line-height: 1.3 !important;
@@ -182,9 +183,9 @@ body.dark-theme .clients-grid .box .client-name {
     transform: translateY(-50%);
     background: none;
     border: none;
-    cursor: pointer;
     font-size: 20px;
-    color: var(--text-secondary);
+    cursor: pointer;
+    color: #aaa;
     padding: 0;
     width: 20px;
     height: 20px;
@@ -203,25 +204,117 @@ body.dark-theme .search-wrapper #searchInput {
     color: var(--text-primary);
 }
 
-/* ===== PULSANTI SPECIFICI CREDITO ===== */
-.action-btn.secondary {
-    background-color: var(--bg-display);
-    color: var(--text-secondary);
+/* ===== PULSANTI SPECIALI (Nuovi Stili di Hover) ===== */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 20px;
+    font-weight: 600;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease, border-color 0.3s ease;
+    /* Assicurati che il border-radius sia definito altrove in style.css o lascialo come default del browser */
+    /* Esempio se deve essere sempre squadrato: border-radius: var(--radius-squadrato); */
+    /* Esempio se deve essere sempre a pillola: border-radius: var(--radius-pill); */
 }
 
-.action-btn.secondary:hover {
-    background-color: var(--primary-blue-light);
-    color: var(--primary-blue);
+/* Stile normale per i pulsanti "speciali" (es. AGGIUNGI nella top-action-bar, Aggiungi/Conferma nei modali) */
+#addNewClientBtn,
+#add-client-ok,
+#acconto-ok-btn,
+#confirm-modal-ok,
+#import-modal-ok,
+#import-confirm-btn { 
+    background-color: transparent !important; /* Trasparente */
+    color: var(--text-secondary) !important; /* Testo scuro */
+    border: none !important; /* Senza bordo in stato normale */
 }
 
-.action-btn.success {
-    background-color: var(--success);
-    color: white;
+#addNewClientBtn i,
+#add-client-ok i,
+#acconto-ok-btn i,
+#confirm-modal-ok i,
+#import-modal-ok i,
+#import-confirm-btn i {
+    color: var(--text-secondary) !important; /* Colore normale dell'icona */
 }
 
-.action-btn.success:hover {
-    background-color: var(--success-hover);
-    color: white;
+/* Stile Hover per i pulsanti "speciali" (sfondo blu, testo/icona bianca) */
+#addNewClientBtn:hover,
+#add-client-ok:hover,
+#acconto-ok-btn:hover,
+#confirm-modal-ok:hover,
+#import-modal-ok:hover,
+#import-confirm-btn:hover {
+    background-color: var(--primary-blue) !important; /* Sfondo blu in hover */
+    color: white !important; /* Testo bianco */
+    transform: translateY(-1px);
+}
+
+#addNewClientBtn:hover i,
+#add-client-ok:hover i,
+#acconto-ok-btn:hover i,
+#confirm-modal-ok:hover i,
+#import-modal-ok:hover i,
+#import-confirm-btn:hover i {
+    color: white !important; /* Icona bianca in hover */
+}
+
+/* Stile per i pulsanti secondari/annulla */
+.action-btn.secondary,
+#import-modal-cancel,
+#import-cancel-btn {
+    background-color: transparent !important; /* Trasparente in stato normale */
+    color: var(--text-secondary) !important; /* Colore del testo normale */
+    border: none !important; /* Senza bordo in stato normale */
+}
+
+.action-btn.secondary i,
+#import-modal-cancel i,
+#import-cancel-btn i {
+    color: var(--text-secondary) !important; /* Colore normale dell'icona */
+}
+
+.action-btn.secondary:hover,
+#import-modal-cancel:hover,
+#import-cancel-btn:hover {
+    background-color: var(--danger) !important; /* ROSSO in hover */
+    color: white !important; /* Testo bianco in hover */
+}
+
+.action-btn.secondary:hover i,
+#import-modal-cancel:hover i,
+#import-cancel-btn:hover i {
+    color: white !important; /* Icona bianca in hover */
+}
+
+/* Stile per il pulsante di chiusura del modale */
+.modal-close-btn {
+    background: transparent !important; /* Sfondo trasparente in stato normale */
+    border: none !important;
+    border-radius: 50%; /* Tondo */
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease, color 0.3s ease;
+    font-size: 16px;
+    color: var(--text-secondary) !important; /* Colore normale dell'icona */
+    line-height: 1; 
+}
+
+.modal-close-btn:hover {
+    background-color: var(--danger) !important; /* Sfondo rosso in hover */
+    color: white !important; /* Icona bianca in hover */
+    transform: rotate(90deg); 
+}
+
+.modal-close-btn:hover i {
+    color: white !important;
 }
 
 /* ===== MODAL DETTAGLI CLIENTE ===== */
