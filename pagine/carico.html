@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem('cerbero_theme') || 'light';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch (e) {
+                console.error('Errore applicazione tema iniziale:', e);
+            }
+        })();
+    </script>
+
+    <title>CeRBERO - Carico carburanti</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/stile.css"> 
+</head>
+<body>
+
+    <div class="top-action-bar">
+        <button class="action-btn btn-success" id="btn-nuovo-carico"><i class="fa-solid fa-plus-circle"></i>NUOVO CARICO</button>
+        <button class="action-btn" id="btn-importa"><i class="fa-solid fa-download"></i>IMPORTA</button>
+        <button class="action-btn" id="btn-esporta"><i class="fa-solid fa-upload"></i>ESPORTA</button>
+        <button class="action-btn" id="btn-stampa"><i class="fa-solid fa-print"></i>STAMPA</button>
+        <button class="action-btn btn-danger" id="btn-reset"><i class="fa-solid fa-rotate-left"></i>RESET ANNO</button>
+    </div>
+
+    <aside class="sidebar">
+        <div class="sidebar-header">CeRBERO</div>
+<nav class="nav">
+    <ul>
+        <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
+        <li><a href="rubrica.html"><i class="fa-solid fa-address-book"></i>RUBRICA</a></li>
+        <li><a href="monetario.html"><i class="fa-solid fa-coins"></i>MONETARIO</a></li>
+        <li><a href="virtualstation.html"><i class="fa-solid fa-gas-pump"></i>VIRTUALSTATION</a></li>
+        <li><a href="vendite.html"><i class="fa-solid fa-chart-line"></i>VENDITE</a></li>
+        <li><a href="credito.html"><i class="fa-solid fa-credit-card"></i>CREDITO</a></li>
+        <li><a href="carico.html" class="active"><i class="fa-solid fa-truck"></i>CARICO</a></li>
+    </ul>
+</nav>
+        <div class="sidebar-footer">
+            <a href="#" id="theme-switcher" title="Cambia Tema">
+                <i class="fa-solid fa-sun theme-icon-light" id="theme-icon-light"></i>
+                <i class="fa-solid fa-moon theme-icon-dark" id="theme-icon-dark"></i>TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
+            </a>
+        </div>
+    </aside>
+
+    <div class="container">
+        <!-- ✅ CORRETTO: Rimosso style="margin-top:0;" -->
+        <main class="main-content">
+            <div class="filter-container">
+                <label class="filter-label">Filtra Totali Per:</label>
+                <select id="filter-type" class="filter-select">
+                    <option value="mese">MESE</option>
+                    <option value="trimestre">TRIMESTRE</option>
+                    <option value="semestre">SEMESTRE</option>
+                </select>
+                <select id="filter-value" class="filter-select"></select>
+                <button class="action-btn" id="btn-apply-filter"><i class="fa-solid fa-check"></i>Applica</button>
+                <button class="action-btn secondary" id="btn-reset-filter" title="Reset Filtro"><i class="fa-solid fa-rotate-left"></i></button>
+            </div>
+
+            <div class="main-container">
+                <div class="box summary-box" id="box-sinistro">
+                    <h2 class="box-header" id="box-title-anno">TOTALE ANNO</h2>
+                    <div class="box-content">
+                        <div class="carico-grid">
+                            <div class="grid-header">Prodotto</div>
+                            <div class="grid-header">Litri</div>
+                            <div class="grid-header hide-mobile">PIÙ</div>
+                            <div class="grid-header hide-mobile">MENO</div>
+                            <div class="grid-header hide-mobile">Differenza</div>
+                            <div class="grid-header hide-mobile hide-on-filter" id="rimanenza-header">RIMANENZA</div>
+                            <div class="grid-header hide-mobile hide-on-filter">Totale</div>
+
+                            <div class="display-field">BENZINA</div>
+                            <div><input type="text" class="grid-input" id="litri-benzina" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="piu-benzina" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="meno-benzina" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="diff-benzina" readonly placeholder="0" tabindex="-1"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="rimanenza-benzina" placeholder="0"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="totale-benzina" readonly placeholder="0" tabindex="-1"></div>
+
+                            <div class="display-field">GASOLIO</div>
+                            <div><input type="text" class="grid-input" id="litri-gasolio" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="piu-gasolio" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="meno-gasolio" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="diff-gasolio" readonly placeholder="0" tabindex="-1"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="rimanenza-gasolio" placeholder="0"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="totale-gasolio" readonly placeholder="0" tabindex="-1"></div>
+
+                            <div class="display-field">DIESEL+</div>
+                            <div><input type="text" class="grid-input" id="litri-diesel" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="piu-diesel" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="meno-diesel" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="diff-diesel" readonly placeholder="0" tabindex="-1"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="rimanenza-diesel" placeholder="0"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="totale-diesel" readonly placeholder="0" tabindex="-1"></div>
+
+                            <div class="display-field">HVOLUTION</div>
+                            <div><input type="text" class="grid-input" id="litri-hvolution" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="piu-hvolution" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="meno-hvolution" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="diff-hvolution" readonly placeholder="0" tabindex="-1"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="rimanenza-hvolution" placeholder="0"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="totale-hvolution" readonly placeholder="0" tabindex="-1"></div>
+
+                            <div class="display-field">TOTALI</div>
+                            <div><input type="text" class="grid-input" id="totali-litri" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="totali-piu" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="totali-meno" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile"><input type="text" class="grid-input" id="totali-diff" readonly placeholder="0" tabindex="-1"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="totali-rimanenza" placeholder="0" readonly tabindex="-1"></div>
+                            <div class="hide-mobile hide-on-filter"><input type="text" class="grid-input" id="totali-totale" readonly placeholder="0" tabindex="-1"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-row">
+                <div class="box summary-box" id="box-grafico">
+                    <h2 class="box-header">GRAFICO CARICHI</h2>
+                    <div class="box-content">
+                        <div class="chart-container-adaptive">
+                            <canvas id="carichiChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="box summary-box" id="monthly-load-chart-box">
+                    <h2 class="box-header">ANDAMENTO CARICHI MENSILI</h2>
+                    <div class="box-content">
+                        <div class="chart-container-adaptive">
+                            <canvas id="monthlyLoadChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="box summary-box">
+                <h2 class="box-header">CARICHI EFFETTUATI</h2>
+                <div class="box-content">
+                    <table class="history-table">
+                        <thead>
+                            <tr>
+                                <th>Data</th>
+                                <th class="product-benzina">Benzina</th>
+                                <th class="product-benzina">+/-</th>
+                                <th class="product-gasolio">Gasolio</th>
+                                <th class="product-gasolio">+/-</th>
+                                <th class="product-diesel">Diesel+</th>
+                                <th class="product-diesel">+/-</th>
+                                <th class="product-hvolution">HVOlution</th>
+                                <th class="product-hvolution">+/-</th>
+                                <th>Autista</th>
+                                <th class="actions-header">Azioni</th>
+                            </tr>
+                        </thead>
+                        <tbody id="history-tbody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="newLoadModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Nuovo Carico</h3>
+                <button class="modal-close-btn" id="btn-close-modal" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content">
+                <form class="modal-form" id="newLoadForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Data Carico</label>
+                            <input type="text" class="form-input" id="load-date" placeholder="GG/MM/AAAA" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Autista</label>
+                            <input type="text" class="form-input autista-input" id="load-driver" placeholder="Nome autista" required>
+                        </div>
+                    </div>
+                    <div class="form-group full-width">
+                        <div class="product-inputs">
+                            <div class="product-input-group">
+                                <div class="product-input-label benzina">Benzina</div>
+                                <input type="number" class="form-input" id="load-benzina" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-benzina" placeholder="+/- 0">
+                            </div>
+                            <div class="product-input-group">
+                                <div class="product-input-label gasolio">Gasolio</div>
+                                <input type="number" class="form-input" id="load-gasolio" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-gasolio" placeholder="+/- 0">
+                            </div>
+                            <div class="product-input-group">
+                                <div class="product-input-label diesel">Diesel+</div>
+                                <input type="number" class="form-input" id="load-diesel" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-diesel" placeholder="+/- 0">
+                            </div>
+                            <div class="product-input-group">
+                                <div class="product-input-label hvolution">HVOlution</div>
+                                <input type="number" class="form-input" id="load-hvolution" placeholder="0" step="1000" min="0">
+                                <input type="number" class="form-input product-diff-input" id="load-diff-hvolution" placeholder="+/- 0">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="action-btn btn-danger" id="btn-cancel-modal">
+                            <i class="fa-solid fa-xmark"></i>ANNULLA
+                        </button>
+                        <button type="submit" class="action-btn btn-success">
+                            <i class="fa-solid fa-check"></i>SALVA CARICO
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirm-modal-title">Conferma Azione</h3>
+                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content">
+                <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn btn-danger" id="confirm-modal-cancel">
+                    <i class="fa-solid fa-xmark"></i>ANNULLA
+                </button>
+                <button class="action-btn btn-success" id="confirm-modal-ok">
+                    <i class="fa-solid fa-check"></i>CONFERMA
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Informazioni Progetto</div>
+                <button class="modal-close-btn" title="Chiudi" onclick="this.closest('.modal-overlay').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content info-modal-content">
+                <i class="fa-solid fa-brain modal-info-icon"></i>
+                <h1 class="info-modal-brand">CeRBERO</h1>
+                <div class="info-divider"></div>
+                <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
+                <div class="info-divider"></div>
+                <div class="programmer-info">
+                    <strong>Sviluppato da:</strong> NeRO<br>
+                    <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
+                    <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/carico.js"></script>
+</body>
+</html>

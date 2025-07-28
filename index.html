@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem('cerbero_theme') || 'light';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch (e) {
+                console.error('Errore applicazione tema iniziale:', e);
+            }
+        })();
+    </script>
+
+    <title>CeRBERO - Pagina iniziale</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="css/stile.css"> 
+    <style>
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr); /* Massimo 3 box per riga */
+            gap: 20px;
+        }
+
+        #confirm-modal .modal-content p {
+            text-align: left;
+        }
+
+        /* Correzioni tema scuro */
+        html.dark-theme .corrispettivi-input,
+        html.dark-theme .uniform-field {
+            color: var(--text-primary) !important;
+            background: var(--bg-white) !important;
+            border-color: var(--border-color) !important;
+        }
+
+        html.dark-theme .corrispettivi-input::placeholder,
+        html.dark-theme .uniform-field::placeholder {
+            color: var(--text-secondary) !important;
+        }
+
+        /* Modale info */
+        .modal-info-content {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .modal-info-icon {
+            font-size: 72px !important;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .info-modal-brand {
+            font-size: 48px !important;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: -0.025em;
+        }
+
+        .info-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .info-modal-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            text-align: left !important;
+        }
+
+        /* Pulsanti eliminazione task */
+        .todo-delete {
+            width: 24px;
+            height: 24px;
+            background: transparent;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            color: var(--text-secondary);
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .todo-delete:hover {
+            background-color: var(--danger);
+            color: white;
+            border-color: var(--danger);
+        }
+
+        /* Correzioni campi editabili */
+        .corrispettivi-input,
+        .uniform-field {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-size: var(--font-size-sm);
+            background: var(--bg-white);
+            color: var(--text-primary);
+            box-sizing: border-box;
+        }
+
+        .corrispettivi-input:focus,
+        .uniform-field:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-action-bar">
+        <button class="action-btn" onclick="importaDatiCompleti()"><i class="fa-solid fa-download"></i>IMPORTA</button>
+        <button class="action-btn" onclick="esportaTuttiIDati()"><i class="fa-solid fa-upload"></i>ESPORTA</button>
+        <button class="action-btn btn-success" onclick="confirmNewDay()"><i class="fa-solid fa-power-off"></i>NUOVA GIORNATA</button>
+    </div>
+
+    <aside class="sidebar" id="main-sidebar">
+        <div class="sidebar-header">CeRBERO</div>
+<nav class="nav">
+    <ul>
+        <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i>HOME</a></li>
+        <li><a href="pagine/rubrica.html"><i class="fa-solid fa-address-book"></i>RUBRICA</a></li>
+        <li><a href="pagine/monetario.html"><i class="fa-solid fa-coins"></i>MONETARIO</a></li>
+        <li><a href="pagine/virtualstation.html"><i class="fa-solid fa-gas-pump"></i>VIRTUALSTATION</a></li>
+        <li><a href="pagine/vendite.html"><i class="fa-solid fa-chart-line"></i>VENDITE</a></li>
+        <li><a href="pagine/credito.html"><i class="fa-solid fa-credit-card"></i>CREDITO</a></li>
+        <li><a href="pagine/carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
+    </ul>
+</nav>
+        
+        <div class="sidebar-footer">
+            <a href="#" id="theme-switcher" title="Cambia Tema">
+            <i class="fa-solid fa-sun theme-icon-light" id="theme-icon-light"></i>
+            <i class="fa-solid fa-moon theme-icon-dark" id="theme-icon-dark"></i>TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
+            </a>
+        </div>
+    </aside>
+
+    <div class="container">
+<div class="container">
+  <main class="main-content">
+            <div class="dashboard-grid">
+                <!-- Giorata -->
+                <section class="box summary-box giornata-box">
+                    <div class="box-header">GIORNATA</div>
+                    <div class="box-content">
+                        <div class="giornata-content">
+                            <div class="time-date">
+                                <div id="currentTime"></div>
+                                <div id="currentDateDisplay"></div>
+                            </div>
+                            <div class="form-fields">
+                                 <div class="form-group">
+                                    <label for="controlTurno">TURNO</label>
+                                    <input type="text" class="grid-input" id="controlTurno" placeholder="Turno">
+                                </div>
+                                <div class="form-group">
+                                    <label for="controlDate">DATA</label>
+                                    <input type="text" class="display-field" id="controlDate" readonly tabindex="-1">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Incasso -->
+                <section class="box summary-box box-libero-1">
+                    <div class="box-header">INCASSO</div>
+                    <div class="box-content corrispettivi-content">
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">FATTURATO TOTALE</span>
+                            <input type="text" class="corrispettivi-input" id="corrispettivi-fatturato" placeholder="€ 0,00" inputmode="decimal" style="text-align: center;">
+                        </div>
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">IMPONIBILE</span>
+                            <input type="text" class="display-field" id="corrispettivi-imponibile" placeholder="€ 0,00" readonly>
+                        </div>
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">IVA (22%)</span>
+                            <input type="text" class="display-field" id="corrispettivi-iva" placeholder="€ 0,00" readonly>
+                        </div>
+                        <div class="corrispettivi-group">
+                            <span class="corrispettivi-label">MARGINE</span>
+                            <input type="text" class="display-field" id="corrispettivi-margine" placeholder="€ 0,00" readonly>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Riepilogo vendite -->
+                <section class="box summary-box vendite-summary-box">
+                    <div class="box-header">RIEPILOGO VENDITE</div>
+                    <div class="box-content">
+                        <div class="vendite-summary-grid">
+                            <div class="display-field">BENZINA</div>
+                            <input type="text" class="display-field" id="benzina-liters" placeholder="0,00 L" readonly>
+                            
+                            <div class="display-field">GASOLIO</div>
+                            <input type="text" class="display-field" id="gasolio-liters" placeholder="0,00 L" readonly>
+                            
+                            <div class="display-field">DIESEL+</div>
+                            <input type="text" class="display-field" id="diesel-liters" placeholder="0,00 L" readonly>
+                            
+                            <div class="display-field">HVOLUTION</div>
+                            <input type="text" class="display-field" id="hvolution-liters" placeholder="0,00 L" readonly>
+                            
+                            <div class="display-field">ADBLUE</div>
+                            <input type="text" class="display-field" id="adblue-liters" placeholder="0,00 L" readonly>
+                        </div>
+                        
+                        <div class="vendite-totals">
+                            <input type="text" class="display-field product-field" value="TOTALE LITRI" readonly>
+                            <input type="text" class="display-field" id="total-liters" placeholder="0,00 L" readonly>
+                        </div>
+                    </div>
+                </section>
+                
+                <!-- Note -->
+                <section class="box summary-box note-box" id="notes-card">
+                    <div class="box-header">NOTE</div>
+                    <div class="box-content">
+                        <textarea id="notesArea" placeholder="Scrivi le tue note qui..." class="uniform-field"></textarea>
+                    </div>
+                </section>
+
+                <!-- Calendario -->
+                <section class="box summary-box calendario-box" id="calendar-card">
+                    <div class="box-header">CALENDARIO</div>
+                    <div class="box-content">
+                        <div class="calendar-header">
+                            <button id="calendarPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                            <h4 id="calendarTitle"></h4>
+                            <button id="calendarNext"><i class="fa-solid fa-chevron-right"></i></button>
+                        </div>
+                        <div class="calendar-grid">
+                            <div class="weekday">LU</div><div class="weekday">MA</div><div class="weekday">ME</div><div class="weekday">GI</div><div class="weekday">VE</div><div class="weekday">SA</div><div class="weekday">DO</div>
+                        </div>
+                        <div class="calendar-grid" id="calendarDates"></div>
+                    </div>
+                </section>
+                
+                <!-- To-do list -->
+                <section class="box summary-box todo-box" id="todo-card">
+                    <div class="box-header">TO-DO LIST</div>
+                    <div class="box-content">
+                        <div class="todo-input-group">
+                            <input type="text" id="newTodoInput" placeholder="Aggiungi task del turno..." class="uniform-field">
+                            <button id="addTodoBtn" class="action-btn"><i class="fa-solid fa-plus"></i></button>
+                        </div>
+                        <ul id="todo-list">
+                            <!-- Esempio di task con pulsante elimina -->
+                            <li>
+                                <label>
+                                    <input type="checkbox">
+                                    <span>Esempio task</span>
+                                </label>
+                                <button class="todo-delete" onclick="this.parentElement.remove()">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Informazioni Progetto</div>
+                <button class="modal-close-btn" title="Chiudi" onclick="this.closest('.modal-overlay').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content info-modal-content">
+                <i class="fa-solid fa-brain modal-info-icon"></i>
+                <h1 class="info-modal-brand">CeRBERO</h1>
+                <div class="info-divider"></div>
+                <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
+                <div class="info-divider"></div>
+                <div class="programmer-info">
+                    <strong>Sviluppato da:</strong> NeRO<br>
+                    <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
+                    <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="confirm-modal-title">Conferma</div>
+                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').classList.remove('active')"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content">
+                <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn btn-danger" id="confirm-modal-cancel"><i class="fa-solid fa-xmark"></i>Annulla</button>
+                <button class="action-btn btn-success" id="confirm-modal-ok"><i class="fa-solid fa-check"></i>Conferma</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/storage.js"></script>
+    <script src="js/index.js"></script>
+</body>
+</html>

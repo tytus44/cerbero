@@ -1,0 +1,22 @@
+│   index.html
+│
+├───css
+│       stile - Copia.css
+│
+├───js
+│       carico.js
+│       credito.js
+│       index.js
+│       monetario.js
+│       rubrica.js
+│       storage.js
+│       vendite.js
+│       virtualstation.js
+│
+└───pagine
+        carico.html
+        credito.html
+        monetario.html
+        rubrica.html
+        vendite.html
+        virtualstation.html

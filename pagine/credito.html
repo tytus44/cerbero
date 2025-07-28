@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem('cerbero_theme') || 'light';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch (e) {
+                console.error('Errore applicazione tema iniziale:', e);
+            }
+        })();
+    </script>
+
+    <title>CeRBERO - Gestione Credito Clienti</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/stile.css"> 
+    <style>
+        .top-action-bar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            background-color: var(--bg-white);
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 99;
+            border-bottom: 1px solid var(--primary-blue-light);
+            box-shadow: none;
+            transition: left 0.3s ease, width 0.3s ease;
+        }
+        html.dark-theme .top-action-bar {
+            background-color: var(--bg-white);
+            border-bottom-color: var(--bg-display);
+        }
+        .main-content {
+            margin-top: 85px;
+        }
+        .search-wrapper {
+            position: relative;
+        }
+        #searchInput {
+            padding-left: 40px;
+            padding-right: 40px;
+        }
+        .search-icon {
+            position: absolute;
+            top: 50%;
+            left: 12px;
+            transform: translateY(-50%);
+            color: #aaa;
+        }
+        #clearSearchBtn {
+            position: absolute;
+            top: 50%;
+            right: 8px;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        /* ✅ 1. Grid clienti max 3 per riga */
+        .clients-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            max-width: none;
+            gap: 16px;
+        }
+
+        /* Limita a massimo 3 colonne */
+        @media (min-width: 1200px) {
+            .clients-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* ✅ 2. Stile campo input ricerca */
+        #searchInput {
+            width: 100%;
+            padding: 8px 40px 8px 40px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-weight: 500;
+            background: var(--bg-white);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            min-height: 36px;
+            box-sizing: border-box;
+            transition: border-color 0.2s ease;
+            min-width: 200px;
+        }
+
+        #searchInput:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+        }
+
+        #searchInput::placeholder {
+            color: var(--text-secondary);
+        }
+
+        /* ✅ 3. Diminuisci testo cliente ultima operazione */
+        #last-op-client {
+            font-size: 1.2rem !important; /* Ridotto da default */
+        }
+
+        /* ✅ 1. Stilizzazione pulsante storico come action-btn */
+        .history-toggle {
+            font-size: var(--font-size-sm);
+            padding: 8px 16px;
+            height: 36px;
+            text-decoration: none;
+            color: var(--text-secondary);
+            background: var(--bg-card);
+            font-weight: 600;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.025em;
+            min-width: 80px;
+        }
+
+        .history-toggle:hover {
+            color: var(--primary-blue);
+            background-color: var(--primary-blue-light);
+            border-color: var(--primary-blue);
+        }
+
+        /* ✅ 2. Campo descrizione automaticamente maiuscolo */
+        .desc-input {
+            text-transform: uppercase;
+        }
+
+        /* ✅ 3. Saldo finale con divisore e allineamento a destra */
+        .client-total {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px solid var(--primary-blue);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 700;
+            text-transform: uppercase;
+            color: var(--primary-blue);
+        }
+
+        .client-total .total-value {
+            text-align: right;
+        }
+
+        /* ✅ 4. Campo input modale aggiungi cliente */
+        #new-client-name {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-md);
+            font-family: inherit;
+            font-weight: 500;
+            background: var(--bg-white);
+            color: var(--text-primary);
+            font-size: var(--font-size-sm);
+            min-height: 36px;
+            box-sizing: border-box;
+            text-transform: uppercase;
+            transition: border-color 0.2s ease;
+        }
+
+        #new-client-name:focus {
+            border-color: var(--primary-blue);
+            outline: none;
+        }
+
+        /* Stile per schermi piccoli */
+        @media (max-width: 992px) {
+            .top-action-bar {
+                left: 0;
+                width: 100%;
+                flex-wrap: wrap; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="top-action-bar">
+        <div class="search-wrapper">
+            <input type="text" id="searchInput" placeholder="Cerca cliente...">
+            <i class="fas fa-search search-icon"></i>
+            <button id="clearSearchBtn" title="Pulisci ricerca">&times;</button>
+        </div>
+        <button class="action-btn btn-success" id="addNewClientBtn">
+            <i class="fa-solid fa-user-plus"></i>AGGIUNGI
+        </button>
+        <button class="action-btn" onclick="importaDatiCompleti()">
+            <i class="fa-solid fa-download"></i>IMPORTA
+        </button>
+        <button class="action-btn" onclick="esportaDatiCompleti()">
+            <i class="fa-solid fa-upload"></i>ESPORTA
+        </button>
+        <button class="action-btn" id="stampaDatiBtn" onclick="stampaDati()">
+            <i class="fa-solid fa-print"></i>STAMPA
+        </button>
+    </div>
+
+    <div class="sidebar">
+        <div class="sidebar-header">CeRBERO</div>
+<nav class="nav">
+    <ul>
+        <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
+        <li><a href="rubrica.html"><i class="fa-solid fa-address-book"></i>RUBRICA</a></li>
+        <li><a href="monetario.html"><i class="fa-solid fa-coins"></i>MONETARIO</a></li>
+        <li><a href="virtualstation.html"><i class="fa-solid fa-gas-pump"></i>VIRTUALSTATION</a></li>
+        <li><a href="vendite.html"><i class="fa-solid fa-chart-line"></i>VENDITE</a></li>
+        <li><a href="credito.html" class="active"><i class="fa-solid fa-credit-card"></i>CREDITO</a></li>
+        <li><a href="carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
+    </ul>
+</nav>
+        <div class="sidebar-footer">
+            <a href="#" id="theme-switcher" title="Cambia Tema">
+                <i class="fa-solid fa-sun theme-icon-light" id="theme-icon-light"></i>
+                <i class="fa-solid fa-moon theme-icon-dark" id="theme-icon-dark"></i>TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
+            </a>
+        </div>
+    </div>
+
+    <div class="container main-content">
+        <div class="summary-grid">
+            <div class="box summary-box">
+                <div class="summary-title">Clienti a Debito</div>
+                <div class="summary-value stat-value" id="clientiAttivi">0</div>
+            </div>
+            <div class="box summary-box">
+                <div class="summary-title">Credito Totale</div>
+                <div class="summary-value stat-value" id="totalCredito">€ 0,00</div>
+            </div>
+            <div class="box summary-box">
+                <div class="summary-title">Ultima Operazione</div>
+                <div class="summary-value stat-value" id="last-op-client" style="font-size: 18px;">--</div>
+                <div class="summary-details" id="last-op-details"></div>
+            </div>
+        </div>
+
+        <main id="clientsGrid" class="clients-grid">
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="add-client-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Aggiungi Nuovo Cliente</h3>
+                <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content">
+                <div class="add-client-form">
+                    <input type="text" id="new-client-name" placeholder="Nome del cliente">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn btn-danger" id="add-client-cancel"><i class="fa-solid fa-xmark"></i> Annulla</button>
+                <button class="action-btn btn-success" id="add-client-ok"><i class="fa-solid fa-check"></i> Aggiungi</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="acconto-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Aggiungi Acconto</h3>
+            </div>
+            <div class="modal-content">
+                <p>Inserisci l'importo dell'acconto per <strong id="acconto-client-name"></strong>.</p>
+                <div class="acconto-form">
+                    <input type="text" id="acconto-amount-input" placeholder="€ 0,00" inputmode="decimal">
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn btn-danger" id="acconto-cancel-btn"><i class="fa-solid fa-xmark"></i> Annulla</button>
+                <button class="action-btn btn-success" id="acconto-ok-btn"><i class="fa-solid fa-check"></i> Conferma</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="confirm-modal-title">Conferma Azione</h3>
+            </div>
+            <div class="modal-content">
+                <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn btn-danger" id="confirm-modal-cancel"><i class="fa-solid fa-xmark"></i> Annulla</button>
+                <button class="action-btn btn-success" id="confirm-modal-ok"><i class="fa-solid fa-check"></i> Conferma</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 5. Modale info copiato da index.html -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Informazioni Progetto</div>
+                <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-content info-modal-content">
+                <i class="fa-solid fa-brain modal-info-icon"></i>
+                <h1 class="info-modal-brand">CeRBERO</h1>
+                <div class="info-divider"></div>
+                <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
+                <div class="info-divider"></div>
+                <div class="programmer-info">
+                    <strong>Sviluppato da:</strong> NeRO<br>
+                    <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
+                    <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="client-detail-modal">
+        <div class="modal-content-wrapper modal">
+            <div id="modal-body-content" class="modal-inner-content">
+
+                <!-- Intestazione cliente -->
+                <div class="client-header">
+                    <input type="text" class="client-name-input" id="client-name-input" value="">
+                </div>
+
+                <!-- 🔹 Barra azioni con Storico a sinistra e pulsanti a destra -->
+                <div class="client-actions-bar">
+                    <button class="history-toggle" id="history-toggle-btn">
+                        <i class="fa-solid fa-clock-rotate-left"></i> Storico
+                    </button>
+
+                    <div class="client-actions-right">
+                        <button class="client-salda-btn" id="client-salda-btn">
+                            <i class="fa-solid fa-check"></i> Salda
+                        </button>
+                        <button class="client-acconto-btn" id="client-acconto-btn">
+                            <i class="fa-solid fa-coins"></i> Acconto
+                        </button>
+                        <button class="client-print-btn" id="client-print-btn">
+                            <i class="fa-solid fa-print"></i> Stampa
+                        </button>
+                        <button class="client-delete-btn" id="client-delete-btn">
+                            <i class="fa-solid fa-trash"></i> Elimina
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Qui verranno caricati i dettagli e le transazioni del cliente -->
+                <div id="client-transactions-container"></div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/storage.js"></script>
+    <script src="../js/credito.js"></script>
+</body>
+</html>
