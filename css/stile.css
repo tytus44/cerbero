@@ -1084,6 +1084,10 @@ html:not(.dark-theme) #theme-icon-dark {
     color: var(--text-secondary);
 }
 
+.client-name {
+    text-transform: uppercase;
+}
+
 /* ✅ 4. Diminuisci testo cliente ultima operazione */
 #last-op-client {
     font-size: 1.2rem !important; /* Ridotto da default */

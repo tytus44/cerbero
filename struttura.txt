@@ -1,7 +1,7 @@
 │   index.html
 │
 ├───css
-│       stile - Copia.css
+│       stile.css
 │
 ├───js
 │       carico.js
@@ -9,6 +9,7 @@
 │       index.js
 │       monetario.js
 │       rubrica.js
+│       storage - Copia.js
 │       storage.js
 │       vendite.js
 │       virtualstation.js

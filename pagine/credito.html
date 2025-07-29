@@ -344,11 +344,22 @@
     </div>
 </div>
     
-    <div class="modal-overlay" id="acconto-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Aggiungi Acconto</h3>
-            </div>
+<div class="modal-overlay" id="add-client-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Aggiungi Nuovo Cliente</h3>
+            <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-content">
+            <input type="text" id="new-client-name" placeholder="Nome cliente">
+        </div>
+        <div class="modal-actions">
+            <button class="action-btn btn-danger" id="add-client-cancel"><i class="fa-solid fa-xmark"></i> Annulla</button>
+            <button class="action-btn btn-success" id="add-client-ok"><i class="fa-solid fa-check"></i> Aggiungi</button>
+        </div>
+    </div>
+</div>
+
 <div class="modal-content">
     <p class="acconto-text-line1">Inserisci l'importo dell'acconto per:</p>
     <p class="acconto-client-name" id="acconto-client-name">NOME CLIENTE</p>
