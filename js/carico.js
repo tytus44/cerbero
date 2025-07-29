@@ -905,7 +905,7 @@ class CargoManager {
         const rimanenzaHeader = document.getElementById('rimanenza-header');
 
         if(boxTitle) boxTitle.textContent = `TOTALE ANNO (${year})`;
-        if(rimanenzaHeader) rimanenzaHeader.textContent = `RIMANENZA (${year - 1})`;
+        if(rimanenzaHeader) rimanenzaHeader.textContent = `(${year - 1})`;
     }
 
     saveRimanenzeFromUI(triggerRefresh = true) {

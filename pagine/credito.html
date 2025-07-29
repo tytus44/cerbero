@@ -198,6 +198,63 @@
                 flex-wrap: wrap; 
             }
         }
+
+/* ✅ MODALE ACCONTO - CORREZIONE COMPLETA */
+#acconto-modal .modal {
+    max-width: 400px !important;
+}
+
+/* ✅ Prima riga di testo */
+.acconto-text-line1 {
+    text-align: center;
+    margin-bottom: 8px;
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+}
+
+/* ✅ Nome cliente (seconda riga) */
+.acconto-client-name {
+    text-align: center;
+    margin-bottom: 20px;
+    color: var(--primary-blue);
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    text-transform: uppercase;
+}
+
+/* ✅ Container del form CENTRATO */
+.acconto-form {
+    display: flex;
+    justify-content: center;
+    padding: 0 20px;
+}
+
+/* ✅ Campo input STILIZZATO E CENTRATO */
+#acconto-amount-input {
+    width: 200px !important;
+    padding: 12px 16px !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: var(--radius-md) !important;
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 600 !important;
+    background: var(--bg-white) !important;
+    color: var(--text-primary) !important;
+    font-size: var(--font-size-lg) !important;
+    min-height: 44px !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+}
+
+#acconto-amount-input:focus {
+    border-color: var(--primary-blue) !important;
+    box-shadow: 0 0 0 3px var(--primary-blue-light) !important;
+    outline: none !important;
+    transform: scale(1.02) !important;
+}
+
+#acconto-amount-input::placeholder {
+    color: var(--text-secondary) !important;
+}
     </style>
 </head>
 <body>
@@ -267,35 +324,38 @@
         </main>
     </div>
 
-    <div class="modal-overlay" id="add-client-modal">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 class="modal-title">Aggiungi Nuovo Cliente</h3>
-                <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="modal-content">
-                <div class="add-client-form">
-                    <input type="text" id="new-client-name" placeholder="Nome del cliente">
-                </div>
-            </div>
-            <div class="modal-actions">
-                <button class="action-btn btn-danger" id="add-client-cancel"><i class="fa-solid fa-xmark"></i> Annulla</button>
-                <button class="action-btn btn-success" id="add-client-ok"><i class="fa-solid fa-check"></i> Aggiungi</button>
+<div class="modal-overlay" id="acconto-modal">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 class="modal-title">Aggiungi Acconto</h3>
+            <button class="modal-close-btn" title="Chiudi"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="modal-content">
+            <p class="acconto-text-line1">Inserisci l'importo dell'acconto per:</p>
+            <p class="acconto-client-name" id="acconto-client-name">NOME CLIENTE</p>
+            <div class="acconto-form">
+                <input type="text" id="acconto-amount-input" placeholder="€ 0,00" inputmode="decimal">
             </div>
         </div>
+        <div class="modal-actions">
+            <button class="action-btn btn-danger" id="acconto-cancel-btn"><i class="fa-solid fa-xmark"></i> Annulla</button>
+            <button class="action-btn btn-success" id="acconto-ok-btn"><i class="fa-solid fa-check"></i> Conferma</button>
+        </div>
     </div>
+</div>
     
     <div class="modal-overlay" id="acconto-modal">
         <div class="modal">
             <div class="modal-header">
                 <h3 class="modal-title">Aggiungi Acconto</h3>
             </div>
-            <div class="modal-content">
-                <p>Inserisci l'importo dell'acconto per <strong id="acconto-client-name"></strong>.</p>
-                <div class="acconto-form">
-                    <input type="text" id="acconto-amount-input" placeholder="€ 0,00" inputmode="decimal">
-                </div>
-            </div>
+<div class="modal-content">
+    <p class="acconto-text-line1">Inserisci l'importo dell'acconto per:</p>
+    <p class="acconto-client-name" id="acconto-client-name">NOME CLIENTE</p>
+    <div class="acconto-form">
+        <input type="text" id="acconto-amount-input" placeholder="€ 0,00" inputmode="decimal">
+    </div>
+</div>
             <div class="modal-actions">
                 <button class="action-btn btn-danger" id="acconto-cancel-btn"><i class="fa-solid fa-xmark"></i> Annulla</button>
                 <button class="action-btn btn-success" id="acconto-ok-btn"><i class="fa-solid fa-check"></i> Conferma</button>

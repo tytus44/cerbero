@@ -76,7 +76,7 @@ class VersamentoManager {
     updateUI() { let totalValue = 0; let totalCount = 0; this.denominations.forEach(denom => { const quantity = this.data[`banconote${denom}`] || 0; totalValue += denom * quantity; totalCount += quantity; const qtyInput = document.querySelector(`.spinner-input-group[data-denom="${denom}"] .spinner-value`); if (qtyInput && document.activeElement !== qtyInput) qtyInput.value = quantity === 0 ? '0' : quantity.toString(); const valoreInput = document.getElementById(`valore-${denom}`); if (valoreInput) valoreInput.value = formatter.currency.format(denom * quantity); }); const totalBanconoteEl = document.getElementById('versamento-total-banconote'); if (totalBanconoteEl) totalBanconoteEl.textContent = totalCount.toString(); const totalImportoEl = document.getElementById('versamento-total-importo'); if (totalImportoEl) totalImportoEl.textContent = formatter.currency.format(totalValue); }
 }
 
-/* ===== PRICING MANAGER ===== */
+/* ===== PRICING MANAGER CORRETTO ===== */
 class PricingManager {
     constructor() {
         this.data = Storage.load(Storage.KEYS.MONETARIO_DATA, { pricing: {}, competitors: {}, fuelOrders: {} });
@@ -85,14 +85,26 @@ class PricingManager {
         this.init();
     }
     
-    init() { this.bindEvents(); this.populateInputs(); this.updateCalculatedFields(); }
+    init() { 
+        this.bindEvents(); 
+        this.populateInputs(); 
+        this.updateCalculatedFields(); 
+    }
     
     bindEvents() {
+        // Gestione input normali (non spinner)
         document.querySelectorAll('.grid-input[data-product]:not(.spinner-value), .grid-input[data-fuel]:not(.spinner-value)').forEach(input => {
             input.addEventListener('input', (e) => this.handleInput(e.target));
             input.addEventListener('blur', (e) => this.handleBlur(e.target));
-            input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.moveToNextInput(e.target); } });
+            input.addEventListener('keydown', (e) => { 
+                if (e.key === 'Enter') { 
+                    e.preventDefault(); 
+                    this.moveToNextInput(e.target); 
+                } 
+            });
         });
+        
+        // Gestione spinner carburanti
         this.fuelProducts.forEach(fuel => {
             const inputGroup = document.querySelector(`.spinner-input-group[data-fuel="${fuel}"]`);
             if(inputGroup) {
@@ -101,7 +113,12 @@ class PricingManager {
                 inputGroup.querySelector('.spinner-btn.increment').addEventListener('click', () => this.adjustFuelQuantity(fuel, 1));
                 input.addEventListener('input', () => this.handleInput(input));
                 input.addEventListener('blur', () => this.handleBlur(input));
-                input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.moveToNextInput(input); } });
+                input.addEventListener('keydown', (e) => { 
+                    if (e.key === 'Enter') { 
+                        e.preventDefault(); 
+                        this.moveToNextInput(input); 
+                    } 
+                });
             }
         });
     }
@@ -127,12 +144,17 @@ class PricingManager {
     handleInput(input) {
         const { product, type, competitor, fuel, field } = input.dataset;
         const value = parseNumberInput(input.value);
+        
+        // ✅ GESTIONE PREZZI CONSIGLIATI CON AGGIORNAMENTO ISTANTANEO
         if (type) {
             if (!this.data.pricing[product]) this.data.pricing[product] = {};
             if (product === 'adblue' && type === 'servito') {
                 this.data.pricing.adblue.price = value;
             } else if (type === 'consigliati') {
                 this.data.pricing[product].consigliati = value;
+                // ✅ AGGIORNAMENTO IMMEDIATO dei campi iperself e servito
+                this.updateCalculatedFields();
+                console.log(`Aggiornato prezzo consigliato per ${product}: ${value}`); // Debug
             }
         } else if (competitor) {
             if (!this.data.competitors[product]) this.data.competitors[product] = {};
@@ -141,6 +163,8 @@ class PricingManager {
             if (!this.data.fuelOrders[fuel]) this.data.fuelOrders[fuel] = {};
             this.data.fuelOrders[fuel].quantity = Math.max(0, value);
         }
+        
+        // ✅ SEMPRE aggiorna i campi calcolati e salva
         this.updateCalculatedFields();
         Storage.save(Storage.KEYS.MONETARIO_DATA, this.data);
     }
@@ -172,14 +196,30 @@ class PricingManager {
     
     updateCalculatedFields() {
         let totalOrderQuantity = 0, totalOrderAmount = 0;
+        
+        // ✅ CALCOLO PREZZI IPERSELF E SERVITO MIGLIORATO
         this.fuelProducts.forEach(p => {
             const pricingData = this.data.pricing[p];
-            if (pricingData && typeof pricingData.consigliati === 'number') {
+            if (pricingData && typeof pricingData.consigliati === 'number' && pricingData.consigliati > 0) {
+                // Calcola automaticamente iperself e servito
                 pricingData.iperself = pricingData.consigliati + 0.005;
                 pricingData.servito = pricingData.consigliati + 0.225;
-                document.querySelector(`input[data-product="${p}"][data-type="iperself"]`).value = formatter.fuelPrices.format(pricingData.iperself);
-                document.querySelector(`input[data-product="${p}"][data-type="servito"]`).value = formatter.fuelPrices.format(pricingData.servito);
+                
+                // ✅ AGGIORNA IMMEDIATAMENTE i campi nell'interfaccia
+                const iperselfInput = document.querySelector(`input[data-product="${p}"][data-type="iperself"]`);
+                const servitoInput = document.querySelector(`input[data-product="${p}"][data-type="servito"]`);
+                
+                if (iperselfInput) {
+                    iperselfInput.value = formatter.fuelPrices.format(pricingData.iperself);
+                    console.log(`Aggiornato iperself ${p}: ${pricingData.iperself}`); // Debug
+                }
+                if (servitoInput) {
+                    servitoInput.value = formatter.fuelPrices.format(pricingData.servito);
+                    console.log(`Aggiornato servito ${p}: ${pricingData.servito}`); // Debug
+                }
             }
+            
+            // Calcola differenze con concorrenti
             ['myoil', 'esso', 'q8'].forEach(c => {
                 const diff = (pricingData?.iperself || 0) - (this.data.competitors[p]?.[c] || 0);
                 const diffInput = document.querySelector(`input[data-product="${p}"][data-diff="${c}"]`);
@@ -188,6 +228,8 @@ class PricingManager {
                     diffInput.style.color = diff > 0.001 ? 'var(--danger)' : (diff < -0.001 ? 'var(--success)' : 'var(--orange)');
                 }
             });
+            
+            // Calcola ordini carburanti
             const orderData = this.data.fuelOrders[p] || {};
             const servitoPrice = pricingData?.servito || 0;
             const quantity = orderData.quantity || 0;
@@ -195,11 +237,14 @@ class PricingManager {
             const amount = quantity * advancePrice;
             totalOrderQuantity += quantity;
             totalOrderAmount += amount;
+            
             const advanceInput = document.querySelector(`input[data-fuel="${p}"][data-field="advance"]`);
             if (advanceInput) advanceInput.value = (advancePrice !== 0) ? formatter.fuelPrices.format(advancePrice) : "0,000"; 
             const amountInput = document.querySelector(`input[data-fuel="${p}"][data-field="amount"]`);
             if (amountInput) amountInput.value = (amount !== 0) ? formatter.currency.format(amount) : "€ 0,00"; 
         });
+        
+        // Aggiorna totali ordini
         const totalQtyEl = document.getElementById('total-quantity');
         if (totalQtyEl) totalQtyEl.textContent = `${formatter.liters.format(totalOrderQuantity)} L`;
         const totalAmountEl = document.getElementById('total-amount');
