@@ -3,104 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <script>
         (function() {
             try {
                 const theme = localStorage.getItem('cerbero_theme') || 'light';
-                if (theme === 'dark') {
-                    document.documentElement.classList.add('dark-theme');
-                }
-            } catch (e) {
-                console.error('Errore applicazione tema iniziale:', e);
-            }
+                if (theme === 'dark') document.documentElement.classList.add('dark-theme');
+            } catch (e) { console.error('Errore tema iniziale:', e); }
         })();
     </script>
-    
     <title>CeRBERO - Applicazioni monetarie</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
-    <link rel="stylesheet" href="../css/stile.css"> 
+    <link rel="stylesheet" href="../css/stile.css">
     <style>
-        /* Allinea a sinistra il testo del modale */
-        #confirm-modal .modal-content p {
-            text-align: left;
-        }
-
-        /* ===== CORREZIONI SPINNER ===== */
+        #confirm-modal .modal-content p { text-align: left; }
         .spinner-input-group {
-            display: flex;
-            align-items: stretch; /* Allunga i figli per tutta l'altezza */
-            border: 2px solid var(--primary-blue-light) !important; /* Forza il bordo corretto */
+            display: flex; align-items: stretch;
+            border: 2px solid var(--primary-blue-light) !important;
             border-radius: var(--radius-squadrato);
-            height: 44px;
-            box-sizing: border-box;
-            overflow: hidden; /* Nasconde gli angoli interni */
+            height: 44px; box-sizing: border-box; overflow: hidden;
         }
-
         .spinner-input-group .spinner-btn {
-            border: none;
-            background: var(--bg-primary);
-            flex-shrink: 0;
-            padding: 0 12px;
-            cursor: pointer;
-            transition: background-color 0.2s ease; /* Aggiunge transizione per l'hover */
+            border: none; background: var(--bg-primary); flex-shrink: 0;
+            padding: 0 12px; cursor: pointer;
+            transition: background-color .2s ease;
         }
-        
-        /* Aggiunto effetto hover per i pulsanti dello spinner */
         .spinner-input-group .spinner-btn:hover {
-            background-color: var(--primary-blue-light);
-            color: var(--primary-blue);
+            background-color: var(--primary-blue-light); color: var(--primary-blue);
         }
-        
         .spinner-input-group .grid-input.spinner-value {
-            border: none;
-            height: 100%;
-            background: var(--bg-white);
-            box-shadow: none;
+            border: none; height: 100%; background: var(--bg-white);
+            box-shadow: none; text-align: center;
         }
-        
-        .spinner-input-group .grid-input.spinner-value:focus {
-             box-shadow: none; /* Rimuove l'ombra al focus */
-        }
-        
-        html.dark-theme .spinner-input-group {
-             border-color: var(--bg-display) !important;
-        }
-        
-        html.dark-theme .spinner-input-group .spinner-btn {
-            background: var(--bg-display);
-        }
-
-        html.dark-theme .spinner-input-group .spinner-btn:hover {
-            background-color: var(--primary-blue-light);
-        }
-
-        html.dark-theme .spinner-input-group .grid-input.spinner-value {
-            background: var(--bg-primary);
-        }
-
-        @media (max-width: 992px) {
-            .top-action-bar {
-                left: 0;
-                width: 100%;
-            }
-        }
-
-/* ===== CENTRATURA INPUT SOLO PER PAGINA MONETARIO ===== */
-.grid-input {
-    text-align: center !important;
-}
-
-/* Mantieni centratura anche per spinner input */
-.spinner-input-group .grid-input.spinner-value {
-    text-align: center !important;
-}
-
+        .spinner-input-group .grid-input.spinner-value:focus { box-shadow: none; }
+        html.dark-theme .spinner-input-group { border-color: var(--bg-display) !important; }
+        html.dark-theme .spinner-input-group .spinner-btn { background: var(--bg-display); }
+        html.dark-theme .spinner-input-group .spinner-btn:hover { background-color: var(--primary-blue-light); }
+        html.dark-theme .spinner-input-group .grid-input.spinner-value { background: var(--bg-primary); }
+        .grid-input { text-align: center !important; }
+        @media (max-width: 992px) { .top-action-bar { left: 0; width: 100%; } }
     </style>
 </head>
 <body>
-
     <div class="top-action-bar">
         <button class="action-btn" onclick="importaDatiCompleti()"><i class="fa-solid fa-download"></i>IMPORTA</button>
         <button class="action-btn" onclick="esportaDatiCompleti()"><i class="fa-solid fa-upload"></i>ESPORTA</button>
@@ -108,19 +52,19 @@
 
     <aside class="sidebar" id="main-sidebar">
         <div class="sidebar-header">CeRBERO</div>
-<nav class="nav">
-    <ul>
-        <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
-        <li><a href="rubrica.html"><i class="fa-solid fa-address-book"></i>RUBRICA</a></li>
-        <li><a href="monetario.html" class="active"><i class="fa-solid fa-coins"></i>MONETARIO</a></li>
-        <li><a href="virtualstation.html"><i class="fa-solid fa-gas-pump"></i>VIRTUALSTATION</a></li>
-        <li><a href="vendite.html"><i class="fa-solid fa-chart-line"></i>VENDITE</a></li>
-        <li><a href="credito.html"><i class="fa-solid fa-credit-card"></i>CREDITO</a></li>
-        <li><a href="carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
-    </ul>
-</nav>
+        <nav class="nav">
+            <ul>
+                <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
+                <li><a href="rubrica.html"><i class="fa-solid fa-address-book"></i>RUBRICA</a></li>
+                <li><a href="monetario.html" class="active"><i class="fa-solid fa-coins"></i>MONETARIO</a></li>
+                <li><a href="virtualstation.html"><i class="fa-solid fa-gas-pump"></i>VIRTUALSTATION</a></li>
+                <li><a href="vendite.html"><i class="fa-solid fa-chart-line"></i>VENDITE</a></li>
+                <li><a href="credito.html"><i class="fa-solid fa-credit-card"></i>CREDITO</a></li>
+                <li><a href="carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
+            </ul>
+        </nav>
         <div class="sidebar-footer">
-             <ul>
+            <ul>
                 <li>
                     <a href="#" id="theme-switcher" title="Cambia Tema">
                         <i class="fa-solid fa-sun theme-icon-light" id="theme-icon-light"></i>
@@ -137,7 +81,6 @@
     </aside>
 
     <div class="container">
-        <!-- ✅ CORRETTO: Rimosso style="margin-top:0;" -->
         <main class="main-content">
             <div class="content-grid">
                 <div class="box summary-box">
@@ -148,31 +91,26 @@
                             <div class="grid-header">Consigliati</div>
                             <div class="grid-header">Iperself</div>
                             <div class="grid-header">Servito</div>
-                            
                             <input type="text" class="display-field product-benzina" value="BENZINA" readonly>
-                            <input type="text" class="grid-input" data-product="benzina" data-type="consigliati" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="benzina" data-type="iperself" placeholder="€ 0,000" readonly>
-                            <input type="text" class="grid-input" data-product="benzina" data-type="servito" placeholder="€ 0,000" readonly>
-                            
+                            <input type="text" class="grid-input" data-product="benzina" data-type="consigliati">
+                            <input type="text" class="grid-input" data-product="benzina" data-type="iperself" readonly>
+                            <input type="text" class="grid-input" data-product="benzina" data-type="servito" readonly>
                             <input type="text" class="display-field product-diesel" value="DIESEL+" readonly>
-                            <input type="text" class="grid-input" data-product="diesel" data-type="consigliati" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="diesel" data-type="iperself" placeholder="€ 0,000" readonly>
-                            <input type="text" class="grid-input" data-product="diesel" data-type="servito" placeholder="€ 0,000" readonly>
-                            
+                            <input type="text" class="grid-input" data-product="diesel" data-type="consigliati">
+                            <input type="text" class="grid-input" data-product="diesel" data-type="iperself" readonly>
+                            <input type="text" class="grid-input" data-product="diesel" data-type="servito" readonly>
                             <input type="text" class="display-field product-gasolio" value="GASOLIO" readonly>
-                            <input type="text" class="grid-input" data-product="gasolio" data-type="consigliati" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="gasolio" data-type="iperself" placeholder="€ 0,000" readonly>
-                            <input type="text" class="grid-input" data-product="gasolio" data-type="servito" placeholder="€ 0,000" readonly>
-                            
+                            <input type="text" class="grid-input" data-product="gasolio" data-type="consigliati">
+                            <input type="text" class="grid-input" data-product="gasolio" data-type="iperself" readonly>
+                            <input type="text" class="grid-input" data-product="gasolio" data-type="servito" readonly>
                             <input type="text" class="display-field product-hvolution" value="HVOLUTION" readonly>
-                            <input type="text" class="grid-input" data-product="hvolution" data-type="consigliati" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="hvolution" data-type="iperself" placeholder="€ 0,000" readonly>
-                            <input type="text" class="grid-input" data-product="hvolution" data-type="servito" placeholder="€ 0,000" readonly>
-                            
+                            <input type="text" class="grid-input" data-product="hvolution" data-type="consigliati">
+                            <input type="text" class="grid-input" data-product="hvolution" data-type="iperself" readonly>
+                            <input type="text" class="grid-input" data-product="hvolution" data-type="servito" readonly>
                             <input type="text" class="display-field product-adblue" value="ADBLUE" readonly>
                             <input type="text" class="grid-input" style="visibility: hidden;">
                             <input type="text" class="grid-input" style="visibility: hidden;" disabled>
-                            <input type="text" class="grid-input" data-product="adblue" data-type="servito" placeholder="€ 0,000">
+                            <input type="text" class="grid-input" data-product="adblue" data-type="servito">
                         </div>
                     </div>
                 </div>
@@ -185,28 +123,23 @@
                             <div class="grid-header">MyOil</div>
                             <div class="grid-header">Esso</div>
                             <div class="grid-header">Q8</div>
-                            
                             <input type="text" class="display-field product-benzina" value="BENZINA" readonly>
-                            <input type="text" class="grid-input" data-product="benzina" data-competitor="myoil" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="benzina" data-competitor="esso" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="benzina" data-competitor="q8" placeholder="€ 0,000">
-                            
+                            <input type="text" class="grid-input" data-product="benzina" data-competitor="myoil">
+                            <input type="text" class="grid-input" data-product="benzina" data-competitor="esso">
+                            <input type="text" class="grid-input" data-product="benzina" data-competitor="q8">
                             <input type="text" class="display-field product-gasolio" value="GASOLIO" readonly>
-                            <input type="text" class="grid-input" data-product="gasolio" data-competitor="myoil" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="gasolio" data-competitor="esso" placeholder="€ 0,000">
-                            <input type="text" class="grid-input" data-product="gasolio" data-competitor="q8" placeholder="€ 0,000">
-                            
+                            <input type="text" class="grid-input" data-product="gasolio" data-competitor="myoil">
+                            <input type="text" class="grid-input" data-product="gasolio" data-competitor="esso">
+                            <input type="text" class="grid-input" data-product="gasolio" data-competitor="q8">
                             <div class="grid-divider">DIFFERENZA PREZZI</div>
-                            
                             <input type="text" class="display-field product-benzina" value="BENZINA" readonly>
-                            <input type="text" class="grid-input" data-product="benzina" data-diff="myoil" placeholder="0,00" readonly>
-                            <input type="text" class="grid-input" data-product="benzina" data-diff="esso" placeholder="0,00" readonly>
-                            <input type="text" class="grid-input" data-product="benzina" data-diff="q8" placeholder="0,00" readonly>
-                            
+                            <input type="text" class="grid-input" data-product="benzina" data-diff="myoil" readonly>
+                            <input type="text" class="grid-input" data-product="benzina" data-diff="esso" readonly>
+                            <input type="text" class="grid-input" data-product="benzina" data-diff="q8" readonly>
                             <input type="text" class="display-field product-gasolio" value="GASOLIO" readonly>
-                            <input type="text" class="grid-input" data-product="gasolio" data-diff="myoil" placeholder="0,00" readonly>
-                            <input type="text" class="grid-input" data-product="gasolio" data-diff="esso" placeholder="0,00" readonly>
-                            <input type="text" class="grid-input" data-product="gasolio" data-diff="q8" placeholder="0,00" readonly>
+                            <input type="text" class="grid-input" data-product="gasolio" data-diff="myoil" readonly>
+                            <input type="text" class="grid-input" data-product="gasolio" data-diff="esso" readonly>
+                            <input type="text" class="grid-input" data-product="gasolio" data-diff="q8" readonly>
                         </div>
                     </div>
                 </div>
@@ -220,45 +153,41 @@
                             <div class="grid-header">Prodotto</div>
                             <div class="grid-header">Quantità</div>
                             <div class="grid-header">Importo</div>
-                            
                             <input type="text" class="display-field product-benzina" value="BENZINA" readonly>
                             <div class="spinner-input-group" data-fuel="benzina" data-step="1000">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" placeholder="0" data-fuel="benzina" data-field="quantity-value">
+                                <input type="text" class="grid-input spinner-value" data-fuel="benzina" data-field="quantity-value">
                                 <button class="spinner-btn increment">+</button>
                             </div>
                             <input type="text" class="grid-input" data-fuel="benzina" data-field="amount" readonly>
-                            
                             <input type="text" class="display-field product-diesel" value="DIESEL+" readonly>
                             <div class="spinner-input-group" data-fuel="diesel" data-step="1000">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" placeholder="0" data-fuel="diesel" data-field="quantity-value">
+                                <input type="text" class="grid-input spinner-value" data-fuel="diesel" data-field="quantity-value">
                                 <button class="spinner-btn increment">+</button>
                             </div>
                             <input type="text" class="grid-input" data-fuel="diesel" data-field="amount" readonly>
-                            
                             <input type="text" class="display-field product-gasolio" value="GASOLIO" readonly>
                             <div class="spinner-input-group" data-fuel="gasolio" data-step="1000">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" placeholder="0" data-fuel="gasolio" data-field="quantity-value">
+                                <input type="text" class="grid-input spinner-value" data-fuel="gasolio" data-field="quantity-value">
                                 <button class="spinner-btn increment">+</button>
                             </div>
                             <input type="text" class="grid-input" data-fuel="gasolio" data-field="amount" readonly>
-                            
                             <input type="text" class="display-field product-hvolution" value="HVOLUTION" readonly>
                             <div class="spinner-input-group" data-fuel="hvolution" data-step="1000">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" placeholder="0" data-fuel="hvolution" data-field="quantity-value">
+                                <input type="text" class="grid-input spinner-value" data-fuel="hvolution" data-field="quantity-value">
                                 <button class="spinner-btn increment">+</button>
                             </div>
                             <input type="text" class="grid-input" data-fuel="hvolution" data-field="amount" readonly>
-                            
                             <div></div>
                             <div class="display-field" id="total-quantity">0 L</div>
                             <div class="display-field" id="total-amount">€ 0,00</div>
                         </div>
                     </div>
                 </div>
+
                 <div class="box summary-box">
                     <h2 class="box-header">VERSAMENTO</h2>
                     <div class="box-content">
@@ -266,51 +195,51 @@
                             <div class="versamento-banconota euro-500">500</div>
                             <div class="spinner-input-group" data-denom="500" data-step="1">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" id="banconote-500" placeholder="0" min="0">
+                                <input type="text" class="grid-input spinner-value" id="banconote-500">
                                 <button class="spinner-btn increment">+</button>
                             </div>
-                            <input type="text" class="grid-input" id="valore-500" placeholder="€ 0,00" readonly tabindex="-1">
-                            
+                            <input type="text" class="grid-input" id="valore-500" readonly tabindex="-1">
+
                             <div class="versamento-banconota euro-200">200</div>
                             <div class="spinner-input-group" data-denom="200" data-step="1">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" id="banconote-200" placeholder="0" min="0">
+                                <input type="text" class="grid-input spinner-value" id="banconote-200">
                                 <button class="spinner-btn increment">+</button>
                             </div>
-                            <input type="text" class="grid-input" id="valore-200" placeholder="€ 0,00" readonly tabindex="-1">
-                            
+                            <input type="text" class="grid-input" id="valore-200" readonly tabindex="-1">
+
                             <div class="versamento-banconota euro-100">100</div>
                             <div class="spinner-input-group" data-denom="100" data-step="1">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" id="banconote-100" placeholder="0" min="0">
+                                <input type="text" class="grid-input spinner-value" id="banconote-100">
                                 <button class="spinner-btn increment">+</button>
                             </div>
-                            <input type="text" class="grid-input" id="valore-100" placeholder="€ 0,00" readonly tabindex="-1">
-                            
+                            <input type="text" class="grid-input" id="valore-100" readonly tabindex="-1">
+
                             <div class="versamento-banconota euro-50">50</div>
                             <div class="spinner-input-group" data-denom="50" data-step="1">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" id="banconote-50" placeholder="0" min="0">
+                                <input type="text" class="grid-input spinner-value" id="banconote-50">
                                 <button class="spinner-btn increment">+</button>
                             </div>
-                            <input type="text" class="grid-input" id="valore-50" placeholder="€ 0,00" readonly tabindex="-1">
-                            
+                            <input type="text" class="grid-input" id="valore-50" readonly tabindex="-1">
+
                             <div class="versamento-banconota euro-20">20</div>
                             <div class="spinner-input-group" data-denom="20" data-step="1">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" id="banconote-20" placeholder="0" min="0">
+                                <input type="text" class="grid-input spinner-value" id="banconote-20">
                                 <button class="spinner-btn increment">+</button>
                             </div>
-                            <input type="text" class="grid-input" id="valore-20" placeholder="€ 0,00" readonly tabindex="-1">
-                            
+                            <input type="text" class="grid-input" id="valore-20" readonly tabindex="-1">
+
                             <div class="versamento-banconota euro-10">10</div>
                             <div class="spinner-input-group" data-denom="10" data-step="1">
                                 <button class="spinner-btn decrement">-</button>
-                                <input type="text" class="grid-input spinner-value" id="banconote-10" placeholder="0" min="0">
+                                <input type="text" class="grid-input spinner-value" id="banconote-10">
                                 <button class="spinner-btn increment">+</button>
                             </div>
-                            <input type="text" class="grid-input" id="valore-10" placeholder="€ 0,00" readonly tabindex="-1">
-    
+                            <input type="text" class="grid-input" id="valore-10" readonly tabindex="-1">
+
                             <div class="total-separator"></div>
                             <div></div>
                             <div class="display-field" id="versamento-total-banconote">0</div>
@@ -321,7 +250,7 @@
             </div>
         </main>
     </div>
-    
+
     <div class="modal-overlay" id="confirm-modal">
         <div class="modal">
             <div class="modal-header">

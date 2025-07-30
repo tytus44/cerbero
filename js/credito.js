@@ -988,3 +988,13 @@ document.addEventListener('DOMContentLoaded', function() {
         showMessage("Errore critico nell'avvio.", 'error');
     }
 });
+
+/* ===== CHIUSURA UNIVERSALE PER QUALSIASI .modal-close-btn ===== */
+document.addEventListener('click', function (e) {
+    const closeBtn = e.target.closest('.modal-close-btn');
+    if (!closeBtn) return;
+
+    // Trova il modale che contiene il bottone
+    const modal = closeBtn.closest('.modal-overlay');
+    if (modal) modal.classList.remove('active');
+});

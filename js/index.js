@@ -1,8 +1,12 @@
-/* ===== INIZIO JAVASCRIPT - INDEX UNIFICATO ===== */
+/* ===== INIZIO JAVASCRIPT - INDEX UNIFICATO - TIMER OTTIMIZZATO ===== */
 
 /* ===== INIZIO VARIABILI GLOBALI ===== */
 let calendarWidget = null;
 let todoWidget = null;
+let updateTimer = null; // Timer reference per poterlo gestire
+let lastDataHash = null; // Hash per tracciare cambiamenti dati
+let isUpdating = false; // Flag per evitare aggiornamenti simultanei
+
 const VAT_RATE = 0.22;
 const MARGIN_NON_SERVITO = 0.035;
 const MARGIN_SERVITO = 0.065;
@@ -115,6 +119,15 @@ function getFormattedTimestamp() {
     const minutes = String(now.getMinutes()).padStart(2, '0');
     return `${year}${month}${day}-${hours}${minutes}`;
 }
+
+// ✅ NUOVA FUNZIONE: Calcola hash dei dati per rilevare cambiamenti
+function calculateDataHash(data) {
+    try {
+        return btoa(JSON.stringify(data)).slice(0, 16); // Hash semplice
+    } catch (error) {
+        return String(Date.now()).slice(-8);
+    }
+}
 /* ===== FINE UTILITY ===== */
 
 /* ===== INIZIO WIDGETS ===== */
@@ -127,10 +140,7 @@ class CalendarWidget {
     bindEvents() { const prevBtn = document.getElementById('calendarPrev'), nextBtn = document.getElementById('calendarNext'); if (prevBtn) prevBtn.addEventListener('click', () => { this.currentDate.setMonth(this.currentDate.getMonth() - 1); this.render(); }); if (nextBtn) nextBtn.addEventListener('click', () => { this.currentDate.setMonth(this.currentDate.getMonth() + 1); this.render(); }); }
     render() { this.renderHeader(); this.renderDates(); }
     renderHeader() { const titleEl = document.getElementById('calendarTitle'); if (titleEl) { const monthNames = [ 'Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre' ]; titleEl.textContent = `${monthNames[this.currentDate.getMonth()]} ${this.currentDate.getFullYear()}`; } }
-    renderDates() { const container = document.getElementById('calendarDates'); if (!container) return; const year = this.currentDate.getFullYear(), month = this.currentDate.getMonth(); const today = new Date(); const firstDayOfMonth = new Date(year, month, 1); const dayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; const startDate = new Date(firstDayOfMonth); startDate.setDate(firstDayOfMonth.getDate() - dayOfWeek); container.innerHTML = Array.from({ length: 42 }).map((_, i) => { const date = new Date(startDate); date.setDate(startDate.getDate() + i); const isCurrentMonth = date.getMonth() === month; const isToday = date.toDateString() === today.toDateString(); const isHoliday = this.isHoliday(date); let classes = 'day-square'; // nuova classe
-if (!isCurrentMonth) classes += ' other-month';
-if (isToday) classes += ' current-day-square';
-if (isHoliday && isCurrentMonth) classes += ' holiday-square'; return `<div class="${classes}">${date.getDate()}</div>`; }).join(''); }
+    renderDates() { const container = document.getElementById('calendarDates'); if (!container) return; const year = this.currentDate.getFullYear(), month = this.currentDate.getMonth(); const today = new Date(); const firstDayOfMonth = new Date(year, month, 1); const dayOfWeek = (firstDayOfMonth.getDay() + 6) % 7; const startDate = new Date(firstDayOfMonth); startDate.setDate(firstDayOfMonth.getDate() - dayOfWeek); container.innerHTML = Array.from({ length: 42 }).map((_, i) => { const date = new Date(startDate); date.setDate(startDate.getDate() + i); const isCurrentMonth = date.getMonth() === month; const isToday = date.toDateString() === today.toDateString(); const isHoliday = this.isHoliday(date); let classes = 'day'; if (!isCurrentMonth) classes += ' other-month'; if (isToday) classes += ' current-day'; if (isHoliday && isCurrentMonth) classes += ' holiday'; return `<div class="${classes}">${date.getDate()}</div>`; }).join(''); }
 }
 
 class TodoWidget {
@@ -139,72 +149,165 @@ class TodoWidget {
     bindEvents() { const addBtn = document.getElementById('addTodoBtn'), input = document.getElementById('newTodoInput'), todoList = document.getElementById('todo-list'); if (addBtn) addBtn.addEventListener('click', () => this.addTodo()); if (input) input.addEventListener('keypress', e => { if (e.key === 'Enter') this.addTodo(); }); if (todoList) todoList.addEventListener('click', e => { if (e.target.matches('.todo-delete, .todo-delete *')) this.deleteTodo(e.target.closest('li')); }); }
     addTodo() { const input = document.getElementById('newTodoInput'); const text = input.value.trim(); if (!text) { input.focus(); return; } if (this.todos.length >= this.maxTasks) { showMessage(`Massimo ${this.maxTasks} task consentiti`, 'warning'); return; } this.todos.push({ id: `task_${Date.now()}`, text }); Storage.save(Storage.KEYS.TODO_LIST, this.todos); this.renderTodos(); input.value = ''; input.focus(); }
     deleteTodo(todoItem) { showConfirmModal('Eliminare Task?', 'L\'azione non può essere annullata.', () => { const todoId = todoItem.getAttribute('data-todo-id'); this.todos = this.todos.filter(todo => todo.id !== todoId); Storage.save(Storage.KEYS.TODO_LIST, this.todos); this.renderTodos(); }); }
-renderTodos() {
-  const todoList = document.getElementById('todo-list');
-  if (!todoList) return;
-  todoList.innerHTML = '';
-  this.todos.forEach(todo => {
-    const li = document.createElement('li');
-    li.setAttribute('data-todo-id', todo.id);
-    li.innerHTML = `
-      <label>${todo.text}</label>
-      <button class="todo-delete" onclick="todoWidget.deleteTodo(this.parentElement)">
-        <i class="fa-solid fa-xmark"></i>
-      </button>
-    `;
-    todoList.appendChild(li);
-  });
-}
+    renderTodos() {
+      const todoList = document.getElementById('todo-list');
+      if (!todoList) return;
+      todoList.innerHTML = '';
+      this.todos.forEach(todo => {
+        const li = document.createElement('li');
+        li.setAttribute('data-todo-id', todo.id);
+        li.innerHTML = `
+          <label>${todo.text}</label>
+          <button class="todo-delete" onclick="todoWidget.deleteTodo(this.parentElement)">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        `;
+        todoList.appendChild(li);
+      });
+    }
 }
 /* ===== FINE WIDGETS ===== */
 
-/* ===== FUNZIONI CENTRALI E DI RIEPILOGO ===== */
+/* ===== FUNZIONI CENTRALI E DI RIEPILOGO - CORRETTE E MIGLIORATE ===== */
 function getSalesSummaryData() {
     const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
+    
     const productTotals = { benzina: 0, gasolio: 0, diesel: 0, hvolution: 0, adblue: 0 };
     const modalityTotals = { servito: 0, iperself: 0, selfservice: 0 };
-    for (const key in virtualstationData) {
-        if (key.startsWith('turn-')) {
-            const turnData = virtualstationData[key];
-            if (turnData && typeof turnData === 'object') {
-                for (const product in productTotals) {
-                    const productInfo = turnData[product] || {};
-                    productTotals[product] += productInfo.totalLiters || 0;
-                    modalityTotals.servito += productInfo.servito || 0;
-                    modalityTotals.iperself += productInfo.iperself || 0;
-                    modalityTotals.selfservice += productInfo['self-service'] || 0;
-                }
-            }
-        }
+    
+    // ✅ CORREZIONE: Usa i totali globali se disponibili (più affidabile)
+    if (virtualstationData.globalTotals) {
+        const globalTotals = virtualstationData.globalTotals;
+        
+        modalityTotals.servito = globalTotals.servito?.liters || 0;
+        modalityTotals.iperself = globalTotals.iperself?.liters || 0;
+        modalityTotals.selfservice = globalTotals.selfService?.liters || 0;
     }
+    
+    // ✅ CORREZIONE: Calcola i totali per prodotto in modo più robusto
+    const turnKeys = Object.keys(virtualstationData).filter(key => key.startsWith('turn-'));
+    
+    turnKeys.forEach(turnKey => {
+        const turnData = virtualstationData[turnKey];
+        if (turnData && typeof turnData === 'object') {
+            // Itera sui prodotti per ogni turno
+            Object.keys(productTotals).forEach(product => {
+                if (turnData[product]) {
+                    const productData = turnData[product];
+                    
+                    // Usa totalLiters se disponibile, altrimenti calcola manualmente
+                    if (typeof productData.totalLiters === 'number') {
+                        productTotals[product] += productData.totalLiters;
+                    } else {
+                        const iperself = productData.iperself || 0;
+                        const servito = productData.servito || 0;
+                        const selfService = productData['self-service'] || 0;
+                        const total = iperself + servito + selfService;
+                        productTotals[product] += total;
+                    }
+                }
+            });
+        }
+    });
+    
     return { productTotals, modalityTotals };
 }
 
 function updateSalesSummaryWidget() {
+    console.log('[INDEX] 🔄 Aggiornamento widget riepilogo vendite...');
+    
     const { productTotals } = getSalesSummaryData();
-    Object.entries(productTotals).forEach(([product, liters]) => {
-        const element = document.getElementById(`${product}-liters`);
-        if (element) element.textContent = `${formatLiters(liters)} L`;
+    
+    // ✅ DEBUG: Verifica che i dati siano corretti
+    console.log('[INDEX] 🔍 Dati prodotti ricevuti:', productTotals);
+    
+    // ✅ DEBUG: Verifica che tutti gli elementi esistano
+    const expectedElements = ['benzina-liters', 'gasolio-liters', 'diesel-liters', 'hvolution-liters', 'adblue-liters', 'total-liters'];
+    expectedElements.forEach(id => {
+        const element = document.getElementById(id);
+        if (!element) {
+            console.error(`[INDEX] ❌ Elemento mancante: ${id}`);
+        } else {
+            console.log(`[INDEX] ✅ Elemento trovato: ${id}`, element.tagName, element.type);
+        }
     });
+    
+    // ✅ CORREZIONE: Usa .value per elementi <input>
+    Object.entries(productTotals).forEach(([product, liters]) => {
+        const elementId = `${product}-liters`;
+        const element = document.getElementById(elementId);
+        
+        console.log(`[INDEX] 🔍 Processando ${product}:`, {
+            elementId,
+            element: element ? 'TROVATO' : 'NON_TROVATO',
+            liters: liters,
+            type: typeof liters
+        });
+        
+        if (element) {
+            const formattedLiters = `${formatLiters(liters)} L`;
+            const oldValue = element.value;
+            element.value = formattedLiters;
+            console.log(`[INDEX] ✅ ${product} aggiornato: "${oldValue}" → "${formattedLiters}"`);
+        } else {
+            console.error(`[INDEX] ❌ Elemento non trovato per ${elementId}`);
+        }
+    });
+    
+    // Calcola e aggiorna il totale
     const totalLiters = Object.values(productTotals).reduce((sum, liters) => sum + liters, 0);
     const totalElement = document.getElementById('total-liters');
-    if (totalElement) totalElement.textContent = `${formatLiters(totalLiters)} L`;
+    
+    console.log('[INDEX] 🔍 Totale litri calcolato:', totalLiters);
+    
+    if (totalElement) {
+        const formattedTotal = `${formatLiters(totalLiters)} L`;
+        const oldValue = totalElement.value;
+        totalElement.value = formattedTotal;
+        console.log(`[INDEX] ✅ Totale aggiornato: "${oldValue}" → "${formattedTotal}"`);
+    } else {
+        console.error('[INDEX] ❌ Elemento total-liters non trovato');
+    }
+    
+    console.log('[INDEX] ✅ Widget riepilogo vendite completato');
 }
 
 function calculateFatturatoFromVenditeData() {
     const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
+    
+    // ✅ CORREZIONE: Prima prova a usare i totali globali (più affidabile)
     if (virtualstationData.globalTotals?.general?.amount) {
-        return virtualstationData.globalTotals.general.amount;
+        const globalAmount = virtualstationData.globalTotals.general.amount;
+        console.log('[INDEX] ✅ Usando totali globali per fatturato:', globalAmount);
+        return globalAmount;
     }
+    
+    // ✅ FALLBACK: Calcola dai singoli turni se non ci sono totali globali
     let totalFromAllTurns = 0;
     const turnKeys = Object.keys(virtualstationData).filter(key => key.startsWith('turn-'));
-    turnKeys.forEach(turnKey => { totalFromAllTurns += virtualstationData[turnKey].totalTurnAmount || 0; });
-    if (totalFromAllTurns > 0) return totalFromAllTurns;
+    
+    turnKeys.forEach(turnKey => {
+        const turnData = virtualstationData[turnKey];
+        const turnAmount = turnData?.totalTurnAmount || 0;
+        totalFromAllTurns += turnAmount;
+    });
+    
+    if (totalFromAllTurns > 0) {
+        console.log('[INDEX] ✅ Totale calcolato dai turni:', totalFromAllTurns);
+        return totalFromAllTurns;
+    }
+    
+    // ✅ ULTIMO FALLBACK: Usa storico vendite se disponibile
     const venditeHistory = Storage.load(Storage.KEYS.VENDITE_HISTORY, []);
     if (venditeHistory.length > 0) {
         const lastSnapshot = venditeHistory[venditeHistory.length - 1];
-        if (lastSnapshot.totalSales) return lastSnapshot.totalSales;
+        if (lastSnapshot?.totalSales) {
+            console.log('[INDEX] ✅ Usando storico vendite:', lastSnapshot.totalSales);
+            return lastSnapshot.totalSales;
+        }
     }
+    
+    console.log('[INDEX] ⚠️ Nessun dato di fatturato trovato, ritorno 0');
     return 0;
 }
 
@@ -212,41 +315,134 @@ function updateIncassoBox(fatturatoValue) {
     const imponibileElement = document.getElementById('corrispettivi-imponibile');
     const ivaElement = document.getElementById('corrispettivi-iva');
     if (!imponibileElement || !ivaElement) return;
+    
     const imponibile = fatturatoValue / (1 + VAT_RATE);
     const iva = fatturatoValue - imponibile;
-    imponibileElement.textContent = formatEuro(imponibile);
-    ivaElement.textContent = formatEuro(iva);
+    
+    // ✅ CORREZIONE: Usa .value per elementi <input>
+    imponibileElement.value = formatEuro(imponibile);
+    ivaElement.value = formatEuro(iva);
+    
+    console.log(`[INDEX] 💰 Incasso aggiornato - Fatturato: ${formatEuro(fatturatoValue)}, Imponibile: ${formatEuro(imponibile)}, IVA: ${formatEuro(iva)}`);
 }
 
 function updateMarginBox() {
     const marginElement = document.getElementById('corrispettivi-margine');
     if (!marginElement) return;
+    
     const { modalityTotals } = getSalesSummaryData();
+    
+    // ✅ CORREZIONE: Usa i nomi corretti delle chiavi
     const nonServitoLiters = modalityTotals.iperself + modalityTotals.selfservice;
     const servitoLiters = modalityTotals.servito;
+    
     const nonServitoMargin = nonServitoLiters * MARGIN_NON_SERVITO;
     const servitoMargin = servitoLiters * MARGIN_SERVITO;
     const totalMargin = nonServitoMargin + servitoMargin;
-    marginElement.textContent = formatEuro(totalMargin);
+    
+    // ✅ CORREZIONE: Usa .value per elemento <input>
+    marginElement.value = formatEuro(totalMargin);
+    console.log(`[INDEX] 📊 Margine aggiornato: ${formatEuro(totalMargin)} (Non servito: ${nonServitoLiters.toFixed(2)}L = ${formatEuro(nonServitoMargin)}, Servito: ${servitoLiters.toFixed(2)}L = ${formatEuro(servitoMargin)})`);
+}
+
+// ✅ NUOVA FUNZIONE: Aggiorna campo turno display
+function updateTurnoDisplay() {
+    const turnoElement = document.getElementById('controlTurno');
+    if (!turnoElement) return;
+    
+    const currentTurno = Storage.load(Storage.KEYS.CURRENT_TURNO, '');
+    turnoElement.value = currentTurno || 'N/A';
+    
+    console.log(`[INDEX] 🎯 Campo turno aggiornato: "${currentTurno || 'N/A'}"`);
+}
+
+// ✅ FUNZIONE PRINCIPALE DI AGGIORNAMENTO - OTTIMIZZATA ANTI-LOOP
+function refreshDataFromVirtualstation() {
+    // ✅ PROTEZIONE ANTI-LOOP: Evita aggiornamenti simultanei
+    if (isUpdating) {
+        console.log('[INDEX] ⏭️ Aggiornamento già in corso, evito duplicazione...');
+        return;
+    }
+    
+    isUpdating = true;
+    console.log('[INDEX] 🔄 === INIZIO AGGIORNAMENTO DATI DA VIRTUALSTATION ===');
+    
+    try {
+        // ✅ CONTROLLO HASH: Evita aggiornamenti ridondanti
+        const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
+        const currentHash = calculateDataHash(virtualstationData);
+        
+        if (lastDataHash && lastDataHash === currentHash) {
+            console.log('[INDEX] 📝 Dati non cambiati (hash identico), skip aggiornamento ridondante');
+            return;
+        }
+        
+        lastDataHash = currentHash;
+        console.log('[INDEX] 🆕 Rilevati nuovi dati, procedo con aggiornamento...');
+        
+        // 1. Aggiorna sempre il riepilogo vendite
+        updateSalesSummaryWidget();
+        
+        // 2. Aggiorna il fatturato solo se non è stato impostato manualmente
+        const savedManualFatturato = Storage.load(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE, null);
+        if (savedManualFatturato === null) {
+            console.log('[INDEX] 💰 Fatturato manuale non impostato, calcolo automatico...');
+            const fatturatoInput = document.getElementById('corrispettivi-fatturato');
+            if (fatturatoInput) {
+                const calculatedFatturato = calculateFatturatoFromVenditeData();
+                fatturatoInput.value = formatEuro(calculatedFatturato);
+                updateIncassoBox(calculatedFatturato);
+            }
+        } else {
+            console.log('[INDEX] 💰 Fatturato manuale presente, non aggiorno automaticamente:', savedManualFatturato);
+            updateIncassoBox(savedManualFatturato);
+        }
+        
+        // 3. Aggiorna sempre il margine
+        updateMarginBox();
+        
+        // ✅ AGGIUNTA: Aggiorna campo turno (display)
+        updateTurnoDisplay();
+        
+        console.log('[INDEX] ✅ === AGGIORNAMENTO COMPLETATO CON SUCCESSO ===');
+        
+    } catch (error) {
+        console.error('[INDEX] ❌ Errore durante aggiornamento dati:', error);
+        showMessage('Errore aggiornamento dati da Virtualstation', 'error');
+    } finally {
+        // ✅ RELEASE FLAG
+        isUpdating = false;
+    }
 }
 
 function initializeIncassoBox() {
     const fatturatoInput = document.getElementById('corrispettivi-fatturato');
     if (!fatturatoInput) return;
+    
+    console.log('[INDEX] 🔧 Inizializzazione box Incasso...');
+    
     const savedManualFatturato = Storage.load(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE, null);
     let initialFatturato = 0;
+    
     if (savedManualFatturato !== null) {
         initialFatturato = typeof savedManualFatturato === 'number' ? savedManualFatturato : parseNumberInput(savedManualFatturato);
+        console.log('[INDEX] 💰 Caricato fatturato manuale:', initialFatturato);
     } else {
         initialFatturato = calculateFatturatoFromVenditeData();
+        console.log('[INDEX] 💰 Calcolato fatturato automatico:', initialFatturato);
     }
+    
     fatturatoInput.value = formatEuro(initialFatturato);
     updateIncassoBox(initialFatturato);
+    
+    // ✅ Event handlers migliorati
     const handleFatturatoChange = debounce(() => {
         const manualValue = parseNumberInput(fatturatoInput.value);
         Storage.save(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE, manualValue);
         updateIncassoBox(manualValue);
+        console.log('[INDEX] 💰 Fatturato manuale salvato:', manualValue);
     }, 400);
+    
     fatturatoInput.addEventListener('input', handleFatturatoChange);
     fatturatoInput.addEventListener('focus', () => {
         const rawValue = parseNumberInput(fatturatoInput.value);
@@ -257,6 +453,8 @@ function initializeIncassoBox() {
         const finalValue = parseNumberInput(fatturatoInput.value);
         fatturatoInput.value = formatEuro(finalValue);
     });
+    
+    console.log('[INDEX] ✅ Box Incasso inizializzato');
 }
 
 function resetManualFatturato() {
@@ -268,6 +466,154 @@ function resetManualFatturato() {
         showMessage('Fatturato manuale azzerato.', 'success');
     });
 }
+
+/* ===== LISTENER PER EVENTI VIRTUALSTATION - MIGLIORATI ===== */
+function initializeVirtualstationListener() {
+    console.log('[INDEX] 👂 Inizializzazione listener Virtualstation...');
+    
+    // ✅ LISTENER PRINCIPALE per eventi custom
+    window.addEventListener('virtualstation-data-changed', (event) => {
+        console.log('[INDEX] 🔔 Ricevuta notifica cambiamento da Virtualstation:', event.detail);
+        
+        // Aggiorna solo se non siamo nella pagina virtualstation stessa
+        if (!window.location.pathname.includes('virtualstation.html')) {
+            // ✅ Aggiornamento immediato senza delay eccessivi
+            setTimeout(() => {
+                refreshDataFromVirtualstation();
+                console.log('[INDEX] ✅ Aggiornamento automatico completato');
+            }, 50); // Ridotto da 100ms a 50ms per maggiore reattività
+        } else {
+            console.log('[INDEX] 🚫 Su pagina Virtualstation, skip aggiornamento automatico');
+        }
+    });
+    
+    // ✅ LISTENER per eventi di storage (modifiche in altre tab)
+    window.addEventListener('storage', (event) => {
+        if (event.key === Storage.KEYS.VIRTUALSTATION_DATA) {
+            console.log('[INDEX] 🔔 Rilevato cambiamento dati Virtualstation in altra tab');
+            setTimeout(() => {
+                refreshDataFromVirtualstation();
+                console.log('[INDEX] ✅ Aggiornamento da altra tab completato');
+            }, 100);
+        }
+    });
+    
+    // ✅ LISTENER per focus window (quando si torna alla tab)
+    window.addEventListener('focus', () => {
+        console.log('[INDEX] 👁️ Finestra tornata in focus, aggiorno dati...');
+        setTimeout(() => {
+            refreshDataFromVirtualstation();
+        }, 200);
+    });
+    
+    console.log('[INDEX] ✅ Listener Virtualstation inizializzati correttamente');
+}
+
+// ✅ TIMER INTELLIGENTE - ANTI-LOOP
+function startSmartTimer() {
+    // ✅ Pulisce timer esistente se presente
+    if (updateTimer) {
+        clearInterval(updateTimer);
+        updateTimer = null;
+    }
+    
+    console.log('[INDEX] ⏰ Avvio timer intelligente (10 secondi)...');
+    
+    updateTimer = setInterval(() => {
+        try {
+            // ✅ CONTROLLO INTELLIGENTE: Aggiorna solo se necessario
+            const savedManualFatturato = Storage.load(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE, null);
+            
+            // Se non c'è fatturato manuale, controlla se ci sono cambiamenti nei dati
+            if (savedManualFatturato === null) {
+                const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
+                const currentHash = calculateDataHash(virtualstationData);
+                
+                // Aggiorna solo se i dati sono effettivamente cambiati
+                if (lastDataHash !== currentHash) {
+                    console.log('[INDEX] ⏰ Timer: rilevati nuovi dati, aggiorno...');
+                    refreshDataFromVirtualstation();
+                } else {
+                    console.log('[INDEX] ⏰ Timer: nessun cambiamento rilevato, skip...');
+                }
+            } else {
+                // Se c'è fatturato manuale, aggiorna solo vendite e margine (se dati cambiati)
+                const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
+                const currentHash = calculateDataHash(virtualstationData);
+                
+                if (lastDataHash !== currentHash) {
+                    console.log('[INDEX] ⏰ Timer: aggiorno solo vendite, margine e turno...');
+                    lastDataHash = currentHash;
+                    updateSalesSummaryWidget();
+                    updateMarginBox();
+                    updateTurnoDisplay();
+                }
+            }
+        } catch (error) {
+            console.error('[INDEX] ❌ Errore nel timer intelligente:', error);
+        }
+    }, 10000); // ✅ AUMENTATO: da 2 secondi a 10 secondi per evitare loop
+    
+    console.log('[INDEX] ✅ Timer intelligente attivato ogni 10 secondi');
+}
+
+/* ===== FUNZIONE DI DEBUG MIGLIORATA ===== */
+function debugVirtualstationConnection() {
+    console.log('=== 🔍 DEBUG CONNESSIONE VIRTUALSTATION ===');
+    
+    const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
+    console.log('📊 Dati Virtualstation completi:', virtualstationData);
+    
+    if (virtualstationData.globalTotals) {
+        console.log('✅ Totali globali trovati:', virtualstationData.globalTotals);
+        console.log('  - Iperself:', virtualstationData.globalTotals.iperself);
+        console.log('  - Servito:', virtualstationData.globalTotals.servito);
+        console.log('  - Self-Service:', virtualstationData.globalTotals.selfService);
+        console.log('  - Generale:', virtualstationData.globalTotals.general);
+    } else {
+        console.log('⚠️ Totali globali non trovati');
+    }
+    
+    const turnKeys = Object.keys(virtualstationData).filter(key => key.startsWith('turn-'));
+    console.log(`📋 Trovati ${turnKeys.length} turni:`, turnKeys);
+    
+    turnKeys.forEach(turnKey => {
+        const turnData = virtualstationData[turnKey];
+        console.log(`🔸 ${turnKey}:`, {
+            totalTurnLiters: turnData.totalTurnLiters,
+            totalTurnAmount: turnData.totalTurnAmount,
+            turnNumber: turnData.turnNumber,
+            prodotti: Object.keys(turnData).filter(key => !key.startsWith('total') && key !== 'turnNumber')
+        });
+        
+        // Dettaglio prodotti per questo turno
+        const products = ['benzina', 'gasolio', 'diesel', 'hvolution', 'adblue'];
+        products.forEach(product => {
+            if (turnData[product]) {
+                console.log(`    ${product}:`, turnData[product]);
+            }
+        });
+    });
+    
+    const { productTotals, modalityTotals } = getSalesSummaryData();
+    console.log('📊 Totali prodotti calcolati:', productTotals);
+    console.log('📊 Totali modalità calcolati:', modalityTotals);
+    
+    const calculatedFatturato = calculateFatturatoFromVenditeData();
+    console.log('💰 Fatturato calcolato:', calculatedFatturato);
+    
+    const savedManualFatturato = Storage.load(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE, null);
+    console.log('💰 Fatturato manuale salvato:', savedManualFatturato);
+    
+    console.log('🔄 Is updating flag:', isUpdating);
+    console.log('🔍 Last data hash:', lastDataHash);
+    console.log('⏰ Timer active:', updateTimer !== null);
+    
+    console.log('=== 🏁 FINE DEBUG ===');
+}
+
+// Aggiungi questa funzione come globale per debug dalla console
+window.debugVirtualstationConnection = debugVirtualstationConnection;
 
 /* ===== SISTEMA IMPORT/EXPORT UNIFICATO ===== */
 const COMPLETE_EXPORT_MAPPING = {
@@ -332,8 +678,8 @@ function esportaTuttiIDati() {
 function resetRegistroData() { Storage.remove(Storage.KEYS.REGISTRO_DATA); }
 function resetVirtualstationData() {
      const virtualstationData = Storage.load(Storage.KEYS.VIRTUALSTATION_DATA, {});
-     const clearedData = { globalTotals: virtualstationData.globalTotals || {} };
-     Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, clearedData);
+    const clearedData = { globalTotals: virtualstationData.globalTotals || {} };
+    Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, clearedData);
 }
 function resetFatturatoManuale() { Storage.remove(Storage.KEYS.CORRISPETTIVI_FATTURATO_MANUALE); }
 
@@ -377,15 +723,23 @@ function confirmNewDay() {
 
 /* ===== GESTIONE ERRORI GLOBALI ===== */
 window.addEventListener('error', function(event) { console.error('Errore JavaScript globale:', event.error); showMessage('Si è verificato un errore imprevisto', 'error'); });
-window.addEventListener('unhandledrejection', function(event) { console.error('Promise rifiutata non gestita:', event.reason); showMessage('Errore operazione asincrona', 'error'); });
+window.addEventListener('unhandledrejection', function(event) { console.error('Promise rifiutata non gestita:', event.reason); showMessage('Errore nell\'operazione asincrona', 'error'); });
 
-/* ===== INIZIALIZZAZIONE PAGINA ===== */
+/* ===== INIZIALIZZAZIONE PAGINA - MIGLIORATA ===== */
 document.addEventListener('DOMContentLoaded', function() {
     try {
-        if (typeof Storage === 'undefined' || !Storage.KEYS) { console.error("Storage o Storage.KEYS non definiti."); return; }
+        if (typeof Storage === 'undefined' || !Storage.KEYS) { 
+            console.error("❌ Storage o Storage.KEYS non definiti."); 
+            return; 
+        }
         
-        ThemeManager.init(); // Chiamata al gestore centralizzato
+        console.log('[INDEX] 🚀 === INIZIALIZZAZIONE INDEX AVVIATA ===');
         
+        // Inizializza il tema
+        ThemeManager.init();
+        console.log('[INDEX] ✅ Tema inizializzato');
+        
+        // Inizializza modali info
         const infoBtn = document.getElementById('info-btn');
         const infoModal = document.getElementById('info-modal');
         if (infoBtn && infoModal) {
@@ -394,20 +748,26 @@ document.addEventListener('DOMContentLoaded', function() {
             if(closeBtn) { closeBtn.addEventListener('click', () => { infoModal.classList.remove('active'); }); }
             infoModal.addEventListener('click', (e) => { if(e.target === infoModal) { infoModal.classList.remove('active'); } });
         }
+        console.log('[INDEX] ✅ Modali info inizializzate');
         
+        // Inizializza widgets
         calendarWidget = new CalendarWidget();
         todoWidget = new TodoWidget();
+        console.log('[INDEX] ✅ Widget inizializzati');
         
-        const turnoInput = document.getElementById('controlTurno');
-        if (turnoInput) {
-            turnoInput.value = Storage.load(Storage.KEYS.CURRENT_TURNO, '');
-            turnoInput.addEventListener('change', (e) => Storage.save(Storage.KEYS.CURRENT_TURNO, e.target.value));
-        }
+        // Inizializza campo turno (ora solo display)
+        updateTurnoDisplay();
+        console.log('[INDEX] ✅ Campo turno inizializzato (display)');
+        
+        // Inizializza area note
         const notesArea = document.getElementById('notesArea');
         if (notesArea) {
             notesArea.value = Storage.load(Storage.KEYS.NOTES, '');
             notesArea.addEventListener('input', debounce(() => Storage.save(Storage.KEYS.NOTES, notesArea.value), 500));
         }
+        console.log('[INDEX] ✅ Area note inizializzata');
+        
+        // Inizializza data/ora
         function updateDateTime() {
             const now = new Date();
             const timeString = now.toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' });
@@ -422,9 +782,135 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         updateDateTime();
         setInterval(updateDateTime, 60000);
+        console.log('[INDEX] ✅ Data/ora inizializzate');
         
+        // ✅ INIZIALIZZA LISTENER VIRTUALSTATION (PRIMA DI TUTTO IL RESTO)
+        initializeVirtualstationListener();
+        console.log('[INDEX] ✅ Listener Virtualstation inizializzati');
+        
+        // ✅ INIZIALIZZA BOX INCASSO
         initializeIncassoBox();
-        updateSalesSummaryWidget();
-        updateMarginBox();
-    } catch (error) { console.error('❌ Errore nell\'inizializzazione:', error); showMessage('Errore critico nell\'inizializzazione del sistema', 'error'); }
+        console.log('[INDEX] ✅ Box Incasso inizializzato');
+        
+        // ✅ PRIMA IMPORTAZIONE DATI DA VIRTUALSTATION
+        console.log('[INDEX] 📊 Importazione iniziale dati da Virtualstation...');
+        refreshDataFromVirtualstation();
+        
+        // ✅ AVVIA TIMER INTELLIGENTE
+        startSmartTimer();
+        
+        // ✅ CLEANUP al unload della pagina
+        window.addEventListener('beforeunload', () => {
+            if (updateTimer) {
+                clearInterval(updateTimer);
+                updateTimer = null;
+            }
+            console.log('[INDEX] 🧹 Cleanup completato');
+        });
+        
+        console.log('[INDEX] 🎉 === SISTEMA INDEX INIZIALIZZATO CORRETTAMENTE ===');
+        
+        // ✅ Debug iniziale (solo se attivato)
+        if (localStorage.getItem('debug_virtualstation') === 'true') {
+            setTimeout(debugVirtualstationConnection, 1000);
+        }
+        
+    } catch (error) { 
+        console.error('[INDEX] ❌ Errore critico nell\'inizializzazione:', error); 
+        showMessage('Errore critico nell\'inizializzazione del sistema', 'error'); 
+    }
 });
+
+/* ===== COMANDI DI DEBUG GLOBALI ===== */
+// Per attivare il debug dalla console: localStorage.setItem('debug_virtualstation', 'true')
+// Per disattivarlo: localStorage.removeItem('debug_virtualstation')
+// Per eseguire debug immediato: debugVirtualstationConnection()
+window.forceRefreshFromVirtualstation = refreshDataFromVirtualstation;
+
+// ✅ FUNZIONI DI CONTROLLO TIMER
+window.pauseTimer = () => {
+    if (updateTimer) {
+        clearInterval(updateTimer);
+        updateTimer = null;
+        console.log('[INDEX] ⏸️ Timer pausato');
+    }
+};
+
+window.resumeTimer = () => {
+    if (!updateTimer) {
+        startSmartTimer();
+        console.log('[INDEX] ▶️ Timer riavviato');
+    }
+};
+
+window.checkTimerStatus = () => {
+    console.log('[INDEX] ⏰ Timer attivo:', updateTimer !== null);
+    console.log('[INDEX] 🔄 Aggiornamento in corso:', isUpdating);
+    console.log('[INDEX] 🔍 Ultimo hash dati:', lastDataHash);
+};
+
+// ✅ FUNZIONE DI TEST PER DEBUG
+window.testUpdateFields = () => {
+    console.log('[INDEX] 🧪 === TEST MANUALE AGGIORNAMENTO CAMPI ===');
+    
+    // Test dati di esempio
+    const testData = {
+        benzina: 1500.50,
+        gasolio: 2000.75,
+        diesel: 800.25,
+        hvolution: 300.00,
+        adblue: 150.00
+    };
+    
+    console.log('[INDEX] 🧪 Aggiornamento con dati di test:', testData);
+    
+    Object.entries(testData).forEach(([product, liters]) => {
+        const elementId = `${product}-liters`;
+        const element = document.getElementById(elementId);
+        
+        if (element) {
+            const formattedValue = `${formatLiters(liters)} L`;
+            element.value = formattedValue;
+            console.log(`[INDEX] ✅ ${product}: ${formattedValue} → campo aggiornato`);
+        } else {
+            console.error(`[INDEX] ❌ Campo ${elementId} non trovato`);
+        }
+    });
+    
+    // Test totale
+    const total = Object.values(testData).reduce((sum, val) => sum + val, 0);
+    const totalElement = document.getElementById('total-liters');
+    if (totalElement) {
+        const formattedTotal = `${formatLiters(total)} L`;
+        totalElement.value = formattedTotal;
+        console.log(`[INDEX] ✅ Totale: ${formattedTotal} → campo aggiornato`);
+    }
+    
+    // Test campo turno
+    updateTurnoDisplay();
+    
+    console.log('[INDEX] 🧪 === FINE TEST ===');
+};
+
+// ✅ FUNZIONE PER CONTROLLARE STRUTTURA HTML
+window.checkHtmlStructure = () => {
+    console.log('[INDEX] 🔍 === CONTROLLO STRUTTURA HTML ===');
+    
+    const expectedIds = [
+        'benzina-liters', 'gasolio-liters', 'diesel-liters', 
+        'hvolution-liters', 'adblue-liters', 'total-liters',
+        'corrispettivi-imponibile', 'corrispettivi-iva', 'corrispettivi-margine',
+        'controlTurno'
+    ];
+    
+    expectedIds.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            console.log(`✅ ${id}: ${element.tagName.toLowerCase()}${element.type ? `[${element.type}]` : ''} = "${element.value}"`);
+        } else {
+            console.error(`❌ ${id}: NON TROVATO`);
+        }
+    });
+    
+    console.log('[INDEX] 🔍 === FINE CONTROLLO ===');
+};

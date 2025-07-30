@@ -735,6 +735,7 @@ html:not(.dark-theme) #theme-icon-dark {
     text-transform: uppercase;
 }
 
+/* --- Giorno normale --- */
 .day {
     cursor: pointer;
     border-radius: 50%;
@@ -748,24 +749,36 @@ html:not(.dark-theme) #theme-icon-dark {
     transition: background-color 0.2s ease;
 }
 
+/* --- Hover --- */
 .day:hover {
     background-color: var(--primary-blue-light);
 }
 
+/* --- Oggi --- */
 .day.current-day {
     background-color: var(--primary-blue);
     color: white;
 }
 
+/* --- Oggi + festivo --- */
 .day.current-day.holiday {
     background-color: var(--danger) !important;
     color: white !important;
 }
 
+/* --- Festivo / domenica (non oggi) --- */
+.day.holiday:not(.current-day) {
+    color: var(--danger) !important;
+}
+
+/* --- Giorni di altri mesi --- */
 .day.other-month {
     opacity: 0.4;
 }
-
+/* Giorni di altri mesi */
+.day.other-month {
+    opacity: 0.4;
+}
 .todo-input-group {
     display: flex;
     gap: 8px;
@@ -1609,6 +1622,13 @@ html.dark-theme .info-link:hover {
     grid-template-columns: repeat(4, 1fr);
     gap: 20px;
     margin-bottom: 25px;
+}
+
+/* Centra il testo in tutti gli input di Virtualstation */
+.virtualstation-grid .grid-input,
+.total-turn-grid .grid-input,
+.turn-number-input {
+    text-align: center;
 }
 
 .summary-box {

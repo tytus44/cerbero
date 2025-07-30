@@ -1,4 +1,4 @@
-/* ===== CERBERO VIRTUALSTATION - CLONAZIONE TURNI E IMPORT/EXPORT ===== */
+/* ===== CERBERO VIRTUALSTATION - CLONAZIONE TURNI E IMPORT/EXPORT v2.1 ===== */
 
 /* ===== GESTIONE TEMA (Copia da monetario.js) ===== */
 function applyTheme(theme) {
@@ -157,7 +157,6 @@ function showConfirmModal(title, text, onConfirm) {
     }
 }
 
-
 const formatter = {
     liters: new Intl.NumberFormat('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
     currency: new Intl.NumberFormat('it-IT', { style: 'currency', currency: 'EUR' }),
@@ -172,6 +171,28 @@ function parseNumberInput(value) {
     } catch (error) {
         console.error('Errore parsing numero:', error);
         return 0;
+    }
+}
+
+/* ===== NUOVA FUNZIONE PER NOTIFICARE CAMBIAMENTI ===== */
+function notifyDataChange() {
+    // Notifica ad altre pagine che i dati sono cambiati
+    try {
+        window.dispatchEvent(new CustomEvent('virtualstation-data-changed', {
+            detail: { 
+                timestamp: Date.now(),
+                action: 'data-updated'
+            }
+        }));
+        
+        // Se siamo sulla pagina index, aggiorna direttamente
+        if (typeof refreshDataFromVirtualstation === 'function') {
+            refreshDataFromVirtualstation();
+        }
+        
+        console.log('[VIRTUALSTATION] Dati aggiornati, notifica inviata');
+    } catch (error) {
+        console.error('[VIRTUALSTATION] Errore nella notifica:', error);
     }
 }
 
@@ -387,7 +408,6 @@ class VirtualstationManager {
         this.updateAllTurnsInStorage();
     }
 
-
     confirmResetTurns() {
         showConfirmModal('Reset Tutti i Turni', 'Sei sicuro di voler cancellare tutti i turni? L\'operazione è irreversibile.', () => this.resetAllTurns());
     }
@@ -475,43 +495,120 @@ class VirtualstationManager {
         });
     }
     
+    // ✅ CORREZIONE: Funzione updateGlobalTotals completa con tutti gli importi
     updateGlobalTotals() {
-        let totalGlobalIperselfLiters = 0, totalGlobalIperselfAmount = 0, totalGlobalServitoLiters = 0, totalGlobalServitoAmount = 0,
-            totalGlobalSelfServiceLiters = 0, totalGlobalSelfServiceAmount = 0, totalGlobalLiters = 0, totalGlobalAmount = 0;
+        console.log('[VIRTUALSTATION] 🔄 Aggiornamento totali globali...');
+        
+        let totalGlobalIperselfLiters = 0, totalGlobalIperselfAmount = 0, 
+            totalGlobalServitoLiters = 0, totalGlobalServitoAmount = 0,
+            totalGlobalSelfServiceLiters = 0, totalGlobalSelfServiceAmount = 0, 
+            totalGlobalLiters = 0, totalGlobalAmount = 0;
 
-        Object.keys(this.data).filter(key => key.startsWith('turn-')).forEach(turnKey => {
+        // Calcola i totali da tutti i turni
+        const turnKeys = Object.keys(this.data).filter(key => key.startsWith('turn-'));
+        console.log(`[VIRTUALSTATION] Processando ${turnKeys.length} turni...`);
+
+        turnKeys.forEach(turnKey => {
             const turnData = this.data[turnKey];
+            console.log(`[VIRTUALSTATION] Processando ${turnKey}:`, turnData);
+            
             this.products.forEach(product => {
                 const productData = turnData[product] || {}; 
                 const priceServito = this.monetaryPrices[product]?.servito || 0;
                 const priceIperself = this.monetaryPrices[product]?.iperself || 0; 
+                
                 const iperselfLiters = productData.iperself || 0;
                 const servitoLiters = productData.servito || 0;
                 const selfServiceLiters = productData['self-service'] || 0;
+                
+                // Accumula litri
                 totalGlobalIperselfLiters += iperselfLiters;
-                totalGlobalIperselfAmount += iperselfLiters * priceIperself;
                 totalGlobalServitoLiters += servitoLiters;
-                totalGlobalServitoAmount += servitoLiters * priceServito;
                 totalGlobalSelfServiceLiters += selfServiceLiters;
-                totalGlobalSelfServiceAmount += selfServiceLiters * priceIperself;
                 totalGlobalLiters += iperselfLiters + servitoLiters + selfServiceLiters;
-                totalGlobalAmount += (iperselfLiters * priceIperself) + (servitoLiters * priceServito) + (selfServiceLiters * priceIperself);
+                
+                // Calcola e accumula importi
+                const iperselfAmount = iperselfLiters * priceIperself;
+                const servitoAmount = servitoLiters * priceServito;
+                const selfServiceAmount = selfServiceLiters * priceIperself;
+                
+                totalGlobalIperselfAmount += iperselfAmount;
+                totalGlobalServitoAmount += servitoAmount;
+                totalGlobalSelfServiceAmount += selfServiceAmount;
+                totalGlobalAmount += iperselfAmount + servitoAmount + selfServiceAmount;
+                
+                console.log(`[VIRTUALSTATION]   ${product}: I=${iperselfLiters}L(${formatter.currency.format(iperselfAmount)}), S=${servitoLiters}L(${formatter.currency.format(servitoAmount)}), SS=${selfServiceLiters}L(${formatter.currency.format(selfServiceAmount)})`);
             });
         });
 
+        // Aggiorna i totali globali nei dati
         this.data.globalTotals = {
             iperself: { liters: totalGlobalIperselfLiters, amount: totalGlobalIperselfAmount },
             servito: { liters: totalGlobalServitoLiters, amount: totalGlobalServitoAmount },
             selfService: { liters: totalGlobalSelfServiceLiters, amount: totalGlobalSelfServiceAmount },
             general: { liters: totalGlobalLiters, amount: totalGlobalAmount }
         };
+        
         Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, this.data);
 
-document.getElementById('global-iperself-liters').textContent = formatter.liters.format(totalGlobalIperselfLiters);
-document.getElementById('global-servito-liters').textContent = formatter.liters.format(totalGlobalServitoLiters);
-document.getElementById('global-self-service-liters').textContent = formatter.liters.format(totalGlobalSelfServiceLiters);
-document.getElementById('global-total-liters').textContent = formatter.liters.format(totalGlobalLiters);
-        document.getElementById('global-total-amount').textContent = formatter.currency.format(totalGlobalAmount);
+        console.log('[VIRTUALSTATION] 📊 Totali globali calcolati:', this.data.globalTotals);
+
+        // ✅ CORREZIONE: Aggiorna TUTTI gli elementi dell'interfaccia, inclusi gli importi per modalità
+        
+        // Aggiorna litri per modalità
+        const iperselfLitersEl = document.getElementById('global-iperself-liters');
+        const servitoLitersEl = document.getElementById('global-servito-liters');
+        const selfServiceLitersEl = document.getElementById('global-self-service-liters');
+        const totalLitersEl = document.getElementById('global-total-liters');
+        
+        if (iperselfLitersEl) iperselfLitersEl.textContent = formatter.liters.format(totalGlobalIperselfLiters);
+        if (servitoLitersEl) servitoLitersEl.textContent = formatter.liters.format(totalGlobalServitoLiters);
+        if (selfServiceLitersEl) selfServiceLitersEl.textContent = formatter.liters.format(totalGlobalSelfServiceLiters);
+        if (totalLitersEl) totalLitersEl.textContent = formatter.liters.format(totalGlobalLiters);
+        
+        // ✅ AGGIUNTA: Aggiorna importi per modalità (questi mancavano!)
+        const iperselfAmountEl = document.getElementById('global-iperself-amount');
+        const servitoAmountEl = document.getElementById('global-servito-amount');
+        const selfServiceAmountEl = document.getElementById('global-self-service-amount');
+        const totalAmountEl = document.getElementById('global-total-amount');
+        
+        if (iperselfAmountEl) {
+            iperselfAmountEl.textContent = formatter.currency.format(totalGlobalIperselfAmount);
+            console.log('[VIRTUALSTATION] ✅ Aggiornato importo Iperself:', formatter.currency.format(totalGlobalIperselfAmount));
+        } else {
+            console.warn('[VIRTUALSTATION] ⚠️ Elemento global-iperself-amount non trovato!');
+        }
+        
+        if (servitoAmountEl) {
+            servitoAmountEl.textContent = formatter.currency.format(totalGlobalServitoAmount);
+            console.log('[VIRTUALSTATION] ✅ Aggiornato importo Servito:', formatter.currency.format(totalGlobalServitoAmount));
+        } else {
+            console.warn('[VIRTUALSTATION] ⚠️ Elemento global-servito-amount non trovato!');
+        }
+        
+        if (selfServiceAmountEl) {
+            selfServiceAmountEl.textContent = formatter.currency.format(totalGlobalSelfServiceAmount);
+            console.log('[VIRTUALSTATION] ✅ Aggiornato importo Self-Service:', formatter.currency.format(totalGlobalSelfServiceAmount));
+        } else {
+            console.warn('[VIRTUALSTATION] ⚠️ Elemento global-self-service-amount non trovato!');
+        }
+        
+        if (totalAmountEl) {
+            totalAmountEl.textContent = formatter.currency.format(totalGlobalAmount);
+            console.log('[VIRTUALSTATION] ✅ Aggiornato importo totale:', formatter.currency.format(totalGlobalAmount));
+        } else {
+            console.warn('[VIRTUALSTATION] ⚠️ Elemento global-total-amount non trovato!');
+        }
+        
+        console.log('[VIRTUALSTATION] ✅ Aggiornamento totali globali completato');
+        console.log('[VIRTUALSTATION] 📊 Riepilogo finale:');
+        console.log(`  - Iperself: ${formatter.liters.format(totalGlobalIperselfLiters)} = ${formatter.currency.format(totalGlobalIperselfAmount)}`);
+        console.log(`  - Servito: ${formatter.liters.format(totalGlobalServitoLiters)} = ${formatter.currency.format(totalGlobalServitoAmount)}`);
+        console.log(`  - Self-Service: ${formatter.liters.format(totalGlobalSelfServiceLiters)} = ${formatter.currency.format(totalGlobalSelfServiceAmount)}`);
+        console.log(`  - TOTALE: ${formatter.liters.format(totalGlobalLiters)} = ${formatter.currency.format(totalGlobalAmount)}`);
+        
+        // Notifica il cambiamento
+        notifyDataChange();
     }
 }
 
@@ -574,7 +671,6 @@ class SingleTurnManager {
         if (turnNumberInput) turnNumberInput.value = this.data.turnNumber ?? '';
     }
 
-
     handleInput(input) {
         const { product, type } = input.dataset;
         this.data[product] ??= {};
@@ -602,6 +698,29 @@ class SingleTurnManager {
                 }
             });
         });
+    }
+
+    resetInputs() {
+        const turnBlockElement = document.getElementById(`turn-block-${this.turnIndex}`);
+        if (!turnBlockElement) return;
+        
+        this.products.forEach(product => {
+            this.types.forEach(type => {
+                const input = turnBlockElement.querySelector(`.grid-input[data-product="${product}"][data-type="${type}"]`);
+                if (input) {
+                    input.value = '';
+                    this.data[product] = this.data[product] || {};
+                    this.data[product][type] = 0;
+                }
+            });
+        });
+        
+        // Reset anche il numero turno
+        const turnNumberInput = turnBlockElement.querySelector(`#turn-number-input-${this.turnIndex}`);
+        if (turnNumberInput) {
+            turnNumberInput.value = '';
+            this.data.turnNumber = '';
+        }
     }
 
     updateTotals() {
@@ -641,20 +760,37 @@ class SingleTurnManager {
             totalTurnLiters += rowTotalLiters;
             totalTurnAmount += rowTotalAmount;
 
-            turnBlockElement.querySelector(`#total-turn-${product}-liters-${this.turnIndex}`).textContent = formatter.liters.format(rowTotalLiters);
-            turnBlockElement.querySelector(`#total-turn-${product}-amount-${this.turnIndex}`).textContent = formatter.currency.format(rowTotalAmount);
+            const productLitersEl = turnBlockElement.querySelector(`#total-turn-${product}-liters-${this.turnIndex}`);
+            const productAmountEl = turnBlockElement.querySelector(`#total-turn-${product}-amount-${this.turnIndex}`);
+            
+            if (productLitersEl) productLitersEl.textContent = formatter.liters.format(rowTotalLiters);
+            if (productAmountEl) productAmountEl.textContent = formatter.currency.format(rowTotalAmount);
         });
 
-        turnBlockElement.querySelector(`#total-iperself-${this.turnIndex}`).textContent = formatter.liters.format(columnTotals.iperself);
-        turnBlockElement.querySelector(`#total-servito-${this.turnIndex}`).textContent = formatter.liters.format(columnTotals.servito);
-        turnBlockElement.querySelector(`#total-self-service-${this.turnIndex}`).textContent = formatter.liters.format(columnTotals['self-service']);
+        // Aggiorna totali colonna nel singolo turno
+        const iperselfTotalEl = turnBlockElement.querySelector(`#total-iperself-${this.turnIndex}`);
+        const servitoTotalEl = turnBlockElement.querySelector(`#total-servito-${this.turnIndex}`);
+        const selfServiceTotalEl = turnBlockElement.querySelector(`#total-self-service-${this.turnIndex}`);
         
-        turnBlockElement.querySelector(`#total-general-liters-${this.turnIndex}`).textContent = formatter.liters.format(totalTurnLiters);
-        turnBlockElement.querySelector(`#total-general-amount-${this.turnIndex}`).textContent = formatter.currency.format(totalTurnAmount);
+        if (iperselfTotalEl) iperselfTotalEl.textContent = formatter.liters.format(columnTotals.iperself);
+        if (servitoTotalEl) servitoTotalEl.textContent = formatter.liters.format(columnTotals.servito);
+        if (selfServiceTotalEl) selfServiceTotalEl.textContent = formatter.liters.format(columnTotals['self-service']);
+        
+        // Aggiorna totali generali del turno
+        const generalLitersEl = turnBlockElement.querySelector(`#total-general-liters-${this.turnIndex}`);
+        const generalAmountEl = turnBlockElement.querySelector(`#total-general-amount-${this.turnIndex}`);
+        
+        if (generalLitersEl) generalLitersEl.textContent = formatter.liters.format(totalTurnLiters);
+        if (generalAmountEl) generalAmountEl.textContent = formatter.currency.format(totalTurnAmount);
 
         this.data.totalTurnLiters = totalTurnLiters;
         this.data.totalTurnAmount = totalTurnAmount;
         Storage.save(Storage.KEYS.VIRTUALSTATION_DATA, this.virtualstationManager.data);
+        
+        // Notifica il cambiamento (solo se i dati sono effettivamente cambiati)
+        if (totalTurnAmount > 0 || totalTurnLiters > 0) {
+            notifyDataChange();
+        }
     }
 
     moveToNextInput(currentInput) {
@@ -679,6 +815,8 @@ window.addEventListener('unhandledrejection', e => showMessage('Errore operazion
 
 document.addEventListener('DOMContentLoaded', () => {
     try {
+        console.log('[VIRTUALSTATION] 🚀 Inizializzazione Virtualstation...');
+        
         // MOBILE MENU LOGIC (START)
         const hamburgerBtn = document.getElementById('hamburger-menu-btn');
         const mainNav = document.getElementById('main-nav');
@@ -709,10 +847,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         initializeThemeSwitcher();
         initializeInfoButton();
+        
+        console.log('[VIRTUALSTATION] 📊 Inizializzazione VirtualstationManager...');
         window.virtualstationManager = new VirtualstationManager();
-        console.log("Sistema Virtualstation inizializzato.");
+        
+        console.log('[VIRTUALSTATION] ✅ Sistema Virtualstation inizializzato correttamente.');
+        
+        // Debug iniziale se attivato
+        if (localStorage.getItem('debug_virtualstation') === 'true') {
+            setTimeout(() => {
+                console.log('[VIRTUALSTATION] 🔍 Debug attivato, visualizzo dati...');
+                console.log('Dati Virtualstation:', window.virtualstationManager.data);
+                console.log('Prezzi monetario:', window.virtualstationManager.monetaryPrices);
+            }, 1000);
+        }
+        
     } catch (error) {
-        console.error('Errore critico nell\'inizializzazione di Virtualstation:', error);
+        console.error('[VIRTUALSTATION] ❌ Errore critico nell\'inizializzazione:', error);
         showMessage('Errore critico nell\'avvio di Virtualstation.', 'error');
     }
 });

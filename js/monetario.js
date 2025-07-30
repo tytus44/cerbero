@@ -68,12 +68,61 @@ function parseNumberInput(value) {
 class VersamentoManager {
     constructor() { this.data = Storage.load(Storage.KEYS.VERSAMENTO_DATA, {}); this.denominations = [500, 200, 100, 50, 20, 10]; this.init(); }
     init() { this.bindEvents(); this.updateUI(); }
-    bindEvents() { this.denominations.forEach(denom => { const inputGroup = document.querySelector(`.spinner-input-group[data-denom="${denom}"]`); if (!inputGroup) return; const input = inputGroup.querySelector('.spinner-value'); inputGroup.querySelector('.spinner-btn.decrement').addEventListener('click', () => this.adjustValue(denom, -1)); inputGroup.querySelector('.spinner-btn.increment').addEventListener('click', () => this.adjustValue(denom, 1)); input.addEventListener('input', () => this.handleInput(denom)); input.addEventListener('blur', () => this.handleBlur(denom)); input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.moveToNextField(denom); } }); }); }
-    adjustValue(denomination, direction) { const input = document.querySelector(`.spinner-input-group[data-denom="${denomination}"] .spinner-value`); const step = parseInt(input.parentElement.dataset.step || '1'); let newValue = Math.max(0, (this.data[`banconote${denomination}`] || 0) + (direction * step)); this.data[`banconote${denomination}`] = newValue; this.updateUI(); Storage.save(Storage.KEYS.VERSAMENTO_DATA, this.data); input.focus(); input.value = newValue === 0 ? '0' : newValue.toString(); }
-    moveToNextField(currentDenom) { const currentIndex = this.denominations.indexOf(currentDenom); const nextDenom = (currentIndex < this.denominations.length - 1) ? this.denominations[currentIndex + 1] : this.denominations[0]; document.querySelector(`.spinner-input-group[data-denom="${nextDenom}"] .spinner-value`)?.focus(); }
-    handleInput(denomination) { const input = document.querySelector(`.spinner-input-group[data-denom="${denomination}"] .spinner-value`); this.data[`banconote${denomination}`] = Math.max(0, parseNumberInput(input.value)); this.updateUI(); Storage.save(Storage.KEYS.VERSAMENTO_DATA, this.data); }
-    handleBlur(denomination) { const input = document.querySelector(`.spinner-input-group[data-denom="${denomination}"] .spinner-value`); const quantity = this.data[`banconote${denomination}`] || 0; input.value = quantity === 0 ? '0' : quantity.toString(); }
-    updateUI() { let totalValue = 0; let totalCount = 0; this.denominations.forEach(denom => { const quantity = this.data[`banconote${denom}`] || 0; totalValue += denom * quantity; totalCount += quantity; const qtyInput = document.querySelector(`.spinner-input-group[data-denom="${denom}"] .spinner-value`); if (qtyInput && document.activeElement !== qtyInput) qtyInput.value = quantity === 0 ? '0' : quantity.toString(); const valoreInput = document.getElementById(`valore-${denom}`); if (valoreInput) valoreInput.value = formatter.currency.format(denom * quantity); }); const totalBanconoteEl = document.getElementById('versamento-total-banconote'); if (totalBanconoteEl) totalBanconoteEl.textContent = totalCount.toString(); const totalImportoEl = document.getElementById('versamento-total-importo'); if (totalImportoEl) totalImportoEl.textContent = formatter.currency.format(totalValue); }
+    bindEvents() {
+        this.denominations.forEach(denom => {
+            const inputGroup = document.querySelector(`.spinner-input-group[data-denom="${denom}"]`);
+            if (!inputGroup) return;
+            const input = inputGroup.querySelector('.spinner-value');
+            inputGroup.querySelector('.spinner-btn.decrement').addEventListener('click', () => this.adjustValue(denom, -1));
+            inputGroup.querySelector('.spinner-btn.increment').addEventListener('click', () => this.adjustValue(denom, 1));
+            input.addEventListener('input', () => this.handleInput(denom));
+            input.addEventListener('blur', () => this.handleBlur(denom));
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') { e.preventDefault(); this.moveToNextField(denom); }
+            });
+        });
+    }
+    adjustValue(denomination, direction) {
+        const input = document.querySelector(`.spinner-input-group[data-denom="${denomination}"] .spinner-value`);
+        const step = parseInt(input.parentElement.dataset.step || '1');
+        let newValue = Math.max(0, (this.data[`banconote${denomination}`] || 0) + (direction * step));
+        this.data[`banconote${denomination}`] = newValue;
+        this.updateUI();
+        Storage.save(Storage.KEYS.VERSAMENTO_DATA, this.data);
+        input.focus();
+        input.value = newValue === 0 ? '' : newValue.toString();
+    }
+    moveToNextField(currentDenom) {
+        const currentIndex = this.denominations.indexOf(currentDenom);
+        const nextDenom = (currentIndex < this.denominations.length - 1) ? this.denominations[currentIndex + 1] : this.denominations[0];
+        document.querySelector(`.spinner-input-group[data-denom="${nextDenom}"] .spinner-value`)?.focus();
+    }
+    handleInput(denomination) {
+        const input = document.querySelector(`.spinner-input-group[data-denom="${denomination}"] .spinner-value`);
+        this.data[`banconote${denomination}`] = Math.max(0, parseNumberInput(input.value));
+        this.updateUI();
+        Storage.save(Storage.KEYS.VERSAMENTO_DATA, this.data);
+    }
+    handleBlur(denomination) {
+        const input = document.querySelector(`.spinner-input-group[data-denom="${denomination}"] .spinner-value`);
+        const quantity = this.data[`banconote${denomination}`] || 0;
+        input.value = quantity === 0 ? '' : quantity.toString();
+    }
+    updateUI() {
+        let totalValue = 0; let totalCount = 0;
+        this.denominations.forEach(denom => {
+            const quantity = this.data[`banconote${denom}`] || 0;
+            totalValue += denom * quantity; totalCount += quantity;
+            const qtyInput = document.querySelector(`.spinner-input-group[data-denom="${denom}"] .spinner-value`);
+            if (qtyInput && document.activeElement !== qtyInput) qtyInput.value = quantity === 0 ? '' : quantity.toString();
+            const valoreInput = document.getElementById(`valore-${denom}`);
+            if (valoreInput) valoreInput.value = formatter.currency.format(denom * quantity);
+        });
+        const totalBanconoteEl = document.getElementById('versamento-total-banconote');
+        if (totalBanconoteEl) totalBanconoteEl.textContent = totalCount.toString();
+        const totalImportoEl = document.getElementById('versamento-total-importo');
+        if (totalImportoEl) totalImportoEl.textContent = formatter.currency.format(totalValue);
+    }
 }
 
 /* ===== PRICING MANAGER CORRETTO ===== */
@@ -84,45 +133,27 @@ class PricingManager {
         this.allProducts = ['benzina', 'diesel', 'gasolio', 'hvolution', 'adblue'];
         this.init();
     }
-    
-    init() { 
-        this.bindEvents(); 
-        this.populateInputs(); 
-        this.updateCalculatedFields(); 
-    }
-    
+    init() { this.bindEvents(); this.populateInputs(); this.updateCalculatedFields(); }
     bindEvents() {
-        // Gestione input normali (non spinner)
+        // gestione input normali
         document.querySelectorAll('.grid-input[data-product]:not(.spinner-value), .grid-input[data-fuel]:not(.spinner-value)').forEach(input => {
             input.addEventListener('input', (e) => this.handleInput(e.target));
             input.addEventListener('blur', (e) => this.handleBlur(e.target));
-            input.addEventListener('keydown', (e) => { 
-                if (e.key === 'Enter') { 
-                    e.preventDefault(); 
-                    this.moveToNextInput(e.target); 
-                } 
-            });
+            input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.moveToNextInput(e.target); } });
         });
-        
-        // Gestione spinner carburanti
+        // gestione spinner carburanti
         this.fuelProducts.forEach(fuel => {
             const inputGroup = document.querySelector(`.spinner-input-group[data-fuel="${fuel}"]`);
-            if(inputGroup) {
+            if (inputGroup) {
                 const input = inputGroup.querySelector('.spinner-value');
                 inputGroup.querySelector('.spinner-btn.decrement').addEventListener('click', () => this.adjustFuelQuantity(fuel, -1));
                 inputGroup.querySelector('.spinner-btn.increment').addEventListener('click', () => this.adjustFuelQuantity(fuel, 1));
                 input.addEventListener('input', () => this.handleInput(input));
                 input.addEventListener('blur', () => this.handleBlur(input));
-                input.addEventListener('keydown', (e) => { 
-                    if (e.key === 'Enter') { 
-                        e.preventDefault(); 
-                        this.moveToNextInput(input); 
-                    } 
-                });
+                input.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); this.moveToNextInput(input); } });
             }
         });
     }
-    
     adjustFuelQuantity(fuel, direction) {
         const input = document.querySelector(`.spinner-input-group[data-fuel="${fuel}"] .spinner-value`);
         const step = parseInt(input.parentElement.dataset.step || '1000');
@@ -132,29 +163,23 @@ class PricingManager {
         this.updateCalculatedFields();
         Storage.save(Storage.KEYS.MONETARIO_DATA, this.data);
         input.focus();
-        input.value = newValue > 0 ? formatter.liters.format(newValue) : '0';
+        input.value = newValue > 0 ? formatter.liters.format(newValue) : '';
     }
-
     moveToNextInput(currentInput) {
         const allInputs = Array.from(document.querySelectorAll('.grid-input:not([readonly]), .spinner-value:not([readonly])'));
         const currentIndex = allInputs.indexOf(currentInput);
         if (currentIndex > -1 && currentIndex < allInputs.length - 1) allInputs[currentIndex + 1].focus();
     }
-    
     handleInput(input) {
         const { product, type, competitor, fuel, field } = input.dataset;
         const value = parseNumberInput(input.value);
-        
-        // ✅ GESTIONE PREZZI CONSIGLIATI CON AGGIORNAMENTO ISTANTANEO
         if (type) {
             if (!this.data.pricing[product]) this.data.pricing[product] = {};
             if (product === 'adblue' && type === 'servito') {
                 this.data.pricing.adblue.price = value;
             } else if (type === 'consigliati') {
                 this.data.pricing[product].consigliati = value;
-                // ✅ AGGIORNAMENTO IMMEDIATO dei campi iperself e servito
                 this.updateCalculatedFields();
-                console.log(`Aggiornato prezzo consigliato per ${product}: ${value}`); // Debug
             }
         } else if (competitor) {
             if (!this.data.competitors[product]) this.data.competitors[product] = {};
@@ -163,63 +188,31 @@ class PricingManager {
             if (!this.data.fuelOrders[fuel]) this.data.fuelOrders[fuel] = {};
             this.data.fuelOrders[fuel].quantity = Math.max(0, value);
         }
-        
-        // ✅ SEMPRE aggiorna i campi calcolati e salva
         this.updateCalculatedFields();
         Storage.save(Storage.KEYS.MONETARIO_DATA, this.data);
     }
-    
     handleBlur(input) {
         const { product, type, competitor, fuel, field } = input.dataset;
-        let value;
-        let formatFunction = formatter.fuelPrices;
-        
+        let value; let formatFunction = formatter.fuelPrices;
         if (type) {
-            if (product === 'adblue' && type === 'servito') {
-                value = this.data.pricing.adblue?.price;
-            } else if (type === 'consigliati') {
-                value = this.data.pricing[product]?.consigliati;
-            }
-        } else if (competitor) {
-            value = this.data.competitors[product]?.[competitor];
-        } else if (fuel && field === 'quantity-value') {
-            value = this.data.fuelOrders[fuel]?.quantity;
-            formatFunction = formatter.liters;
-        }
-    
-        if (value === undefined || value === null || value === 0) {
-            input.value = (fuel && field === 'quantity-value') ? '0' : '';
-        } else {
-            input.value = formatFunction.format(value);
-        }
+            if (product === 'adblue' && type === 'servito') value = this.data.pricing.adblue?.price;
+            else if (type === 'consigliati') value = this.data.pricing[product]?.consigliati;
+        } else if (competitor) value = this.data.competitors[product]?.[competitor];
+        else if (fuel && field === 'quantity-value') { value = this.data.fuelOrders[fuel]?.quantity; formatFunction = formatter.liters; }
+        input.value = (value === undefined || value === null || value === 0) ? '' : formatFunction.format(value);
     }
-    
     updateCalculatedFields() {
         let totalOrderQuantity = 0, totalOrderAmount = 0;
-        
-        // ✅ CALCOLO PREZZI IPERSELF E SERVITO MIGLIORATO
         this.fuelProducts.forEach(p => {
             const pricingData = this.data.pricing[p];
             if (pricingData && typeof pricingData.consigliati === 'number' && pricingData.consigliati > 0) {
-                // Calcola automaticamente iperself e servito
                 pricingData.iperself = pricingData.consigliati + 0.005;
                 pricingData.servito = pricingData.consigliati + 0.225;
-                
-                // ✅ AGGIORNA IMMEDIATAMENTE i campi nell'interfaccia
                 const iperselfInput = document.querySelector(`input[data-product="${p}"][data-type="iperself"]`);
                 const servitoInput = document.querySelector(`input[data-product="${p}"][data-type="servito"]`);
-                
-                if (iperselfInput) {
-                    iperselfInput.value = formatter.fuelPrices.format(pricingData.iperself);
-                    console.log(`Aggiornato iperself ${p}: ${pricingData.iperself}`); // Debug
-                }
-                if (servitoInput) {
-                    servitoInput.value = formatter.fuelPrices.format(pricingData.servito);
-                    console.log(`Aggiornato servito ${p}: ${pricingData.servito}`); // Debug
-                }
+                if (iperselfInput) iperselfInput.value = formatter.fuelPrices.format(pricingData.iperself);
+                if (servitoInput) servitoInput.value = formatter.fuelPrices.format(pricingData.servito);
             }
-            
-            // Calcola differenze con concorrenti
             ['myoil', 'esso', 'q8'].forEach(c => {
                 const diff = (pricingData?.iperself || 0) - (this.data.competitors[p]?.[c] || 0);
                 const diffInput = document.querySelector(`input[data-product="${p}"][data-diff="${c}"]`);
@@ -228,8 +221,6 @@ class PricingManager {
                     diffInput.style.color = diff > 0.001 ? 'var(--danger)' : (diff < -0.001 ? 'var(--success)' : 'var(--orange)');
                 }
             });
-            
-            // Calcola ordini carburanti
             const orderData = this.data.fuelOrders[p] || {};
             const servitoPrice = pricingData?.servito || 0;
             const quantity = orderData.quantity || 0;
@@ -237,20 +228,16 @@ class PricingManager {
             const amount = quantity * advancePrice;
             totalOrderQuantity += quantity;
             totalOrderAmount += amount;
-            
             const advanceInput = document.querySelector(`input[data-fuel="${p}"][data-field="advance"]`);
-            if (advanceInput) advanceInput.value = (advancePrice !== 0) ? formatter.fuelPrices.format(advancePrice) : "0,000"; 
+            if (advanceInput) advanceInput.value = advancePrice !== 0 ? formatter.fuelPrices.format(advancePrice) : '';
             const amountInput = document.querySelector(`input[data-fuel="${p}"][data-field="amount"]`);
-            if (amountInput) amountInput.value = (amount !== 0) ? formatter.currency.format(amount) : "€ 0,00"; 
+            if (amountInput) amountInput.value = amount !== 0 ? formatter.currency.format(amount) : '';
         });
-        
-        // Aggiorna totali ordini
         const totalQtyEl = document.getElementById('total-quantity');
         if (totalQtyEl) totalQtyEl.textContent = `${formatter.liters.format(totalOrderQuantity)} L`;
         const totalAmountEl = document.getElementById('total-amount');
         if (totalAmountEl) totalAmountEl.textContent = formatter.currency.format(totalOrderAmount);
     }
-    
     populateInputs() {
         this.allProducts.forEach(p => {
             const pricingData = this.data.pricing[p] || {};
@@ -262,7 +249,6 @@ class PricingManager {
                 if (consigliatiInput) consigliatiInput.value = (pricingData.consigliati !== undefined) ? formatter.fuelPrices.format(pricingData.consigliati) : '';
             }
         });
-
         ['benzina', 'gasolio'].forEach(p => {
             const competitorData = this.data.competitors[p] || {};
             ['myoil', 'esso', 'q8'].forEach(c => {
@@ -270,11 +256,10 @@ class PricingManager {
                 if (competitorInput) competitorInput.value = (competitorData[c] !== undefined) ? formatter.fuelPrices.format(competitorData[c]) : '';
             });
         });
-
         this.fuelProducts.forEach(fuel => {
             const orderData = this.data.fuelOrders[fuel] || {};
             const quantityInput = document.querySelector(`input[data-fuel="${fuel}"][data-field="quantity-value"]`);
-            if (quantityInput) quantityInput.value = (orderData.quantity !== undefined && orderData.quantity > 0) ? formatter.liters.format(orderData.quantity) : '0';
+            if (quantityInput) quantityInput.value = (orderData.quantity !== undefined && orderData.quantity > 0) ? formatter.liters.format(orderData.quantity) : '';
         });
     }
 }
@@ -306,7 +291,9 @@ function importaDatiCompleti() {
 
 function esportaDatiCompleti() {
     const data = {
-        exportDate: new Date().toISOString(), exportType: 'monetario', version: '2.1',
+        exportDate: new Date().toISOString(),
+        exportType: 'monetario',
+        version: '2.1',
         monetario: Storage.load(Storage.KEYS.MONETARIO_DATA, {}),
         versamento: Storage.load(Storage.KEYS.VERSAMENTO_DATA, {}),
         ordini: Storage.load(Storage.KEYS.ORDER_HISTORY, [])
@@ -337,7 +324,6 @@ document.addEventListener('DOMContentLoaded', () => {
         initializeInfoModal();
         new VersamentoManager();
         window.pricingManager = new PricingManager();
-        
     } catch (error) {
         console.error("Errore durante l'inizializzazione:", error);
         showMessage("Errore critico nell'avvio dell'applicazione.", 'error');
