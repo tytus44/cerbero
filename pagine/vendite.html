@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+
+<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
+<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="shortcut icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+<meta name="apple-mobile-web-app-title" content="CeRBERO" />
+<link rel="manifest" href="/site.webmanifest" />
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+        (function() {
+            try {
+                const theme = localStorage.getItem('cerbero_theme') || 'light';
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch (e) {
+                console.error('Errore applicazione tema iniziale:', e);
+            }
+        })();
+    </script>
+    
+    <title>CeRBERO - Vendite</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <link rel="stylesheet" href="../css/stile.css">
+    <style>
+        .top-action-bar {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            width: calc(100% - var(--sidebar-width));
+            background-color: var(--bg-white);
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            z-index: 99;
+            border-bottom: 1px solid var(--primary-blue-light);
+            box-shadow: none;
+            transition: left 0.3s ease, width 0.3s ease;
+        }
+        html.dark-theme .top-action-bar {
+            background-color: var(--bg-white);
+            border-bottom-color: var(--bg-display);
+        }
+        .main-content {
+            margin-top: 85px;
+        }
+        
+        /* Filtri centrati */
+        .vendite-filter-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px;
+            background: var(--bg-white);
+            padding: 15px 20px;
+            border-radius: var(--radius-squadrato);
+            box-shadow: var(--shadow-light);
+            margin-bottom: 25px;
+            border: 1px solid var(--primary-blue-light);
+        }
+        
+        @media (max-width: 992px) {
+            .top-action-bar {
+                left: 0;
+                width: 100%;
+            }
+        }
+        
+        /* Modale info - stili da index.html */
+        .modal-info-content {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .modal-info-icon {
+            font-size: 72px !important;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .info-modal-brand {
+            font-size: 48px !important;
+            font-weight: 800;
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: -0.025em;
+        }
+
+        .info-divider {
+            height: 1px;
+            background-color: var(--border-color);
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .info-modal-content p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-primary);
+            text-align: left !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Hamburger Menu Button (Mobile) -->
+    <button class="hamburger-menu-btn" id="hamburger-menu-btn" aria-label="Menu">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobile-menu-overlay"></div>
+
+    <!-- Top Action Bar -->
+    <div class="top-action-bar">
+        <button class="action-btn btn-success" id="apply-filters"><i class="fa-solid fa-sync"></i>AGGIORNA DATI</button>
+        <button class="action-btn" id="export-report-btn"><i class="fa-solid fa-upload"></i>ESPORTA</button>
+        <button class="action-btn" id="import-data-btn"><i class="fa-solid fa-download"></i>IMPORTA</button>
+        <button class="action-btn btn-info" id="print-report-btn"><i class="fa-solid fa-print"></i>STAMPA</button>
+    </div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="main-nav">
+        <div class="sidebar-header">CeRBERO</div>
+<nav class="nav">
+    <ul>
+        <li><a href="../index.html"><i class="fa-solid fa-house"></i>HOME</a></li>
+        <li><a href="rubrica.html"><i class="fa-solid fa-address-book"></i>RUBRICA</a></li>
+        <li><a href="monetario.html"><i class="fa-solid fa-coins"></i>MONETARIO</a></li>
+        <li><a href="virtualstation.html"><i class="fa-solid fa-gas-pump"></i>VIRTUALSTATION</a></li>
+        <li><a href="vendite.html" class="active"><i class="fa-solid fa-chart-line"></i>VENDITE</a></li>
+        <li><a href="credito.html"><i class="fa-solid fa-credit-card"></i>CREDITO</a></li>
+        <li><a href="carico.html"><i class="fa-solid fa-truck"></i>CARICO</a></li>
+    </ul>
+</nav>
+        
+        <div class="sidebar-footer">
+            <a href="#" id="theme-switcher" title="Cambia Tema">
+                <i class="fa-solid fa-sun theme-icon-light" id="theme-icon-light"></i>
+                <i class="fa-solid fa-moon theme-icon-dark" id="theme-icon-dark"></i>TEMA
+            </a>
+            <a href="#" id="info-btn" title="Informazioni">
+                <i class="fa-solid fa-circle-info"></i>INFO
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+<div class="container">
+  <main class="main-content">
+        <!-- Filtri Centrati -->
+        <div class="vendite-filter-bar">
+            <div class="filter-label">FILTRA DATI PER:</div>
+            <select id="filter-type" class="grid-input">
+                <option value="mese">MESE</option>
+                <option value="trimestre">TRIMESTRE</option>
+                <option value="semestre">SEMESTRE</option>
+            </select>
+            <select id="filter-value" class="grid-input">
+                <option value="0">GENNAIO</option>
+            </select>
+            <button class="action-btn btn-success" id="btn-apply-filter">
+                <i class="fa-solid fa-check"></i>APPLICA
+            </button>
+            <button class="action-btn btn-danger" id="btn-reset-filter">
+                <i class="fa-solid fa-rotate-left"></i>RESET
+            </button>
+        </div>
+
+        <!-- Metriche Principali -->
+        <div class="vendite-metrics-grid">
+            <div class="box summary-box">
+                <div class="stat-value" id="totalSales">6.379,32 €</div>
+                <div class="stat-label">FATTURATO TOTALE</div>
+            </div>
+            <div class="box summary-box">
+                <div class="stat-value" id="totalLiters">3.655 L</div>
+                <div class="stat-label">LITRI EROGATI</div>
+            </div>
+            <div class="box summary-box">
+                <div class="stat-value" id="servitoPerc">19%</div>
+                <div class="stat-label">SERVITO VS SELF</div>
+            </div>
+        </div>
+
+        <!-- Dashboard Grafici -->
+        <div class="vendite-dashboard-grid">
+            <!-- Vendite per Prodotto -->
+            <div class="box chart-box">
+                <h2 class="box-header">VENDITE PER PRODOTTO</h2>
+                <div class="box-content">
+                    <div class="chart-container">
+                        <canvas id="productChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modalità di Servizio -->
+            <div class="box chart-box">
+                <h2 class="box-header">MODALITÀ DI SERVIZIO</h2>
+                <div class="box-content">
+                    <div class="chart-container pie-chart-container">
+                        <canvas id="modalityChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Composizione Fatturato -->
+            <div class="box chart-box">
+                <h2 class="box-header">COMPOSIZIONE FATTURATO</h2>
+                <div class="box-content">
+                    <div class="chart-container">
+                        <canvas id="islandChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal di Conferma -->
+    <div class="modal-overlay" id="confirm-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="confirm-modal-title">Conferma Azione</div>
+                <button class="modal-close-btn" onclick="this.closest('.modal-overlay').classList.remove('active')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-content">
+                <p id="confirm-modal-text">Sei sicuro di voler procedere?</p>
+            </div>
+            <div class="modal-actions">
+                <button class="action-btn btn-danger" id="confirm-modal-cancel">
+                    <i class="fa-solid fa-xmark"></i>Annulla
+                </button>
+                <button class="action-btn btn-success" id="confirm-modal-ok">
+                    <i class="fa-solid fa-check"></i>Conferma
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Info -->
+    <div class="modal-overlay" id="info-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Informazioni Progetto</div>
+                <button class="modal-close-btn" title="Chiudi" onclick="this.closest('.modal-overlay').classList.remove('active')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <div class="modal-content info-modal-content">
+                <i class="fa-solid fa-gas-pump modal-info-icon"></i>
+                <h1 class="info-modal-brand">CeRBERO</h1>
+                <div class="info-divider"></div>
+                <p>Questo progetto è un gestionale web-based per la contabilità semplificata di una stazione di servizio.</p>
+                <div class="info-divider"></div>
+                <div class="programmer-info">
+                    <strong>Sviluppato da:</strong> NeRO<br>
+                    <a class="info-link" href="mailto:tito.neroni@gmail.com">tito.neroni@gmail.com</a><br>
+                    <a class="info-link" href="https://github.com/tytus44/cerbero" target="_blank">Progetto su GitHub</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-datalabels/2.2.0/chartjs-plugin-datalabels.min.js"></script>
+    <script src="../js/storage.js"></script>
+    <script src="../js/vendite.js"></script>
+</body>
+</html>
